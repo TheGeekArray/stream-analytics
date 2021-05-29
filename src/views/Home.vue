@@ -5,25 +5,22 @@
 			<Dropdown v-if="loaded" @change="updateLabel" v-bind:labels="allLabels" :key="dropdownKey"/>
 		</div>
 		<div class="bar-container">
-			<AverageViewers v-if="label === 'Average Viewers' && loaded" v-bind:data="chartdata" v-bind:options="options" v-bind:label="label" :key="barKey"/>
-			<BarBase v-if="label !== 'Average Viewers'  && loaded" v-bind:data="chartdata" v-bind:options="options" v-bind:label="label" :key="barKey"/>
+			<Bar v-if="loaded" v-bind:data="chartdata" v-bind:options="options" v-bind:label="label" :key="barKey"/>
 		</div>
 	</div>
 </template>
 
 <script>
-	import BarBase from '@/components/graphs/mixins/BarBase.vue';
+	import Bar from '@/components/graphs/Bar.vue';
 	import FileReader from '@/components/FileReader.vue';
 	import Dropdown from '@/components/Dropdown.vue';
-	import AverageViewers from '@/components/graphs/AverageViewers.vue';
 
 	export default {
 		name: 'Home',
 		components: {
-			BarBase,
+			Bar,
 			FileReader,
-			Dropdown,
-			AverageViewers
+			Dropdown
 		},
 		data: () => ({ 
 			loaded: false, 
