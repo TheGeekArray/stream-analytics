@@ -5,12 +5,12 @@ export default {
   extends: Bar,
   props: ["data", "options", "label"],
   mounted () {
-    const chartdata = this.getChartData();
+    const chartdata = this.getBasicChartData();
     
     this.renderChart(chartdata, this.options);
   },
   methods: {
-    getChartData: function() {
+    getBasicChartData: function() {
       return chartdata = {
         labels: this.data["Date"],
         datasets: [
