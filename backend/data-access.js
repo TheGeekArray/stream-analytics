@@ -1,24 +1,27 @@
-const { app, ipcMain } = require('electron');
-const fs = require('fs-extra');
-const path = require('path');
+import { ipcMain } from 'electron';
+import fs from 'fs-extra';
+import path from 'path';
+import filePaths from './file-paths';
 
-function setupListeners() {
-	ipcMain.on("fileUploaded", function(event, data) {
-		const mappedData = mapData(data);
-		if (mappedData) {
-			dataToWrite = JSON.stringify(mappedData);
-			fs.writeFile(path.join(app.getPath("appData") + path.sep + "Stream Analytics" + path.sep + "data", '/data.json'), dataToWrite, function(){
-				event.reply("dataProcessed", mappedData);
-			});
-		}
-	});
-
-	ipcMain.on("dataRequested", function(event) {
-		let data = fs.readFileSync(path.join(app.getPath("appData") + path.sep + "Stream Analytics" + path.sep + "data", '/data.json'), 'utf8');
-		if (data) {
-			event.reply("dataLoaded", JSON.parse(data));
-		}
-	});
+export default {
+	setupListeners() {
+		ipcMain.on("fileUploaded", function(event, data) {
+			const mappedData = mapData(data);
+			if (mappedData) {
+				dataToWrite = JSON.stringify(mappedData);
+				fs.writeFile(path.join(filePaths.userData.data, '/data.json'), dataToWrite, function(){
+					event.reply("dataProcessed", mappedData);
+				});
+			}
+		});
+	
+		ipcMain.on("dataRequested", function(event) {
+			let data = fs.readFileSync(path.join(filePaths.userData.data, '/data.json'), 'utf8');
+			if (data) {
+				event.reply("dataLoaded", JSON.parse(data));
+			}
+		});
+	}
 }
 
 function mapData(data) {
@@ -51,5 +54,3 @@ function splitData(data) {
 
 	return splittedData;
 }
-
-exports.setupListeners = setupListeners;

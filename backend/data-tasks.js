@@ -1,11 +1,9 @@
-import { app } from 'electron';
-import path from 'path';
 import fs from 'fs-extra';
+import filePaths from './file-paths';
 import dataAccess from './data-access';
 
 function setupFolderStructure() {
-	const userDataPath = app.getPath("appData") + path.sep + "Stream Analytics";
-	const filePath = userDataPath + path.sep + "data";
+	const filePath = filePaths.userData.data;
 	
 	if (!fs.pathExists(filePath)) {
 		fs.mkdirSync(filePath);
