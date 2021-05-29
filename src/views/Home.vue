@@ -22,13 +22,12 @@
 			FileReader,
 			Dropdown
 		},
-		data: () => ({ 
-			loaded: false, 
-			data: [],
+		data: () => ({
+			loaded: false,
 			options: {},
 			chartdata: {},
 			allLabels: [],
-			label: "Average Viewers", 
+			label: "Average Viewers",
 			barKey: 0,
 			dropdownKey: 0
 		}),
