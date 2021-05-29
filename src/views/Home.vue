@@ -38,8 +38,6 @@
 				component.setData(data);
 				component.setAllLabels(data);
 				component.setLoaded();
-
-				console.log(data);
 			});
 
 			this.barKey++;
