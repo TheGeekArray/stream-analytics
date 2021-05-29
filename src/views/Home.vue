@@ -33,7 +33,7 @@
 			dropdownKey: 0
 		}),
 		methods: {
-			updateLabel: function (event) {
+			updateLabel: function(event) {
 				this.label = event;
 				this.barKey++;
 			},
@@ -41,7 +41,7 @@
 				const splittedData = this.splitData(data);
 
 				this.chartdata = this.mapData(splittedData);
-				this.allLabels = Object.keys(this.chartdata).filter(topic => topic !== "Date");
+				this.allLabels = this.getAllLabels();
 				this.options = {
 					responsive: true,
 					maintainAspectRatio: false,
@@ -73,7 +73,7 @@
 				this.barKey++;
 				this.loaded = true;
 			},
-			splitData: function (data) {
+			splitData: function(data) {
 				const dataToSplit = data.split("\n");
 				const splittedData = [];
 
@@ -84,7 +84,7 @@
 
 				return splittedData;
 			},
-			mapData: function (data) {
+			mapData: function(data) {
 				const topics = data.shift();
 				const twitchData = {};
 
@@ -100,6 +100,9 @@
 				}
 
 				return twitchData;
+			},
+			getAllLabels: function() {
+				return Object.keys(this.chartdata).filter(topic => topic !== "Date");
 			}
 		}
 	}
