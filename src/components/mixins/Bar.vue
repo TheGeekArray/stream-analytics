@@ -9,12 +9,12 @@ export default {
     label: String
   },
   mounted () {
-    const chartdata = this.getBasicChartData();
+    const chartdata = this.getChartData();
     
     this.renderChart(chartdata, this.options);
   },
   methods: {
-    getBasicChartData: function() {
+    getChartData: function() {
       return {
         labels: this.data["Date"],
         datasets: [

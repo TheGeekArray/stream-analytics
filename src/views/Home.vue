@@ -13,7 +13,7 @@
 
 <script>
 // @ is an alias to /src
-import Bar from '@/components/base/Bar.vue'
+import Bar from '@/components/mixins/Bar.vue'
 import FileReader from '@/components/FileReader.vue'
 import Dropdown from '@/components/Dropdown.vue'
 import AverageViewers from '@/components/AverageViewers.vue'
