@@ -3,7 +3,11 @@ import { Bar } from 'vue-chartjs'
 
 export default {
   extends: Bar,
-  props: ["data", "options", "label"],
+  props: {
+    data: Object,
+    options: Object,
+    label: String
+  },
   mounted () {
     const chartdata = this.getBasicChartData();
     

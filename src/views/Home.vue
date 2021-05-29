@@ -29,10 +29,10 @@ export default {
   data: () => (
     { 
       loaded: false, 
-      data: "",
-      options: "",
-      chartdata: "",
-      allLabels: "",
+      data: [],
+      options: {},
+      chartdata: {},
+      allLabels: [],
       label: "Average Viewers", 
       barKey: 0,
       dropdownKey: 0
