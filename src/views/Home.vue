@@ -12,10 +12,10 @@
 </template>
 
 <script>
-	import Bar from '@/components/mixins/Bar.vue';
+	import Bar from '@/components/graphs/mixins/Bar.vue';
 	import FileReader from '@/components/FileReader.vue';
 	import Dropdown from '@/components/Dropdown.vue';
-	import AverageViewers from '@/components/AverageViewers.vue';
+	import AverageViewers from '@/components/graphs/AverageViewers.vue';
 
 	export default {
 		name: 'Home',
