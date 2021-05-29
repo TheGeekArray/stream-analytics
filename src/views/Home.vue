@@ -6,13 +6,13 @@
 		</div>
 		<div class="bar-container">
 			<AverageViewers v-if="label === 'Average Viewers' && loaded" v-bind:data="chartdata" v-bind:options="options" v-bind:label="label" :key="barKey"/>
-			<Bar v-if="label !== 'Average Viewers'  && loaded" v-bind:data="chartdata" v-bind:options="options" v-bind:label="label" :key="barKey"/>
+			<BarBase v-if="label !== 'Average Viewers'  && loaded" v-bind:data="chartdata" v-bind:options="options" v-bind:label="label" :key="barKey"/>
 		</div>
 	</div>
 </template>
 
 <script>
-	import Bar from '@/components/graphs/mixins/Bar.vue';
+	import BarBase from '@/components/graphs/mixins/BarBase.vue';
 	import FileReader from '@/components/FileReader.vue';
 	import Dropdown from '@/components/Dropdown.vue';
 	import AverageViewers from '@/components/graphs/AverageViewers.vue';
@@ -20,7 +20,7 @@
 	export default {
 		name: 'Home',
 		components: {
-			Bar,
+			BarBase,
 			FileReader,
 			Dropdown,
 			AverageViewers

@@ -1,9 +1,8 @@
 <script>
-	import Bar from './mixins/Bar.vue';
+	import BarBase from './mixins/BarBase.vue';
 
 	export default {
-		extends: Bar,
-		mixins: [ Bar ],
+		mixins: [ BarBase ],
 		methods: {
 			getChartData: function() {
 				const organicAverage = this.calculateOrganicAverage(this.data["Average Viewers"], this.data["Hosts and Raids Viewers (%)"]);
