@@ -2,10 +2,10 @@
 	<div class="home">
 		<div class="header">
 			<FileReader @load="buildChart"/>
-			<Dropdown v-if="loaded" @change="updateLabel" v-bind:labels="allLabels" :key="dropdownKey"/>
+			<Dropdown v-if="loaded" @change="updateCurrentLabel" v-bind:labels="labels" :key="dropdownKey"/>
 		</div>
 		<div class="bar-container">
-			<Bar v-if="loaded" v-bind:data="chartdata" v-bind:label="label" :key="barKey"/>
+			<Bar v-if="loaded" v-bind:data="chartdata" v-bind:label="currentLabel" :key="barKey"/>
 		</div>
 	</div>
 </template>
@@ -14,6 +14,7 @@
 	import Bar from '@/components/graphs/Bar.vue';
 	import FileReader from '@/components/FileReader.vue';
 	import Dropdown from '@/components/Dropdown.vue';
+	const { ipcRenderer } = require('electron');
 
 	export default {
 		name: 'Home',
@@ -25,61 +26,37 @@
 		data: () => ({
 			loaded: false,
 			chartdata: {},
-			allLabels: [],
-			label: "Average Viewers",
+			labels: [],
+			currentLabel: "Average Viewers",
 			barKey: 0,
 			dropdownKey: 0
 		}),
 		methods: {
-			updateLabel: function(event) {
-				this.label = event;
+			updateCurrentLabel: function(event) {
+				this.currentLabel = event;
 				this.barKey++;
 			},
-			buildChart: function(data) {
-				this.parseData(data);
+			buildChart: async function(data) {
+				let component = this;
 
-				if (this.chartdata) {
-					this.allLabels = this.getAllLabels();
-				}
+				ipcRenderer.send("fileUploaded", data);
+
+				ipcRenderer.on("dataProcessed", function(event, processedData) {
+					component.setData(processedData);
+					component.setAllLabels(processedData);
+					component.setLoaded();
+				});
 
 				this.barKey++;
+			},
+			setData: function(data) {
+				this.chartdata = data;
+			},
+			setAllLabels: function(data) {
+				this.labels = Object.keys(data).filter(topic => topic !== "Date");
+			},
+			setLoaded: function() {
 				this.loaded = true;
-			},
-			parseData: function(data) {
-				const splittedData = this.splitData(data);
-
-				this.chartdata = this.mapData(splittedData);
-			},
-			splitData: function(data) {
-				const dataToSplit = data.split("\n");
-				const splittedData = [];
-
-				for (let line of dataToSplit) {
-					let splittedLine = line.split(",");
-					splittedData.push(splittedLine);
-				}
-
-				return splittedData;
-			},
-			mapData: function(data) {
-				const topics = data.shift();
-				const twitchData = {};
-
-				let count = 0;
-				for (let topic of topics) {
-					twitchData[topic] = [];
-
-					for (let line of data) {
-						twitchData[topic].push(line[count]);
-					}
-
-					count++;
-				}
-
-				return twitchData;
-			},
-			getAllLabels: function() {
-				return Object.keys(this.chartdata).filter(topic => topic !== "Date");
 			}
 		}
 	}
