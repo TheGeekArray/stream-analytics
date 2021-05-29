@@ -11,7 +11,7 @@ export default {
   },
   methods: {
     getBasicChartData: function() {
-      return chartdata = {
+      return {
         labels: this.data["Date"],
         datasets: [
           {
