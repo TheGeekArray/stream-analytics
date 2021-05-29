@@ -4,6 +4,13 @@ import path from 'path';
 import filePaths from './file-paths';
 
 export default {
+	setupFolderStructure() {
+		const filePath = filePaths.userData.data;
+		
+		if (!fs.pathExists(filePath)) {
+			fs.mkdirSync(filePath);
+		}
+	},
 	setupListeners() {
 		ipcMain.on("fileUploaded", function(event, data) {
 			const mappedData = mapData(data);
