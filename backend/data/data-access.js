@@ -6,7 +6,7 @@ import filePaths from './file-paths';
 export default {
 	setupFolderStructure() {
 		const filePath = filePaths.userData.data;
-		
+				
 		if (!fs.pathExists(filePath)) {
 			fs.mkdirSync(filePath);
 		}
@@ -16,7 +16,7 @@ export default {
 			const mappedData = mapData(data);
 			if (mappedData) {
 				dataToWrite = JSON.stringify(mappedData);
-				fs.writeFile(path.join(filePaths.userData.data, '/data.json'), dataToWrite, function(){
+				fs.writeFile(path.join(filePaths.userData.data, '/data.json'), dataToWrite, function() {
 					event.reply("dataProcessed", mappedData);
 				});
 			}
