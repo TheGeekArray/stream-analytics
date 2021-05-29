@@ -1,6 +1,8 @@
 'use strict';
 
 import { app, protocol, BrowserWindow } from 'electron';
+import path from 'path';
+import fs from 'fs-extra';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 const isDevelopment = process.env.NODE_ENV !== 'production';
@@ -61,6 +63,13 @@ app.on('ready', async () => {
 		} catch (e) {
 			console.error('Vue Devtools failed to install:', e.toString())
 		}
+	}
+
+	const userDataPath = app.getPath("appData") + path.sep + "Stream Analytics";
+	const filePath = userDataPath + path.sep + "data";
+	
+	if (!fs.pathExists(filePath)) {
+		fs.mkdirSync(filePath);
 	}
 
 	const dataAccess = require("../backend/data-access");

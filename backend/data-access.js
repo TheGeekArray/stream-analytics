@@ -1,14 +1,17 @@
-const { ipcMain } = require('electron');
+const { app, ipcMain } = require('electron');
+const fs = require('fs-extra');
+const path = require('path');
 
 function setupListeners() {
 	ipcMain.on("fileUploaded", function(event, data) {
 		const mappedData = mapData(data);
 		if (mappedData) {
-			event.reply("dataProcessed", mappedData);
+			dataToWrite = JSON.stringify(mappedData);
+			fs.writeFile(path.join(app.getPath("appData") + path.sep + "Stream Analytics" + path.sep + "data", '/data.json'), dataToWrite, function(){
+				event.reply("dataProcessed", mappedData);
+			});
 		}
-		
 	});
-	
 }
 
 function mapData(data) {
