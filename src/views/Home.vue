@@ -31,6 +31,19 @@
 			barKey: 0,
 			dropdownKey: 0
 		}),
+		beforeMount () {
+			let component = this;
+			ipcRenderer.send("dataRequested");
+			ipcRenderer.on("dataLoaded", function(event, data) {
+				component.setData(data);
+				component.setAllLabels(data);
+				component.setLoaded();
+
+				console.log(data);
+			});
+
+			this.barKey++;
+		},
 		methods: {
 			updateCurrentLabel: function(event) {
 				this.currentLabel = event;

@@ -12,6 +12,13 @@ function setupListeners() {
 			});
 		}
 	});
+
+	ipcMain.on("dataRequested", function(event) {
+		let data = fs.readFileSync(path.join(app.getPath("appData") + path.sep + "Stream Analytics" + path.sep + "data", '/data.json'), 'utf8');
+		if (data) {
+			event.reply("dataLoaded", JSON.parse(data));
+		}
+	});
 }
 
 function mapData(data) {
