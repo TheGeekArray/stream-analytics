@@ -1,5 +1,5 @@
 <script>
-	import Bar from '@/components/mixins/Bar.vue'
+	import Bar from '@/components/mixins/Bar.vue';
 
 	export default {
 		extends: Bar,
