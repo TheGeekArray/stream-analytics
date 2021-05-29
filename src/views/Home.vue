@@ -41,33 +41,7 @@
 
 				this.chartdata = this.mapData(splittedData);
 				this.allLabels = this.getAllLabels();
-				this.options = {
-					responsive: true,
-					maintainAspectRatio: false,
-					tooltips: {
-						mode: "x",
-						callbacks: {
-							label: function(tooltipItem, data) {
-								var label = data.datasets[tooltipItem.datasetIndex].label || '';
-
-								if (label) {
-									label += ': ';
-								}
-
-								label += (tooltipItem.yLabel % 1 !== 0 ? tooltipItem.yLabel.toFixed(2) : tooltipItem.yLabel);
-								return label;
-							}
-						}
-					},
-					scales: {
-						xAxes: [{
-							stacked: true,
-						}],
-						yAxes: [{
-							stacked: true
-						}]
-					}
-				};
+				this.options = this.getOptions();
 
 				this.barKey++;
 				this.loaded = true;
@@ -99,6 +73,35 @@
 				}
 
 				return twitchData;
+			},
+			getOptions: function() {
+				return {
+					responsive: true,
+					maintainAspectRatio: false,
+					tooltips: {
+						mode: "x",
+						callbacks: {
+							label: function(tooltipItem, data) {
+								var label = data.datasets[tooltipItem.datasetIndex].label || '';
+
+								if (label) {
+									label += ': ';
+								}
+
+								label += (tooltipItem.yLabel % 1 !== 0 ? tooltipItem.yLabel.toFixed(2) : tooltipItem.yLabel);
+								return label;
+							}
+						}
+					},
+					scales: {
+						xAxes: [{
+							stacked: true,
+						}],
+						yAxes: [{
+							stacked: true
+						}]
+					}
+				};
 			},
 			getAllLabels: function() {
 				return Object.keys(this.chartdata).filter(topic => topic !== "Date");
