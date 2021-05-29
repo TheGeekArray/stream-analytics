@@ -1,7 +1,7 @@
 <template>
 	<div class="home">
 		<div class="header">
-			<FileReader @load="parseData"/>
+			<FileReader @load="buildChart"/>
 			<Dropdown v-if="loaded" @change="updateLabel" v-bind:labels="allLabels" :key="dropdownKey"/>
 		</div>
 		<div class="bar-container">
@@ -36,15 +36,21 @@
 				this.label = event;
 				this.barKey++;
 			},
+			buildChart: function(data) {
+				this.parseData(data);
+
+				if (this.chartdata) {
+					this.allLabels = this.getAllLabels();
+					this.options = this.getOptions();
+				}
+
+				this.barKey++;
+				this.loaded = true;
+			},
 			parseData: function(data) {
 				const splittedData = this.splitData(data);
 
 				this.chartdata = this.mapData(splittedData);
-				this.allLabels = this.getAllLabels();
-				this.options = this.getOptions();
-
-				this.barKey++;
-				this.loaded = true;
 			},
 			splitData: function(data) {
 				const dataToSplit = data.split("\n");
