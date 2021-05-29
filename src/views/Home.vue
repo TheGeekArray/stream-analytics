@@ -5,7 +5,7 @@
 			<Dropdown v-if="loaded" @change="updateLabel" v-bind:labels="allLabels" :key="dropdownKey"/>
 		</div>
 		<div class="bar-container">
-			<Bar v-if="loaded" v-bind:data="chartdata" v-bind:options="options" v-bind:label="label" :key="barKey"/>
+			<Bar v-if="loaded" v-bind:data="chartdata" v-bind:label="label" :key="barKey"/>
 		</div>
 	</div>
 </template>
@@ -24,7 +24,6 @@
 		},
 		data: () => ({
 			loaded: false,
-			options: {},
 			chartdata: {},
 			allLabels: [],
 			label: "Average Viewers",
@@ -41,7 +40,6 @@
 
 				if (this.chartdata) {
 					this.allLabels = this.getAllLabels();
-					this.options = this.getOptions();
 				}
 
 				this.barKey++;
@@ -79,35 +77,6 @@
 				}
 
 				return twitchData;
-			},
-			getOptions: function() {
-				return {
-					responsive: true,
-					maintainAspectRatio: false,
-					tooltips: {
-						mode: "x",
-						callbacks: {
-							label: function(tooltipItem, data) {
-								var label = data.datasets[tooltipItem.datasetIndex].label || '';
-
-								if (label) {
-									label += ': ';
-								}
-
-								label += (tooltipItem.yLabel % 1 !== 0 ? tooltipItem.yLabel.toFixed(2) : tooltipItem.yLabel);
-								return label;
-							}
-						}
-					},
-					scales: {
-						xAxes: [{
-							stacked: true,
-						}],
-						yAxes: [{
-							stacked: true
-						}]
-					}
-				};
 			},
 			getAllLabels: function() {
 				return Object.keys(this.chartdata).filter(topic => topic !== "Date");
