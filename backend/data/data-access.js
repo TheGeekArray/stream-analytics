@@ -2,6 +2,7 @@ import { ipcMain } from 'electron';
 import fs from 'fs-extra';
 import path from 'path';
 import filePaths from './file-paths';
+import dataProcesser from './data-processer';
 
 export default {
 	setupFolderStructure() {
@@ -13,19 +14,16 @@ export default {
 	},
 	setupListeners() {
 		ipcMain.on("fileUploaded", function(event, data) {
-			const mappedData = mapData(data);
-			processData(data);
+			const mappedData = dataProcesser.mapData(data);
+			dataProcesser.processData(data);
 			
 			if (mappedData) {
-				const dataToWrite = JSON.stringify(mappedData, null, 4);
-				fs.writeFile(path.join(filePaths.userData.data, '/data.json'), dataToWrite, function() {
-					event.reply("dataProcessed", mappedData);
-				});
+				writeToDataFile(event, mappedData);
 			}
 		});
 	
 		ipcMain.on("dataRequested", function(event) {
-			let data = fs.readFileSync(path.join(filePaths.userData.data, '/data.json'), 'utf8');
+			let data = readFileSync(path.join(filePaths.userData.data, '/data.json'));
 			if (data) {
 				event.reply("dataLoaded", JSON.parse(data));
 			}
@@ -33,57 +31,23 @@ export default {
 
 		ipcMain.on("startingDateSet", function(event, date) {
 			let settings = { startingDate: date };
-			fs.writeFile(path.join(filePaths.userData.root, '/settings.json'), JSON.stringify(settings, null, 4), function() {
-				event.reply("startingDateProcessed");
-			});
+			writeToSettingsFile(event, settings);
 		});
 	}
 }
 
-function processData(data) {
-	const splittedData = splitData(data);
-
-	const labels = splittedData.shift().filter(label => label !== "Date");
-	const { dates, strippedData } = shiftDates(splittedData);
+function readFileSync(path) {
+	return fs.readFileSync(path, 'utf8');
 }
 
-function shiftDates(data) {
-	const dates = [];
-
-	for (let row of data) {
-		dates.push(row.shift());	
-	}
-
-	return { dates: dates, strippedData: data };
+function writeToDataFile(event, data) {
+	fs.writeFile(path.join(filePaths.userData.data, '/data.json'), JSON.stringify(data, null, 4), function() {
+		event.reply("dataProcessed", data);
+	});
 }
 
-function mapData(data) {
-	const splittedData = splitData(data);
-	const topics = splittedData.shift();
-	const twitchData = {};
-
-	let count = 0;
-	for (let topic of topics) {
-		twitchData[topic] = [];
-
-		for (let line of splittedData) {
-			twitchData[topic].push(line[count]);
-		}
-
-		count++;
-	}
-
-	return twitchData;
-}
-
-function splitData(data) {
-	const dataToSplit = data.split("\n");
-	const splittedData = [];
-
-	for (let line of dataToSplit) {
-		let splittedLine = line.split(",");
-		splittedData.push(splittedLine);
-	}
-
-	return splittedData;
+function writeToSettingsFile(event, settings) {
+	fs.writeFile(path.join(filePaths.userData.root, '/settings.json'), JSON.stringify(settings, null, 4), function() {
+		event.reply("settingsUpdated");
+	});
 }
