@@ -15,7 +15,7 @@ export default {
 		ipcMain.on("fileUploaded", function(event, data) {
 			const mappedData = mapData(data);
 			if (mappedData) {
-				dataToWrite = JSON.stringify(mappedData);
+				let dataToWrite = JSON.stringify(mappedData, null, 4);
 				fs.writeFile(path.join(filePaths.userData.data, '/data.json'), dataToWrite, function() {
 					event.reply("dataProcessed", mappedData);
 				});
@@ -31,7 +31,7 @@ export default {
 
 		ipcMain.on("startingDateSet", function(event, date) {
 			let settings = { startingDate: date };
-			fs.writeFile(path.join(filePaths.userData.root, '/settings.json'), JSON.stringify(settings), function() {
+			fs.writeFile(path.join(filePaths.userData.root, '/settings.json'), JSON.stringify(settings, null, 4), function() {
 				event.reply("startingDateProcessed");
 			});
 		});
