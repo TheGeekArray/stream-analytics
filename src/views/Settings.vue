@@ -17,8 +17,8 @@ export default {
 	methods: {
 		setDateSetting(event) {
 			ipcRenderer.send("startingDateSet", event.target.value);
-			ipcRenderer.on("startingDateProcessed", function() {
-				console.log("Starting date processed");
+			ipcRenderer.on("settingsUpdated", function() {
+				console.log("Settings updated.");
 			});
 		}
 	}
