@@ -5,10 +5,10 @@ import filePaths from './file-paths';
 
 export default {
 	setupFolderStructure() {
-		const filePath = filePaths.userData.data;
+		const dataFilePath = filePaths.userData.data;
 				
-		if (!fs.pathExists(filePath)) {
-			fs.mkdirSync(filePath);
+		if (!fs.pathExists(dataFilePath)) {
+			fs.mkdirSync(dataFilePath);
 		}
 	},
 	setupListeners() {
@@ -17,7 +17,7 @@ export default {
 			processData(data);
 			
 			if (mappedData) {
-				const dataToWrite = JSON.stringify(mappedData);
+				const dataToWrite = JSON.stringify(mappedData, null, 4);
 				fs.writeFile(path.join(filePaths.userData.data, '/data.json'), dataToWrite, function() {
 					event.reply("dataProcessed", mappedData);
 				});
@@ -29,6 +29,13 @@ export default {
 			if (data) {
 				event.reply("dataLoaded", JSON.parse(data));
 			}
+		});
+
+		ipcMain.on("startingDateSet", function(event, date) {
+			let settings = { startingDate: date };
+			fs.writeFile(path.join(filePaths.userData.root, '/settings.json'), JSON.stringify(settings, null, 4), function() {
+				event.reply("startingDateProcessed");
+			});
 		});
 	}
 }
