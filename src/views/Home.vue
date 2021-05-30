@@ -54,8 +54,8 @@
 
 				ipcRenderer.on("dataProcessed", function(event, processedData) {
 					component.setData(processedData);
-					component.setAllLabels(processedData);
-					component.setLoaded();
+
+					this.barKey++;
 				});
 
 				this.barKey++;
