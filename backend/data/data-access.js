@@ -14,8 +14,10 @@ export default {
 	setupListeners() {
 		ipcMain.on("fileUploaded", function(event, data) {
 			const mappedData = mapData(data);
+			processData(data);
+			
 			if (mappedData) {
-				dataToWrite = JSON.stringify(mappedData);
+				const dataToWrite = JSON.stringify(mappedData);
 				fs.writeFile(path.join(filePaths.userData.data, '/data.json'), dataToWrite, function() {
 					event.reply("dataProcessed", mappedData);
 				});
@@ -29,6 +31,23 @@ export default {
 			}
 		});
 	}
+}
+
+function processData(data) {
+	const splittedData = splitData(data);
+
+	const labels = splittedData.shift().filter(label => label !== "Date");
+	const { dates, strippedData } = shiftDates(splittedData);
+}
+
+function shiftDates(data) {
+	const dates = [];
+
+	for (let row of data) {
+		dates.push(row.shift());	
+	}
+
+	return { dates: dates, strippedData: data };
 }
 
 function mapData(data) {
