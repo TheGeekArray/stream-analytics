@@ -33,14 +33,14 @@
 		}),
 		beforeMount () {
 			let component = this;
-			ipcRenderer.send("dataRequested");
-			ipcRenderer.on("dataLoaded", function(event, data) {
-				component.setData(data);
-				component.setAllLabels(data);
-				component.setLoaded();
-			});
 
-			this.barKey++;
+			ipcRenderer.send("dataRequested");
+
+			ipcRenderer.on("dataLoaded", function(event, data) {
+				if (Object.keys(data).length === 0 && data.constructor === Object) return;
+
+				component.processData(data);
+			});
 		},
 		methods: {
 			updateCurrentLabel: function(event) {
@@ -53,12 +53,10 @@
 				ipcRenderer.send("fileUploaded", data);
 
 				ipcRenderer.on("dataProcessed", function(event, processedData) {
-					component.setData(processedData);
+					if (Object.keys(processedData).length === 0 && processedData.constructor === Object) return;
 
-					this.barKey++;
+					component.processData(processedData);
 				});
-
-				this.barKey++;
 			},
 			setData: function(data) {
 				this.chartdata = data;
@@ -66,8 +64,12 @@
 			setAllLabels: function(data) {
 				this.labels = Object.keys(data).filter(topic => topic !== "Date");
 			},
-			setLoaded: function() {
+			processData: function(data) {
+				this.setData(data);
+				this.setAllLabels(data);
+
 				this.loaded = true;
+				this.barKey++;
 			}
 		}
 	}
