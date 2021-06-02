@@ -1,32 +1,53 @@
 <template>
 	<div id="app">
 		<div id="nav">
-			<router-link to="/">Home</router-link> |
-			<router-link to="/settings">Settings</router-link>
+			<router-link to="/" v-if="this.$route.path !== '/'" class="menu-item-home">
+				<font-awesome-icon icon="reply" class="back-icon" />
+			</router-link>
+			<router-link to="/settings"><font-awesome-icon icon="cog" class="settings-icon" /></router-link>
 		</div>
 		<router-view/>
 	</div>
 </template>
 
 <style>
+	body {
+		width: 100vw;
+		margin: 0;
+		padding: 0;
+	}
+
 	#app {
 		font-family: Avenir, Helvetica, Arial, sans-serif;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 		text-align: center;
 		color: #2c3e50;
+		width: 95%;
+		margin: 0 auto;
 	}
 
 	#nav {
-		padding: 30px;
+		display: flex;
+		justify-content: flex-end;
+		width: 100%;
+		margin-bottom: 50px;
 	}
 
 	#nav a {
 		font-weight: bold;
-		color: #2c3e50;
+		color:#616569;
+		text-decoration: none;
 	}
 
-	#nav a.router-link-exact-active {
-		color: #42b983;
+	.settings-icon {
+		color:#616569;
+		font-size: 35px;
+		margin-left: 30px;
+	}
+
+	.back-icon {
+		color:#616569;
+		font-size: 35px;
 	}
 </style>

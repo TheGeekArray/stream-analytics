@@ -77,8 +77,7 @@
 
 <style>
 	.home {
-		width: 90%;
-		margin: 0 auto;
+		width: 100%;
 	}
 
 	.header {
