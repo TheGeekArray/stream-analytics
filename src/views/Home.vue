@@ -14,7 +14,7 @@
 	import Bar from '@/components/graphs/Bar.vue';
 	import FileReader from '@/components/FileReader.vue';
 	import Dropdown from '@/components/Dropdown.vue';
-	const { ipcRenderer } = require('electron');
+	import { ipcRenderer } from 'electron';
 
 	export default {
 		name: 'Home',
