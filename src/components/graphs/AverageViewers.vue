@@ -13,7 +13,12 @@
 					datasets: [{
 						label: "Organic",
 						backgroundColor: "#772ce8",
-						data: organicAverage
+						data: organicAverage,
+						trendlineLinear: {
+							style: "rgba(141,141,141, .8)",
+							lineStyle: "dotted|solid",
+							width: 2
+						}
 					},
 					{
 						label: "Artificial",

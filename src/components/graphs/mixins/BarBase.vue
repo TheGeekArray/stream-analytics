@@ -1,5 +1,6 @@
 <script>
 	import { Bar } from 'vue-chartjs';
+	import 'chartjs-plugin-trendline';
 
 	export default {
 		extends: Bar,
@@ -20,7 +21,12 @@
 					datasets: [{
 						label: this.label,
 						backgroundColor: "#772ce8",
-						data: this.data[this.label]
+						data: this.data[this.label],
+						trendlineLinear: {
+							style: "rgba(141,141,141, .8)",
+							lineStyle: "dotted|solid",
+							width: 2
+						}
 					}]
 				};
 			}
