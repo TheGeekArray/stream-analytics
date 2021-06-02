@@ -14,7 +14,9 @@
   "main": "background.js",
   "dependencies": {
     "chart.js": "^2.9.4",
+    "chartjs-plugin-trendline": "^0.2.2",
     "core-js": "^3.6.5",
+    "graph.js": "^1.21.1",
     "vue": "^2.6.11",
     "vue-chartjs": "^3.5.1",
     "vue-router": "^3.2.0"
