@@ -64,7 +64,7 @@ app.on('ready', async () => {
 		}
 	}
 
-	backend.initialize();
+	await backend.initialize();
 
 	createWindow();
 });

@@ -1,16 +1,21 @@
 import { ipcMain } from 'electron';
 import fs from 'fs-extra';
-import path from 'path';
 import filePaths from './file-paths';
 import dataProcesser from './data-processer';
 
 export default {
-	setupFolderStructure() {
-		const dataFilePath = filePaths.userData.data;
-				
-		if (!fs.pathExists(dataFilePath)) {
-			fs.mkdirSync(dataFilePath);
+	async setupFolders() {
+		if (!fs.pathExistsSync(filePaths.folders.userData)) {
+			fs.mkdirSync(filePaths.folders.userData);
+
+			if (!fs.pathExistsSync(filePaths.folders.streamData)) {
+				fs.mkdirSync(filePaths.folders.streamData);
+			}
 		}
+	},
+	async setupFiles() {
+		await setupFile(filePaths.files.settings);
+		await setupFile(filePaths.files.streamData);
 	},
 	setupListeners() {
 		ipcMain.on("fileUploaded", function(event, data) {
@@ -23,7 +28,7 @@ export default {
 		});
 	
 		ipcMain.on("dataRequested", function(event) {
-			let data = readFileSync(path.join(filePaths.userData.data, '/data.json'));
+			let data = readFileSync(filePaths.files.streamData);
 			if (data) {
 				event.reply("dataLoaded", JSON.parse(data));
 			}
@@ -36,18 +41,25 @@ export default {
 	}
 }
 
+async function setupFile(filePath) {
+	fs.open(filePath, 'ax', function(err, fd) {
+		if (err) return;
+		fs.writeFileSync(filePath, JSON.stringify({}, null, 4));
+	});
+}
+
 function readFileSync(path) {
 	return fs.readFileSync(path, 'utf8');
 }
 
 function writeToDataFile(event, data) {
-	fs.writeFile(path.join(filePaths.userData.data, '/data.json'), JSON.stringify(data, null, 4), function() {
+	fs.writeFile(filePaths.files.streamData, JSON.stringify(data, null, 4), function() {
 		event.reply("dataProcessed", data);
 	});
 }
 
 function writeToSettingsFile(event, settings) {
-	fs.writeFile(path.join(filePaths.userData.root, '/settings.json'), JSON.stringify(settings, null, 4), function() {
+	fs.writeFile(filePaths.files.settings, JSON.stringify(settings, null, 4), function() {
 		event.reply("settingsUpdated");
 	});
 }

@@ -2,13 +2,17 @@ import { app } from 'electron';
 import path from 'path';
 
 const appDataPath = app.getPath("appData");
-const userDataPath = app.getPath("appData") + path.sep + "Stream Analytics";
-const DATA_FILES_PATH = "data";
+const userDataPath = appDataPath + path.sep + "Stream Analytics";
+const streamDataPath = userDataPath + path.sep + "data";
 
 export default {
-	appData: appDataPath,
-	userData: {
-		root: userDataPath,
-		data: userDataPath + path.sep + DATA_FILES_PATH
+	folders: {
+		appData: appDataPath,
+		userData: userDataPath,
+		streamData: streamDataPath
+	},
+	files: {
+		settings: path.join(userDataPath, '/settings.json'),
+		streamData: path.join(streamDataPath, '/data.json')
 	}
 }
