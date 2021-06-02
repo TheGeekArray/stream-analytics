@@ -78,6 +78,7 @@
 <style>
 	.home {
 		width: 100%;
+		margin-top: 50px;
 	}
 
 	.header {

@@ -1,11 +1,11 @@
 <template>
 	<div id="app">
-		<div id="nav">
+		<!-- <div id="nav">
 			<router-link to="/" v-if="this.$route.path !== '/'" class="menu-item-home">
 				<font-awesome-icon icon="reply" class="back-icon" />
 			</router-link>
 			<router-link to="/settings"><font-awesome-icon icon="cog" class="settings-icon" /></router-link>
-		</div>
+		</div> -->
 		<router-view/>
 	</div>
 </template>
@@ -31,7 +31,6 @@
 		display: flex;
 		justify-content: flex-end;
 		width: 100%;
-		margin-bottom: 50px;
 	}
 
 	#nav a {
