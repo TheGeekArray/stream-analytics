@@ -1,10 +1,11 @@
 'use strict';
 
 import { app, protocol, BrowserWindow } from 'electron';
-import backend from '../backend/backend';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 const isDevelopment = process.env.NODE_ENV !== 'production';
+
+import backend from '../backend/backend';
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -64,7 +65,7 @@ app.on('ready', async () => {
 		}
 	}
 
-	await backend.initialize();
+	backend.initialize();
 
 	createWindow();
 });

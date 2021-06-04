@@ -1,10 +1,12 @@
 import dataAccess from './data/data-access';
+import logger from '../backend/utils/logger';
 
 export default {
-	async initialize() {
-		await dataAccess.setupFolders();
-		await dataAccess.setupFiles();
-		
+	initialize() {
+		dataAccess.setupFolders();
+		dataAccess.setupFiles();
 		dataAccess.setupListeners();
+
+		logger.success(`Initialization finished!`)
 	}
 }

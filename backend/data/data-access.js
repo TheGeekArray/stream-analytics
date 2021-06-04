@@ -2,20 +2,26 @@ import { ipcMain } from 'electron';
 import fs from 'fs-extra';
 import filePaths from './file-paths';
 import dataProcesser from './data-processer';
+import logger from '../utils/logger';
 
 export default {
-	async setupFolders() {
+	setupFolders() {
+		logger.info("Creating missing folders...");
 		if (!fs.pathExistsSync(filePaths.folders.userData)) {
 			fs.mkdirSync(filePaths.folders.userData);
+			logger.info("Creating user data folder...");
 
 			if (!fs.pathExistsSync(filePaths.folders.streamData)) {
 				fs.mkdirSync(filePaths.folders.streamData);
+				logger.info("Creating stream data folder...");
 			}
 		}
 	},
 	async setupFiles() {
-		await setupFile(filePaths.files.settings);
-		await setupFile(filePaths.files.streamData);
+		logger.info("Creating missing files...");
+		for (let file in filePaths.files) {
+			setupFile(file, filePaths.files[file]);
+		}
 	},
 	setupListeners() {
 		ipcMain.on("fileUploaded", function(event, data) {
@@ -28,7 +34,7 @@ export default {
 		});
 	
 		ipcMain.on("dataRequested", function(event) {
-			let data = readFileSync(filePaths.files.streamData);
+			let data = readFileSync(filePaths.files.data);
 			if (data) {
 				event.reply("dataLoaded", JSON.parse(data));
 			}
@@ -41,10 +47,11 @@ export default {
 	}
 }
 
-async function setupFile(filePath) {
+function setupFile(file, filePath) {
 	fs.open(filePath, 'ax', function(err, fd) {
 		if (err) return;
 		fs.writeFileSync(filePath, JSON.stringify({}, null, 4));
+		logger.info(`Created ${file} file...`)
 	});
 }
 
@@ -53,7 +60,7 @@ function readFileSync(path) {
 }
 
 function writeToDataFile(event, data) {
-	fs.writeFile(filePaths.files.streamData, JSON.stringify(data, null, 4), function() {
+	fs.writeFile(filePaths.files.data, JSON.stringify(data, null, 4), function() {
 		event.reply("dataProcessed", data);
 	});
 }

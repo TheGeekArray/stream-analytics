@@ -13,6 +13,6 @@ export default {
 	},
 	files: {
 		settings: path.join(userDataPath, '/settings.json'),
-		streamData: path.join(streamDataPath, '/data.json')
+		data: path.join(streamDataPath, '/data.json')
 	}
 }
