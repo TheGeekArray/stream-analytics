@@ -25,6 +25,7 @@ export default {
 	},
 	setupListeners() {
 		ipcMain.on("fileUploaded", function(event, data) {
+			logger.info(`Processing uploaded file...`);
 			const mappedData = dataProcesser.mapData(data);
 			dataProcesser.processData(data);
 			
@@ -37,10 +38,12 @@ export default {
 			let data = readFileSync(filePaths.files.data);
 			if (data) {
 				event.reply("dataLoaded", JSON.parse(data));
+				logger.success(`Data loaded`);
 			}
 		});
 
 		ipcMain.on("startingDateSet", function(event, date) {
+			logger.info(`Setting starting date...`);
 			let settings = { startingDate: date };
 			writeToSettingsFile(event, settings);
 		});
@@ -51,7 +54,7 @@ function setupFile(file, filePath) {
 	fs.open(filePath, 'ax', function(err, fd) {
 		if (err) return;
 		fs.writeFileSync(filePath, JSON.stringify({}, null, 4));
-		logger.info(`Created ${file} file...`)
+		logger.info(`Created ${file} file...`);
 	});
 }
 
@@ -62,11 +65,13 @@ function readFileSync(path) {
 function writeToDataFile(event, data) {
 	fs.writeFile(filePaths.files.data, JSON.stringify(data, null, 4), function() {
 		event.reply("dataProcessed", data);
+		logger.success(`Processed data`);
 	});
 }
 
 function writeToSettingsFile(event, settings) {
 	fs.writeFile(filePaths.files.settings, JSON.stringify(settings, null, 4), function() {
 		event.reply("settingsUpdated");
+		logger.success(`Updated settings`);
 	});
 }
