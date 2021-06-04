@@ -13,6 +13,8 @@ export default {
 	},
 	files: {
 		settings: path.join(userDataPath, '/settings.json'),
-		data: path.join(streamDataPath, '/data.json')
+		data: path.join(streamDataPath, '/data.json'),
+		averageViewers: path.join(streamDataPath, '/average-viewers.json'),
+		hostsAndRaids: path.join(streamDataPath, '/hosts-and-raids.json')
 	}
 }
