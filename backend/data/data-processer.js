@@ -1,38 +1,75 @@
+import filePaths from './file-paths';
+
+// calculateOrganicAverage: function(averageViewers, hostsAndRaids) {
+// 	const organicAverage = [];
+
+// 	for (let i = 0; i < averageViewers.length; i++) {
+// 		let average = (1 - (hostsAndRaids[i] / 100)) * averageViewers[i];
+// 		organicAverage.push(average);
+// 	}
+
+// 	return organicAverage;
+// },
+// calculateArticifialAverage: function(averageViewers, organicAverage) {
+// 	const artificialAverage = [];
+
+// 	for (let i = 0; i < averageViewers.length; i++) {
+// 		let average = averageViewers[i] - organicAverage[i];
+// 		artificialAverage.push(average);
+// 	}
+
+// 	return artificialAverage;
+// }
+
 export default {
 	processData(data) {
 		const splittedData = splitData(data);
-	
-		const labels = splittedData.shift().filter(label => label !== "Date");
-		const { dates, strippedData } = shiftDates(splittedData);
-	},	
-	mapData(data) {
-		const splittedData = splitData(data);
 		const topics = splittedData.shift();
-		const twitchData = {};
-	
+		const dates = getDates(splittedData);
+		let processedData = {};
+
 		let count = 0;
 		for (let topic of topics) {
-			twitchData[topic] = [];
-	
-			for (let line of splittedData) {
-				twitchData[topic].push(line[count]);
+			switch (topic) {
+			case "Average Viewers":
+				processedData["Average Viewers"] = {
+					path: filePaths.files.averageViewers,
+					data: mapData(dates, count, splittedData)
+				}
+			case "Hosts and Raids Viewers (%)":
+				processedData["Hosts and Raids"] = {
+					path: filePaths.files.hostsAndRaids,
+					data: mapData(dates, count, splittedData)
+				}
 			}
-	
+
 			count++;
 		}
-	
-		return twitchData;
+
+		return processedData;
 	}
 }
 
-function shiftDates(data) {
+function mapData(dates, topicCount, data) {
+	const topicData = {};
+
+	let count = 0;
+	for (let line of data) {
+		topicData[dates[count]] = line[topicCount];
+		count++;
+	}
+
+	return topicData;
+}
+
+function getDates(data) {
 	const dates = [];
 
 	for (let row of data) {
-		dates.push(row.shift());	
+		dates.push(row[0]);
 	}
 
-	return { dates: dates, strippedData: data };
+	return dates;
 }
 
 function splitData(data) {

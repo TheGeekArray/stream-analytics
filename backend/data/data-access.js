@@ -26,16 +26,24 @@ export default {
 	setupListeners() {
 		ipcMain.on("fileUploaded", function(event, data) {
 			logger.info(`Processing uploaded file...`);
-			const mappedData = dataProcesser.mapData(data);
-			dataProcesser.processData(data);
-			
-			if (mappedData) {
-				writeToDataFile(event, mappedData);
+			let processedData = dataProcesser.processData(data);
+
+			if (processedData) {
+				for (let topic in processedData) {
+					writeToDataFile(topic, processedData[topic]);
+				}
+
+				event.reply("dataProcessed");
 			}
 		});
 	
-		ipcMain.on("dataRequested", function(event) {
-			let data = readFileSync(filePaths.files.data);
+		ipcMain.on("dataRequested", function(event, topic) {
+			let data = "";
+
+			if (topic === "Average Viewers") {
+				data = readFileSync(filePaths.files.averageViewers);
+			}
+			
 			if (data) {
 				event.reply("dataLoaded", JSON.parse(data));
 				logger.success(`Data loaded`);
@@ -62,10 +70,9 @@ function readFileSync(path) {
 	return fs.readFileSync(path, 'utf8');
 }
 
-function writeToDataFile(event, data) {
-	fs.writeFile(filePaths.files.data, JSON.stringify(data, null, 4), function() {
-		event.reply("dataProcessed", data);
-		logger.success(`Processed data`);
+function writeToDataFile(topic, topicData) {
+	fs.writeFile(topicData.path, JSON.stringify(topicData.data, null, 4), function() {
+		logger.success(`Processed ${topic} data`);
 	});
 }
 

@@ -5,6 +5,8 @@
 </template>
 
 <script>
+	import { ipcRenderer } from 'electron';
+
 	export default {
 		methods: {
 			loadTextFromFile(ev) {
@@ -12,7 +14,7 @@
 				
 				try {
 					const reader = new FileReader();
-					reader.onload = e => this.$emit("load", e.target.result);
+					reader.onload = e => ipcRenderer.send("fileUploaded", e.target.result);
 					reader.readAsText(file);
 				} catch (err) {
 					console.log(err);
