@@ -1,8 +1,11 @@
 <template>
 	<div class="home">
 		<div class="header">
-			<FileReader/>
-			<Dropdown v-if="loaded" @change="timeUnit = $event; updateData();"/>
+			<FileReader class="file-reader-component"/>
+			<div class="data-display-options">
+				<EmptyDaysOption v-if="loaded" @change="hideEmptyDays = $event; updateData();" class="empty-days-option-component"/>
+				<TimeUnitPicker v-if="loaded" @change="timeUnit = $event; updateData();" class="time-unit-picker-component"/>
+			</div>
 		</div>
 		<div class="bar-container">
 			<Bar v-if="loaded" v-bind:data="chartdata" v-bind:options="options" :key="barKey"/>
@@ -13,15 +16,17 @@
 <script>
 	import Bar from '@/components/Bar.vue';
 	import FileReader from '@/components/FileReader.vue';
-	import Dropdown from '@/components/Dropdown.vue';
+	import TimeUnitPicker from '@/components/TimeUnitPicker.vue';
 	import DataProcesser from '@/components/DataProcesser.vue';
+	import EmptyDaysOption from '@/components/EmptyDaysOption.vue';
 
 	export default {
 		name: 'AverageViewers',
 		components: {
 			Bar,
 			FileReader,
-			Dropdown
+			TimeUnitPicker,
+			EmptyDaysOption
 		},
 		mixins: [DataProcesser],
 		data: () => ({
@@ -113,7 +118,7 @@
 	}
 </script>
 
-<style>
+<style scoped>
 	.home {
 		width: 100%;
 		margin-top: 50px;
@@ -122,5 +127,13 @@
 	.header {
 		display: flex;
 		justify-content: space-between;
+	}
+
+	.data-display-options {
+		display: flex;
+	}
+
+	.time-unit-picker-component {
+		margin-left: 30px;
 	}
 </style>

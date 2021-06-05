@@ -1,3 +1,4 @@
+@@ -0,0 +1,142 @@
 <script>
 	import { ipcRenderer } from 'electron';
 
@@ -6,7 +7,8 @@
 		data() {
 			return {
 				initialData: {},
-				view: ""
+				view: "",
+				hideEmptyDays: false
 			};
 		},
 		created() {
@@ -54,7 +56,7 @@
 				for (let year in data) {
 					for (let month in data[year]) {
 						for (let day in data[year][month]) {
-							if (data[year][month][day] === "0") continue;
+							if (this.hideEmptyDays && data[year][month][day] === "0") continue;
 							allData.push(data[year][month][day]);
 							labels.push(month + " " + day.split(" ")[1]);
 						}
@@ -76,6 +78,8 @@
 								weekDataTotal += parseFloat(data[year][month][day]);
 								divisor++;
 							}
+
+							if (this.hideEmptyDays && weekDataTotal === 0) continue;
 
 							let dayName = day.split(" ")[0];
 							if (dayName === "Sat") {
