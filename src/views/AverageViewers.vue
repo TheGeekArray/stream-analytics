@@ -40,6 +40,10 @@
 		watch: {
 			initialData: function() {
 				this.updateData();
+				
+				if (Object.keys(this.initialData).length !== 0) {
+					this.loaded = true;
+				}
 			}
 		},
 		methods: {
@@ -47,7 +51,6 @@
 				let groupedData = this.retrieveGroupedData(this.timeUnit, this.initialData);
 
 				this.chartdata = this.getChartData(groupedData);
-				this.loaded = true;
 				this.barKey++;
 			},
 			getChartData: function(data) {

@@ -16,23 +16,22 @@
 			this.sendDataRequestedEvent();
 		},
 		destroyed() {
-			let component = this;
-
 			ipcRenderer.removeListener("dataProcessed", this.sendDataRequestedEvent);
-			ipcRenderer.removeListener("dataLoaded", (event, data) => component.initialData = data);
+			ipcRenderer.removeListener("dataLoaded", this.setInitialData);
 		},
 		methods: {
 			setupListeners: function() {
-				let component = this;
-
 				ipcRenderer.on("dataProcessed", this.sendDataRequestedEvent);
-				ipcRenderer.on("dataLoaded", (event, data) => component.initialData = data);
+				ipcRenderer.on("dataLoaded", this.setInitialData);
 			},
 			sendDataRequestedEvent: function() {
 				ipcRenderer.send("dataRequested", this.view);
 			},
 			setView: function(view) {
 				this.view = view;
+			},
+			setInitialData: function(event, data) {
+				this.initialData = data;
 			},
 			retrieveGroupedData(timeUnit, data) {
 				switch(timeUnit) {
