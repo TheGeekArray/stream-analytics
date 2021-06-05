@@ -1,3 +1,4 @@
+import Logger from '../utils/logger';
 import filePaths from './file-paths';
 
 // calculateOrganicAverage: function(averageViewers, hostsAndRaids) {
@@ -55,7 +56,17 @@ function mapData(dates, topicCount, data) {
 
 	let count = 0;
 	for (let line of data) {
-		topicData[dates[count]] = line[topicCount];
+		let date = getSplittedDate(dates[count]);
+
+		if (!topicData.hasOwnProperty(date.year)) {
+			topicData[date.year] = {};
+		}
+		if (!topicData[date.year].hasOwnProperty(date.month)) {
+			topicData[date.year][date.month] = {};
+		}
+		
+		topicData[date.year][date.month][date.day] = line[topicCount];
+
 		count++;
 	}
 
@@ -70,6 +81,25 @@ function getDates(data) {
 	}
 
 	return dates;
+}
+
+function getSplittedDate(date) {
+	let splittedDate = {
+		year: "",
+		day: "",
+		month: ""
+	};
+
+	let dateArray = date.split(" ");
+	dateArray.shift();
+
+	let count = 2;
+	for (let timeUnit in splittedDate) {
+		splittedDate[timeUnit] = dateArray[count];
+		count--;
+	}
+
+	return splittedDate;
 }
 
 function splitData(data) {

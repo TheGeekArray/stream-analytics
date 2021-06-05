@@ -73,7 +73,7 @@ function readFileSync(path) {
 
 function writeToDataFile(topic, topicData) {
 	fs.writeFile(topicData.path, JSON.stringify(topicData.data, null, 4), function() {
-		logger.success(`Processed ${topic} data`);
+		logger.debug(`Processed ${topic} data`);
 	});
 }
 
