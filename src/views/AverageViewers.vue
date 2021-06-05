@@ -1,8 +1,8 @@
 <template>
 	<div class="home">
 		<div class="header">
-			<FileReader @load="updateBar"/>
-			<Dropdown v-if="loaded" @change="updateData"/>
+			<FileReader @load="updateData"/>
+			<Dropdown v-if="loaded" @change="timeUnit = $event; updateData();"/>
 		</div>
 		<div class="bar-container">
 			<Bar v-if="loaded" v-bind:data="chartdata" v-bind:options="options" :key="barKey"/>
@@ -14,7 +14,7 @@
 	import Bar from '@/components/Bar.vue';
 	import FileReader from '@/components/FileReader.vue';
 	import Dropdown from '@/components/Dropdown.vue';
-	import { ipcRenderer } from 'electron';
+	import DataProcesser from '@/components/DataProcesser.vue';
 
 	export default {
 		name: 'Home',
@@ -23,163 +23,35 @@
 			FileReader,
 			Dropdown
 		},
+		mixins: [DataProcesser],
 		data: () => ({
 			loaded: false,
-			initialData: {},
 			chartdata: {},
 			options: {},
 			barKey: 0,
-			defaultTimeUnit: "Day"
+			timeUnit: "Day"
 		}),
-		beforeMount () {
-			this.setupListeners();
-			this.sendDataRequestedEvent();
+		beforeMount() {
+			this.options = this.getOptions();
 		},
-		destroyed () {
-			ipcRenderer.removeListener("dataProcessed", this.sendDataRequestedEvent);
-			ipcRenderer.removeListener("dataLoaded", this.processData);
+		watch: {
+			initialData: function() {
+				this.updateData();
+				this.loaded = true;
+			}
 		},
 		methods: {
-			setupListeners: function() {
-				ipcRenderer.on("dataProcessed", this.sendDataRequestedEvent);
-				ipcRenderer.on("dataLoaded", this.processData);
-			},
-			sendDataRequestedEvent: function() {
-				ipcRenderer.send("dataRequested", "Average Viewers");
-			},
-			updateBar: function() {
+			updateData() {
+				let groupedData = this.retrieveGroupedData(this.timeUnit, this.initialData);
+				this.chartdata = this.getChartData(groupedData);
+
 				this.barKey++;
-			},
-			processData: function(event, data) {
-				if (Object.keys(data).length === 0 && data.constructor === Object) return;
-
-				this.initialData = data;
-				this.updateData(this.defaultTimeUnit);
-				this.options = this.getOptions();
-
-				this.loaded = true;
-				this.updateBar();
-			},
-			updateData(timeUnit) {
-				let updatedData = {};
-
-				switch(timeUnit) {
-				case "Day":
-					updatedData = this.getAllData(this.initialData);
-					this.chartdata = this.getChartData(updatedData);
-					break;
-				case "Week":
-					updatedData = this.groupDataInWeeks(this.initialData);
-					this.chartdata = this.getChartData(updatedData);
-					break;
-				case "Month":
-					updatedData = this.groupDataInMonths(this.initialData);
-					this.chartdata = this.getChartData(updatedData);
-					break;
-				case "Year":
-					updatedData = this.groupDataInYears(this.initialData);
-					this.chartdata = this.getChartData(updatedData);
-					break;
-				default:
-					updatedData = this.getAllData(this.initialData);
-					this.chartdata = this.getChartData(updatedData);
-					break;
-				}
-
-				this.updateBar();
-			},
-			getAllData(data) {
-				let allData = [];
-				let labels = [];
-
-				for (let year in data) {
-					for (let month in data[year]) {
-						for (let day in data[year][month]) {
-							if (data[year][month][day] === "0") continue;
-							allData.push(data[year][month][day]);
-							labels.push(month + " " + day.split(" ")[1]);
-						}
-					}
-				}
-
-				return {data: allData, labels: labels };
-			},
-			groupDataInWeeks(data) {
-				let groupedData = [];
-				let labels = [];
-				let weekDataTotal = 0;
-				let divisor = 0;
-
-				for (let year in data) {
-					for (let month in data[year]) {
-						for (let day in data[year][month]) {
-							if (data[year][month][day] !== "0") {
-								weekDataTotal += parseFloat(data[year][month][day]);
-								divisor++;
-							}
-
-							let dayName = day.split(" ")[0];
-							if (dayName === "Sat") {
-								groupedData.push(weekDataTotal / divisor);
-								labels.push(month + " " + day.split(" ")[1]);
-								weekDataTotal = 0;
-								divisor = 0;
-							}
-						}
-					}
-				}
-
-				return { data: groupedData, labels: labels };
-			},
-			groupDataInMonths(data) {
-				let groupedData = [];
-				let labels = [];
-
-				for (let year in data) {
-					for (let month in data[year]) {
-						let monthDataTotal = 0;
-						let divisor = 0;
-
-						for (let day in data[year][month]) {
-							if (data[year][month][day] === "0") continue;
-							monthDataTotal += parseFloat(data[year][month][day]);
-							divisor++;
-						}
-
-						groupedData.push(monthDataTotal / divisor);
-						labels.push(month + " " + year);
-					}
-				}
-
-				return { data: groupedData, labels: labels };
-			},
-			groupDataInYears(data) {
-				let groupedData = [];
-				let labels = [];
-
-				for (let year in data) {
-					let yearDataTotal = 0;
-					let divisor = 0;
-
-					for (let month in data[year]) {
-						for (let day in data[year][month]) {
-							if (data[year][month][day] === "0") continue;
-							yearDataTotal += parseFloat(data[year][month][day]);
-							divisor++;
-						}
-					}
-
-					groupedData.push(yearDataTotal / divisor);
-					labels.push(year);
-				}
-
-				return { data: groupedData, labels: labels };
 			},
 			getChartData: function(data) {
 				return {
 					labels: data.labels,
 					datasets: [{
-						label: "Average Viewers",
+						label: this.view,
 						backgroundColor: "#772ce8",
 						data: data.data,
 						trendlineLinear: {
