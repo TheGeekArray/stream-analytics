@@ -44,10 +44,16 @@ let setupListeners = function() {
 		let data = {};
 
 		if (topic === "Average Viewers") {
-			data.organicViewers = JSON.parse(readFileSync(filePaths.files.organicAverageViewers));
-			data.artificialViewers = JSON.parse(readFileSync(filePaths.files.artificialAverageViewers));
+			data.organicViewers = readFileSync(filePaths.files.organicAverageViewers);
+			data.artificialViewers = readFileSync(filePaths.files.artificialAverageViewers);
 		}
 		
+		for (let item in data) {
+			if (Object.keys(data[item]).length !== 0) {
+				JSON.parse(data[item]);
+			}
+		}
+
 		if (data) {
 			event.reply("dataLoaded", data);
 			logger.success(`Data loaded`);
