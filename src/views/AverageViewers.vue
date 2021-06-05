@@ -95,6 +95,7 @@
 				for (let year in data) {
 					for (let month in data[year]) {
 						for (let day in data[year][month]) {
+							if (data[year][month][day] === "0") continue;
 							allData.push(data[year][month][day]);
 							labels.push(month + " " + day.split(" ")[1]);
 						}
