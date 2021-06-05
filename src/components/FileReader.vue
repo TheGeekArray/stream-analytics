@@ -14,15 +14,11 @@
 				
 				try {
 					const reader = new FileReader();
-					reader.onload = e => this.sendEvents(e);
+					reader.onload = e => ipcRenderer.send("fileUploaded", e.target.result);
 					reader.readAsText(file);
 				} catch (err) {
 					console.log(err);
 				}
-			},
-			sendEvents: function(event) {
-				ipcRenderer.send("fileUploaded", event.target.result);
-				this.$emit("load");
 			}
 		}
 	};

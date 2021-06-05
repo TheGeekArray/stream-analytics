@@ -6,11 +6,13 @@
 		data() {
 			return {
 				initialData: {},
-				view: "Average Viewers"
+				view: ""
 			};
 		},
 		created() {
 			this.setupListeners();
+		},
+		beforeMount() {
 			this.sendDataRequestedEvent();
 		},
 		destroyed() {
@@ -24,12 +26,13 @@
 				let component = this;
 
 				ipcRenderer.on("dataProcessed", this.sendDataRequestedEvent);
-				ipcRenderer.on("dataLoaded", (event, data) => {
-					component.initialData = data;
-				});
+				ipcRenderer.on("dataLoaded", (event, data) => component.initialData = data);
 			},
 			sendDataRequestedEvent: function() {
 				ipcRenderer.send("dataRequested", this.view);
+			},
+			setView: function(view) {
+				this.view = view;
 			},
 			retrieveGroupedData(timeUnit, data) {
 				switch(timeUnit) {

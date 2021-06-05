@@ -1,7 +1,7 @@
 <template>
 	<div class="home">
 		<div class="header">
-			<FileReader @load="updateData"/>
+			<FileReader/>
 			<Dropdown v-if="loaded" @change="timeUnit = $event; updateData();"/>
 		</div>
 		<div class="bar-container">
@@ -17,7 +17,7 @@
 	import DataProcesser from '@/components/DataProcesser.vue';
 
 	export default {
-		name: 'Home',
+		name: 'AverageViewers',
 		components: {
 			Bar,
 			FileReader,
@@ -31,20 +31,23 @@
 			barKey: 0,
 			timeUnit: "Day"
 		}),
+		created() {
+			this.setView("Average Viewers");
+		},
 		beforeMount() {
 			this.options = this.getOptions();
 		},
 		watch: {
 			initialData: function() {
 				this.updateData();
-				this.loaded = true;
 			}
 		},
 		methods: {
 			updateData() {
 				let groupedData = this.retrieveGroupedData(this.timeUnit, this.initialData);
-				this.chartdata = this.getChartData(groupedData);
 
+				this.chartdata = this.getChartData(groupedData);
+				this.loaded = true;
 				this.barKey++;
 			},
 			getChartData: function(data) {
