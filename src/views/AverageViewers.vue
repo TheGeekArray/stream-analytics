@@ -69,7 +69,9 @@
 					this.chartdata = this.getChartData(updatedData);
 					break;
 				case "Week":
-					return;
+					updatedData = this.groupDataInWeeks(this.initialData);
+					this.chartdata = this.getChartData(updatedData);
+					break;
 				case "Month":
 					updatedData = this.groupDataInMonths(this.initialData);
 					this.chartdata = this.getChartData(updatedData);
@@ -94,31 +96,36 @@
 					for (let month in data[year]) {
 						for (let day in data[year][month]) {
 							allData.push(data[year][month][day]);
-							labels.push(month + " " + day);
+							labels.push(month + " " + day.split(" ")[1]);
 						}
 					}
 				}
 
 				return {data: allData, labels: labels };
 			},
-			groupDataInYears(data) {
+			groupDataInWeeks(data) {
 				let groupedData = [];
 				let labels = [];
+				let weekDataTotal = 0;
+				let divisor = 0;
 
 				for (let year in data) {
-					let yearDataTotal = 0;
-					let divisor = 0;
-
 					for (let month in data[year]) {
 						for (let day in data[year][month]) {
-							if (data[year][month][day] === "0") continue;
-							yearDataTotal += parseFloat(data[year][month][day]);
-							divisor++;
+							if (data[year][month][day] !== "0") {
+								weekDataTotal += parseFloat(data[year][month][day]);
+								divisor++;
+							}
+
+							let dayName = day.split(" ")[0];
+							if (dayName === "Sat") {
+								groupedData.push(weekDataTotal / divisor);
+								labels.push(month + " " + day.split(" ")[1]);
+								weekDataTotal = 0;
+								divisor = 0;
+							}
 						}
 					}
-
-					groupedData.push(yearDataTotal / divisor);
-					labels.push(year);
 				}
 
 				return { data: groupedData, labels: labels };
@@ -141,6 +148,28 @@
 						groupedData.push(monthDataTotal / divisor);
 						labels.push(month + " " + year);
 					}
+				}
+
+				return { data: groupedData, labels: labels };
+			},
+			groupDataInYears(data) {
+				let groupedData = [];
+				let labels = [];
+
+				for (let year in data) {
+					let yearDataTotal = 0;
+					let divisor = 0;
+
+					for (let month in data[year]) {
+						for (let day in data[year][month]) {
+							if (data[year][month][day] === "0") continue;
+							yearDataTotal += parseFloat(data[year][month][day]);
+							divisor++;
+						}
+					}
+
+					groupedData.push(yearDataTotal / divisor);
+					labels.push(year);
 				}
 
 				return { data: groupedData, labels: labels };

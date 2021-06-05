@@ -69,7 +69,7 @@ function mapData(path, dates, topicCount, data) {
 			topicData[date.year][date.month] = {};
 		}
 
-		topicData[date.year][date.month][date.day] = line[topicCount];
+		topicData[date.year][date.month][date.dayName + " " + date.dayDate] = line[topicCount];
 
 		count++;
 	}
@@ -90,14 +90,14 @@ function getDates(data) {
 function getSplittedDate(date) {
 	let splittedDate = {
 		year: "",
-		day: "",
-		month: ""
+		dayDate: "",
+		month: "",
+		dayName: ""
 	};
 
 	let dateArray = date.split(" ");
-	dateArray.shift();
 
-	let count = 2;
+	let count = 3;
 	for (let timeUnit in splittedDate) {
 		splittedDate[timeUnit] = dateArray[count];
 		count--;
