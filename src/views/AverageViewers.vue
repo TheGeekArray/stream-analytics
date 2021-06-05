@@ -106,7 +106,7 @@
 								for (let i = 0; i < tooltipItems.length; i++) {
 									total += parseFloat(tooltipItems[i].yLabel);
 								}
-								return 'Total: ' + total;
+								return 'Total: ' + total.toFixed(2);
 							}
 						}
 					},
