@@ -117,7 +117,6 @@ function splitAverageViewersData(averageViewersData, hostsAndRaidsData) {
 	const artificialViewersData = JSON.parse(readFileSync(filePaths.files.artificialAverageViewers));
 
 	for (let year in averageViewersData) {
-		console.log(year);
 		if (!organicViewersData.hasOwnProperty(year)) {
 			organicViewersData[year] = {};
 		}
