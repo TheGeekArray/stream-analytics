@@ -94,7 +94,7 @@
 					for (let month in data[year]) {
 						for (let day in data[year][month]) {
 							allData.push(data[year][month][day]);
-							labels.push(data[year][month] + " " + data[year][month][day]);
+							labels.push(month + " " + day);
 						}
 					}
 				}
@@ -139,7 +139,7 @@
 						}
 
 						groupedData.push(monthDataTotal / divisor);
-						labels.push(month);
+						labels.push(month + " " + year);
 					}
 				}
 
