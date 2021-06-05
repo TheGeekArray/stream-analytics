@@ -53,23 +53,29 @@
 		},
 		methods: {
 			updateData() {
-				let groupedData = this.retrieveGroupedData(this.timeUnit, this.initialData);
+				let organicViewersData = this.retrieveGroupedData(this.timeUnit, this.initialData.organicViewers);
+				let artificialViewersData = this.retrieveGroupedData(this.timeUnit, this.initialData.artificialViewers);
 
-				this.chartdata = this.getChartData(groupedData);
+				this.chartdata = this.getChartData(organicViewersData, artificialViewersData);
 				this.barKey++;
 			},
-			getChartData: function(data) {
+			getChartData: function(organicViewersData, artificialViewersData) {
 				return {
-					labels: data.labels,
+					labels: organicViewersData.labels,
 					datasets: [{
-						label: this.view,
+						label: "Organic Viewers",
 						backgroundColor: "#772ce8",
-						data: data.data,
+						data: organicViewersData.data,
 						trendlineLinear: {
 							style: "rgba(141,141,141, .8)",
 							lineStyle: "dotted|solid",
 							width: 2
 						}
+					},
+					{
+						label: "Artificial Viewers",
+						backgroundColor: "#18181b",
+						data: artificialViewersData.data
 					}]
 				}
 			},
@@ -94,7 +100,7 @@
 								return data.labels[tooltipItems[0].index];
 							},
 							footer: function(tooltipItems, data) {
-								if (data.datasets[0].label !== "Organic") return null;
+								if (data.datasets[0].label !== "Organic Viewers") return null;
 
 								let total = 0;
 								for (let i = 0; i < tooltipItems.length; i++) {

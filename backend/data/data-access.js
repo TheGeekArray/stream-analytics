@@ -41,14 +41,15 @@ let setupListeners = function() {
 	});
 
 	ipcMain.on("dataRequested", function(event, topic) {
-		let data = "";
+		let data = {};
 
 		if (topic === "Average Viewers") {
-			data = readFileSync(filePaths.files.averageViewers);
+			data.organicViewers = JSON.parse(readFileSync(filePaths.files.organicAverageViewers));
+			data.artificialViewers = JSON.parse(readFileSync(filePaths.files.artificialAverageViewers));
 		}
 		
 		if (data) {
-			event.reply("dataLoaded", JSON.parse(data));
+			event.reply("dataLoaded", data);
 			logger.success(`Data loaded`);
 		}
 	});
