@@ -1,5 +1,6 @@
 import Logger from '../utils/logger';
 import filePaths from './file-paths';
+import { readFileSync } from './data-access';
 
 // calculateOrganicAverage: function(averageViewers, hostsAndRaids) {
 // 	const organicAverage = [];
@@ -30,17 +31,20 @@ export default {
 		let processedData = {};
 
 		let count = 0;
+		let path = "";
 		for (let topic of topics) {
 			switch (topic) {
 			case "Average Viewers":
+				path = filePaths.files.averageViewers;
 				processedData["Average Viewers"] = {
-					path: filePaths.files.averageViewers,
-					data: mapData(dates, count, splittedData)
+					path: path,
+					data: mapData(path, dates, count, splittedData)
 				}
 			case "Hosts and Raids Viewers (%)":
+				path = filePaths.files.hostsAndRaids;
 				processedData["Hosts and Raids"] = {
-					path: filePaths.files.hostsAndRaids,
-					data: mapData(dates, count, splittedData)
+					path: path,
+					data: mapData(path, dates, count, splittedData)
 				}
 			}
 
@@ -51,8 +55,8 @@ export default {
 	}
 }
 
-function mapData(dates, topicCount, data) {
-	const topicData = {};
+function mapData(path, dates, topicCount, data) {
+	const topicData = JSON.parse(readFileSync(path));
 
 	let count = 0;
 	for (let line of data) {
@@ -64,7 +68,7 @@ function mapData(dates, topicCount, data) {
 		if (!topicData[date.year].hasOwnProperty(date.month)) {
 			topicData[date.year][date.month] = {};
 		}
-		
+
 		topicData[date.year][date.month][date.day] = line[topicCount];
 
 		count++;

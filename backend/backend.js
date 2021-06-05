@@ -1,12 +1,12 @@
-import dataAccess from './data/data-access';
+import {setupFolders, setupFiles, setupListeners } from './data/data-access';
 import logger from '../backend/utils/logger';
 
 export default {
 	initialize() {
-		dataAccess.setupFolders();
-		dataAccess.setupFiles();
-		dataAccess.setupListeners();
+		setupFolders();
+		setupFiles();
+		setupListeners();
 
-		logger.success(`Initialization finished!`)
+		logger.success(`Initialization finished!`);
 	}
 }
