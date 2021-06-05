@@ -7,8 +7,7 @@
 		data() {
 			return {
 				initialData: {},
-				view: "",
-				hideEmptyDays: false
+				view: ""
 			};
 		},
 		created() {
@@ -56,7 +55,6 @@
 				for (let year in data) {
 					for (let month in data[year]) {
 						for (let day in data[year][month]) {
-							if (this.hideEmptyDays && data[year][month][day] === 0) continue;
 							allData.push(data[year][month][day]);
 							labels.push(month + " " + day.split(" ")[1]);
 						}
@@ -74,16 +72,21 @@
 				for (let year in data) {
 					for (let month in data[year]) {
 						for (let day in data[year][month]) {
-							if (data[year][month][day] !== parseFloat(0)) {
-								weekDataTotal += data[year][month][day];
+							weekDataTotal += data[year][month][day];
+
+							if (data[year][month][day] > parseFloat(0)) {
 								divisor++;
 							}
 
-							if (this.hideEmptyDays && weekDataTotal === parseFloat(0)) continue;
-
 							let dayName = day.split(" ")[0];
 							if (dayName === "Sat") {
-								groupedData.push(weekDataTotal / divisor);
+								
+								if (weekDataTotal === 0) {
+									groupedData.push(0);
+								} else {
+									groupedData.push(weekDataTotal / divisor);
+								}
+								
 								labels.push(month + " " + day.split(" ")[1]);
 								weekDataTotal = 0;
 								divisor = 0;

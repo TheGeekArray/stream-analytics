@@ -155,8 +155,8 @@ function splitAverageViewersData(averageViewersData, hostsAndRaidsData) {
 				let organicAverage = averageViewers * percentage;
 				let artificialAverage = averageViewers - organicAverage;
 		
-				organicViewersData[year][month][day] = organicAverage;
-				artificialViewersData[year][month][day] = artificialAverage;
+				organicViewersData[year][month][day] = organicAverage.toFixed(2);
+				artificialViewersData[year][month][day] = artificialAverage.toFixed(2);
 			}
 		}
 	}

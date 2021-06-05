@@ -3,8 +3,12 @@
 		<div class="header">
 			<FileReader class="file-reader-component"/>
 			<div class="data-display-options">
-				<EmptyDaysOption v-if="loaded" @change="hideEmptyDays = $event; updateData();" class="empty-days-option-component"/>
-				<TimeUnitPicker v-if="loaded" @change="timeUnit = $event; updateData();" class="time-unit-picker-component"/>
+				<EmptyDaysOption v-if="loaded && showEmptyDaysOption" v-bind:isChecked="hideEmptyDays" @change="hideEmptyDays = $event; updateData();" class="empty-days-option-component"/>
+				<TimeUnitPicker 
+					v-if="loaded"
+					@change="timeUnit = $event; updateData(); showEmptyDaysOption = $event === 'Day' || $event === 'Week'"
+					class="time-unit-picker-component"
+				/>
 			</div>
 		</div>
 		<div class="bar-container">
@@ -34,7 +38,9 @@
 			chartdata: {},
 			options: {},
 			barKey: 0,
-			timeUnit: "Day"
+			timeUnit: "Day",
+			showEmptyDaysOption: true,
+			hideEmptyDays: false
 		}),
 		created() {
 			this.setView("Average Viewers");
@@ -55,6 +61,22 @@
 			updateData() {
 				let organicViewersData = this.retrieveGroupedData(this.timeUnit, this.initialData.organicViewers);
 				let artificialViewersData = this.retrieveGroupedData(this.timeUnit, this.initialData.artificialViewers);
+
+				if (this.hideEmptyDays) {
+					let data = organicViewersData.data;
+					
+					let index = 0;
+					while (index < data.length) {
+						if (data[index] === 0) {
+							organicViewersData.data.splice(index, 1);
+							organicViewersData.labels.splice(index, 1);
+							artificialViewersData.data.splice(index, 1);
+							artificialViewersData.labels.splice(index, 1);
+						} else {
+							++index;
+						}
+					}
+				}
 
 				this.chartdata = this.getChartData(organicViewersData, artificialViewersData);
 				this.barKey++;
