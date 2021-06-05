@@ -17,7 +17,7 @@ export default {
 			}
 		}
 	},
-	async setupFiles() {
+	setupFiles() {
 		logger.info("Creating missing files...");
 		for (let file in filePaths.files) {
 			setupFile(file, filePaths.files[file]);
@@ -51,11 +51,12 @@ export default {
 }
 
 function setupFile(file, filePath) {
-	fs.open(filePath, 'ax', function(err, fd) {
-		if (err) return;
-		fs.writeFileSync(filePath, JSON.stringify({}, null, 4));
+	try {
+		fs.writeFileSync(filePath, JSON.stringify({}), { encoding: "utf8", flag: "wx", mode: 0o666 });
 		logger.info(`Created ${file} file...`);
-	});
+	} catch (err) {
+		return;
+	}
 }
 
 function readFileSync(path) {
