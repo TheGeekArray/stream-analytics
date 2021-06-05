@@ -2,27 +2,6 @@ import Logger from '../utils/logger';
 import filePaths from './file-paths';
 import { readFileSync } from './data-access';
 
-// calculateOrganicAverage: function(averageViewers, hostsAndRaids) {
-// 	const organicAverage = [];
-
-// 	for (let i = 0; i < averageViewers.length; i++) {
-// 		let average = (1 - (hostsAndRaids[i] / 100)) * averageViewers[i];
-// 		organicAverage.push(average);
-// 	}
-
-// 	return organicAverage;
-// },
-// calculateArticifialAverage: function(averageViewers, organicAverage) {
-// 	const artificialAverage = [];
-
-// 	for (let i = 0; i < averageViewers.length; i++) {
-// 		let average = averageViewers[i] - organicAverage[i];
-// 		artificialAverage.push(average);
-// 	}
-
-// 	return artificialAverage;
-// }
-
 export default {
 	processData(data) {
 		const splittedData = splitData(data);
@@ -36,6 +15,7 @@ export default {
 			switch (topic) {
 			case "Average Viewers":
 				path = filePaths.files.averageViewers;
+
 				processedData["Average Viewers"] = {
 					path: path,
 					data: mapData(path, dates, count, splittedData)
@@ -50,6 +30,20 @@ export default {
 
 			count++;
 		}
+
+		const averageViewersData = processedData["Average Viewers"];
+		const hostsAndRaidsData = processedData["Hosts and Raids"];
+		const { organicViewersData, artificialViewersData } = splitAverageViewersData(averageViewersData.data, hostsAndRaidsData.data);
+
+		processedData["Organic Average Viewers"] = {
+			path: filePaths.files.organicAverageViewers,
+			data: organicViewersData
+		};
+
+		processedData["Artificial Average Viewers"] = {
+			path: filePaths.files.artificialAverageViewers,
+			data: artificialViewersData
+		};
 
 		return processedData;
 	}
@@ -69,7 +63,7 @@ function mapData(path, dates, topicCount, data) {
 			topicData[date.year][date.month] = {};
 		}
 
-		topicData[date.year][date.month][date.dayName + " " + date.dayDate] = line[topicCount];
+		topicData[date.year][date.month][date.dayName + " " + date.dayDate] = parseFloat(line[topicCount]);
 
 		count++;
 	}
@@ -116,4 +110,56 @@ function splitData(data) {
 	}
 
 	return splittedData;
+}
+
+function splitAverageViewersData(averageViewersData, hostsAndRaidsData) {
+	const organicViewersData = JSON.parse(readFileSync(filePaths.files.organicAverageViewers));
+	const artificialViewersData = JSON.parse(readFileSync(filePaths.files.artificialAverageViewers));
+
+	for (let year in averageViewersData) {
+		console.log(year);
+		if (!organicViewersData.hasOwnProperty(year)) {
+			organicViewersData[year] = {};
+		}
+
+		if (!artificialViewersData.hasOwnProperty(year)) {
+			artificialViewersData[year] = {};
+		}
+
+		for (let month in averageViewersData[year]) {
+			if (!organicViewersData.hasOwnProperty(month)) {
+				organicViewersData[year][month] = {};
+			}
+	
+			if (!artificialViewersData.hasOwnProperty(month)) {
+				artificialViewersData[year][month] = {};
+			}
+
+			for (let day in averageViewersData[year][month]) {
+				let averageViewers = averageViewersData[year][month][day];
+				let hostsAndRaids = hostsAndRaidsData[year][month][day];
+
+				if (averageViewers === 0) {
+					organicViewersData[year][month][day] = 0;
+					artificialViewersData[year][month][day] = 0;
+					continue;
+				}
+
+				if (hostsAndRaids === 0) {
+					organicViewersData[year][month][day] = averageViewers;
+					artificialViewersData[year][month][day] = 0;
+					continue;
+				}
+
+				let percentage = (100 - hostsAndRaids) / 100;
+				let organicAverage = averageViewers * percentage;
+				let artificialAverage = averageViewers - organicAverage;
+		
+				organicViewersData[year][month][day] = organicAverage;
+				artificialViewersData[year][month][day] = artificialAverage;
+			}
+		}
+	}
+
+	return { organicViewersData, artificialViewersData };
 }

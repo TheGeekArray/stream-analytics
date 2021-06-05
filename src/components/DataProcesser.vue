@@ -56,7 +56,7 @@
 				for (let year in data) {
 					for (let month in data[year]) {
 						for (let day in data[year][month]) {
-							if (this.hideEmptyDays && data[year][month][day] === "0") continue;
+							if (this.hideEmptyDays && data[year][month][day] === 0) continue;
 							allData.push(data[year][month][day]);
 							labels.push(month + " " + day.split(" ")[1]);
 						}
@@ -74,8 +74,8 @@
 				for (let year in data) {
 					for (let month in data[year]) {
 						for (let day in data[year][month]) {
-							if (data[year][month][day] !== "0") {
-								weekDataTotal += parseFloat(data[year][month][day]);
+							if (data[year][month][day] !== 0) {
+								weekDataTotal += data[year][month][day];
 								divisor++;
 							}
 
@@ -104,8 +104,8 @@
 						let divisor = 0;
 
 						for (let day in data[year][month]) {
-							if (data[year][month][day] === "0") continue;
-							monthDataTotal += parseFloat(data[year][month][day]);
+							if (data[year][month][day] === 0) continue;
+							monthDataTotal += data[year][month][day];
 							divisor++;
 						}
 
@@ -126,8 +126,8 @@
 
 					for (let month in data[year]) {
 						for (let day in data[year][month]) {
-							if (data[year][month][day] === "0") continue;
-							yearDataTotal += parseFloat(data[year][month][day]);
+							if (data[year][month][day] === 0) continue;
+							yearDataTotal += data[year][month][day];
 							divisor++;
 						}
 					}
