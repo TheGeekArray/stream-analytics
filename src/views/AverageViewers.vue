@@ -48,11 +48,26 @@
 			processData: function(event, data) {
 				if (Object.keys(data).length === 0 && data.constructor === Object) return;
 
-				this.chartdata = this.getData(data);
+				let allData = this.getAllData(data);
+
+				this.chartdata = this.getData(allData);
 				this.options = this.getOptions();
 
 				this.loaded = true;
 				this.updateBar();
+			},
+			getAllData(data) {
+				let allData = [];
+
+				for (let year in data) {
+					for (let month in data[year]) {
+						for (let day in data[year][month]) {
+							allData.push(data[year][month][day]);
+						}
+					}
+				}
+
+				return allData;
 			},
 			getData: function(data) {
 				return {
