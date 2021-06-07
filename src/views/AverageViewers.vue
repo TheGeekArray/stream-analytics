@@ -43,7 +43,7 @@
 			hideEmptyDays: false
 		}),
 		created() {
-			this.setView("Average Viewers");
+			this.setView("Organic Viewers");
 		},
 		beforeMount() {
 			this.options = this.getOptions();
@@ -52,42 +52,40 @@
 			initialData: function() {
 				this.updateData();
 				
-				if (Object.keys(this.initialData).length !== 0) {
+				if (Object.keys(this.initialData).length > 0)  {
 					this.loaded = true;
 				}
 			}
 		},
 		methods: {
 			updateData() {
-				let organicViewersData = this.retrieveGroupedData(this.timeUnit, this.initialData.organicViewers);
-				let artificialViewersData = this.retrieveGroupedData(this.timeUnit, this.initialData.artificialViewers);
+				let organicViewersData = this.retrieveGroupedData(this.timeUnit, this.initialData);
 
 				if (this.hideEmptyDays) {
-					let data = organicViewersData.data;
+					let data = organicViewersData.data.organic;
 					
 					let index = 0;
 					while (index < data.length) {
 						if (data[index] === 0) {
-							organicViewersData.data.splice(index, 1);
+							organicViewersData.data.organic.splice(index, 1);
+							organicViewersData.data.artificial.splice(index, 1);
 							organicViewersData.labels.splice(index, 1);
-							artificialViewersData.data.splice(index, 1);
-							artificialViewersData.labels.splice(index, 1);
 						} else {
 							++index;
 						}
 					}
 				}
 
-				this.chartdata = this.getChartData(organicViewersData, artificialViewersData);
+				this.chartdata = this.getChartData(organicViewersData);
 				this.barKey++;
 			},
-			getChartData: function(organicViewersData, artificialViewersData) {
+			getChartData: function(organicViewersData) {
 				return {
 					labels: organicViewersData.labels,
 					datasets: [{
 						label: "Organic Viewers",
 						backgroundColor: "#772ce8",
-						data: organicViewersData.data,
+						data: organicViewersData.data.organic,
 						trendlineLinear: {
 							style: "rgba(141,141,141, .8)",
 							lineStyle: "dotted|solid",
@@ -97,7 +95,7 @@
 					{
 						label: "Artificial Viewers",
 						backgroundColor: "#18181b",
-						data: artificialViewersData.data
+						data: organicViewersData.data.artificial
 					}]
 				}
 			},

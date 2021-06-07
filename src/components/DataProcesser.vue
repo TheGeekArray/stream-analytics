@@ -49,97 +49,137 @@
 				}
 			},
 			getAllData(data) {
-				let allData = [];
+				let organicData = [];
+				let artificialData = [];
 				let labels = [];
 
 				for (let year in data) {
 					for (let month in data[year]) {
 						for (let day in data[year][month]) {
-							allData.push(data[year][month][day]);
+							organicData.push(data[year][month][day]["organic"]);
+							artificialData.push(data[year][month][day]["artificial"]);
 							labels.push(month + " " + day.split(" ")[1]);
 						}
 					}
 				}
-
-				return {data: allData, labels: labels };
+				
+				return {
+					data: {
+						organic: organicData,
+						artificial: artificialData
+					}, 
+					labels: labels 
+				};
 			},
 			groupDataInWeeks(data) {
-				let groupedData = [];
+				let organicData = [];
+				let artificialData = [];
 				let labels = [];
-				let weekDataTotal = 0;
+				let organicWeekDataTotal = 0;
+				let artificialWeekDataTotal = 0;
 				let divisor = 0;
 
 				for (let year in data) {
 					for (let month in data[year]) {
 						for (let day in data[year][month]) {
-							weekDataTotal += data[year][month][day];
+							organicWeekDataTotal += data[year][month][day]["organic"];
+							artificialWeekDataTotal += data[year][month][day]["artificial"];
 
-							if (data[year][month][day] > parseFloat(0)) {
+							if (data[year][month][day]["organic"] > parseFloat(0)) {
 								divisor++;
 							}
 
 							let dayName = day.split(" ")[0];
 							if (dayName === "Sat") {
 								
-								if (weekDataTotal === 0) {
-									groupedData.push(0);
+								if (organicWeekDataTotal === parseFloat(0)) {
+									organicData.push(0);
+									artificialData.push(0);
 								} else {
-									groupedData.push(weekDataTotal / divisor);
+									organicData.push(organicWeekDataTotal / divisor);
+									artificialData.push(artificialWeekDataTotal / divisor);
 								}
 								
 								labels.push(month + " " + day.split(" ")[1]);
-								weekDataTotal = 0;
+								organicWeekDataTotal = 0;
+								artificialWeekDataTotal = 0;
 								divisor = 0;
 							}
 						}
 					}
 				}
 
-				return { data: groupedData, labels: labels };
+				return {
+					data: {
+						organic: organicData,
+						artificial: artificialData
+					}, 
+					labels: labels 
+				};
 			},
 			groupDataInMonths(data) {
-				let groupedData = [];
+				let organicData = [];
+				let artificialData = [];
 				let labels = [];
 
 				for (let year in data) {
 					for (let month in data[year]) {
-						let monthDataTotal = 0;
+						let organicMonthDataTotal = 0;
+						let artificialMonthdataTotal = 0;
 						let divisor = 0;
 
 						for (let day in data[year][month]) {
-							if (data[year][month][day] === parseFloat(0)) continue;
-							monthDataTotal += data[year][month][day];
+							if (data[year][month][day]["organic"] === parseFloat(0)) continue;
+							organicMonthDataTotal += data[year][month][day]["organic"];
+							artificialMonthdataTotal += data[year][month][day]["artificial"];
 							divisor++;
 						}
 
-						groupedData.push(monthDataTotal / divisor);
+						organicData.push(organicMonthDataTotal / divisor);
+						artificialData.push(artificialMonthdataTotal / divisor);
 						labels.push(month + " " + year);
 					}
 				}
 
-				return { data: groupedData, labels: labels };
+				return {
+					data: {
+						organic: organicData,
+						artificial: artificialData
+					}, 
+					labels: labels 
+				};
 			},
 			groupDataInYears(data) {
-				let groupedData = [];
+				let organicData = [];
+				let artificialData = [];
 				let labels = [];
 
 				for (let year in data) {
-					let yearDataTotal = 0;
+					let organicYearDataTotal = 0;
+					let artificialYearDataTotal = 0;
 					let divisor = 0;
 
 					for (let month in data[year]) {
 						for (let day in data[year][month]) {
-							if (data[year][month][day] === parseFloat(0)) continue;
-							yearDataTotal += data[year][month][day];
+							if (data[year][month][day]["organic"] === parseFloat(0)) continue;
+							organicYearDataTotal += data[year][month][day]["organic"];
+							artificialYearDataTotal += data[year][month][day]["artificial"];
 							divisor++;
 						}
 					}
 
-					groupedData.push(yearDataTotal / divisor);
+					organicData.push(organicYearDataTotal / divisor);
+					artificialData.push(artificialYearDataTotal / divisor);
 					labels.push(year);
 				}
 
-				return { data: groupedData, labels: labels };
+				return {
+					data: {
+						organic: organicData,
+						artificial: artificialData
+					}, 
+					labels: labels 
+				};
 			}
 		}
 	}

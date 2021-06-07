@@ -6,6 +6,8 @@ import filePaths from './file-paths';
 import dataProcesser from './data-processer';
 import logger from '../utils/logger';
 
+let loadedData = {};
+
 let setupFolders = function() {
 	logger.info("Creating missing folders...");
 	if (!fs.pathExistsSync(filePaths.folders.userData)) {
@@ -27,37 +29,21 @@ let setupFiles = function() {
 }
 
 let setupListeners = function() {
-	ipcMain.on("fileUploaded", function(event, data) {
+	ipcMain.on("fileUploaded", async function(event, data) {
 		logger.info(`Processing uploaded file...`);
-		let processedData = dataProcesser.processData(data);
-
-		if (processedData) {
+		
+		dataProcesser.processData(data).then(processedData => {
 			for (let topic in processedData) {
-				writeToDataFile(topic, processedData[topic]);
+				writeToDataFile(topic, processedData[topic]).then(() => {
+					logger.debug(`Processed ${topic} data`);
+					event.reply("dataProcessed");
+				});
 			}
-
-			event.reply("dataProcessed");
-		}
+		});
 	});
 
 	ipcMain.on("dataRequested", function(event, topic) {
-		let data = {};
-
-		if (topic === "Average Viewers") {
-			data.organicViewers = readFileSync(filePaths.files.organicAverageViewers);
-			data.artificialViewers = readFileSync(filePaths.files.artificialAverageViewers);
-		}
-		
-		for (let item in data) {
-			if (Object.keys(data[item]).length !== 0) {
-				JSON.parse(data[item]);
-			}
-		}
-
-		if (data) {
-			event.reply("dataLoaded", data);
-			logger.success(`Data loaded`);
-		}
+		event.reply("dataLoaded", loadedData[topic]);
 	});
 
 	ipcMain.on("startingDateSet", function(event, date) {
@@ -67,30 +53,44 @@ let setupListeners = function() {
 	});
 }
 
-let readFileSync = function(path) {
-	return fs.readFileSync(path, 'utf8');
-}
-
+let getData = function(topic) {
+	return loadedData[topic];
+};
 
 function setupFile(file, filePath) {
 	try {
 		fs.writeFileSync(filePath, JSON.stringify({}), { encoding: "utf8", flag: "wx", mode: 0o666 });
+		loadedData[file] = {};
 		logger.info(`Created ${file} file...`);
 	} catch (err) {
-		return;
+		logger.error('[setupFile]' + err);
 	}
 }
 
-function writeToDataFile(topic, topicData) {
-	fs.writeFile(topicData.path, JSON.stringify(topicData.data, null, 4), function() {
-		logger.debug(`Processed ${topic} data`);
-	});
+async function writeToDataFile(topic, topicData) {
+	loadedData[topic] = topicData;
+
+	try {
+		fs.writeFile(filePaths.files[topic], JSON.stringify(topicData, null, 4), function(err) {
+			if (err) {
+				logger.error(`[writeToDataFile]`, err);
+			}
+		});
+	} catch (err) {
+		logger.error('[writeToDataFile]' + err, true);
+	}
+	
 }
 
 function writeToSettingsFile(event, settings) {
-	fs.writeFile(filePaths.files.settings, JSON.stringify(settings, null, 4), function() {
-		event.reply("settingsUpdated");
-		logger.success(`Updated settings`);
-	});
+	try {
+		fs.writeFile(filePaths.files["Settings"], JSON.stringify(settings, null, 4), function() {
+			event.reply("settingsUpdated");
+			logger.success(`Updated settings`);
+		});
+	} catch (err) {
+		logger.error('[writeToSettingsFile]' + err, true);
+	}
+	
 }
-export { setupFolders, setupFiles, setupListeners, readFileSync };
+export { setupFolders, setupFiles, setupListeners, getData };

@@ -1,56 +1,41 @@
 import Logger from '../utils/logger';
 import filePaths from './file-paths';
-import { readFileSync } from './data-access';
+import { getData } from './data-access';
 
 export default {
-	processData(data) {
+	async processData(data) {
 		const splittedData = splitData(data);
 		const topics = splittedData.shift();
 		const dates = getDates(splittedData);
 		let processedData = {};
 
 		let count = 0;
-		let path = "";
 		for (let topic of topics) {
 			switch (topic) {
 			case "Average Viewers":
-				path = filePaths.files.averageViewers;
-
-				processedData["Average Viewers"] = {
-					path: path,
-					data: mapData(path, dates, count, splittedData)
-				}
+				processedData["Average Viewers"] = mapData(topic, dates, count, splittedData);
 			case "Hosts and Raids Viewers (%)":
-				path = filePaths.files.hostsAndRaids;
-				processedData["Hosts and Raids"] = {
-					path: path,
-					data: mapData(path, dates, count, splittedData)
-				}
+				let newTopic = "Hosts & Raids";
+				processedData[newTopic] = mapData(newTopic, dates, count, splittedData);
 			}
 
 			count++;
 		}
 
 		const averageViewersData = processedData["Average Viewers"];
-		const hostsAndRaidsData = processedData["Hosts and Raids"];
-		const { organicViewersData, artificialViewersData } = splitAverageViewersData(averageViewersData.data, hostsAndRaidsData.data);
+		const hostsAndRaidsData = processedData["Hosts & Raids"];
+		const organicViewersData = splitAverageViewersData(averageViewersData, hostsAndRaidsData);
 
-		processedData["Organic Average Viewers"] = {
-			path: filePaths.files.organicAverageViewers,
-			data: organicViewersData
-		};
-
-		processedData["Artificial Average Viewers"] = {
-			path: filePaths.files.artificialAverageViewers,
-			data: artificialViewersData
-		};
+		processedData["Organic Viewers"] = organicViewersData;
 
 		return processedData;
 	}
 }
 
-function mapData(path, dates, topicCount, data) {
-	const topicData = JSON.parse(readFileSync(path));
+function mapData(topic, dates, topicCount, data) {
+	let topicData = getData(topic);
+
+	if (topicData == null) return;
 
 	let count = 0;
 	for (let line of data) {
@@ -113,40 +98,40 @@ function splitData(data) {
 }
 
 function splitAverageViewersData(averageViewersData, hostsAndRaidsData) {
-	const organicViewersData = JSON.parse(readFileSync(filePaths.files.organicAverageViewers));
-	const artificialViewersData = JSON.parse(readFileSync(filePaths.files.artificialAverageViewers));
+	let organicViewersData = getData("Organic Viewers");
+
+	if (organicViewersData == null) {
+		Logger.error("No data for splitAverageViewersData");
+		return;
+	}
 
 	for (let year in averageViewersData) {
 		if (!organicViewersData.hasOwnProperty(year)) {
 			organicViewersData[year] = {};
 		}
 
-		if (!artificialViewersData.hasOwnProperty(year)) {
-			artificialViewersData[year] = {};
-		}
-
 		for (let month in averageViewersData[year]) {
 			if (!organicViewersData.hasOwnProperty(month)) {
 				organicViewersData[year][month] = {};
 			}
-	
-			if (!artificialViewersData.hasOwnProperty(month)) {
-				artificialViewersData[year][month] = {};
-			}
 
 			for (let day in averageViewersData[year][month]) {
-				let averageViewers = averageViewersData[year][month][day];
-				let hostsAndRaids = hostsAndRaidsData[year][month][day];
+				if (!organicViewersData.hasOwnProperty(day)) {
+					organicViewersData[year][month][day] = {};
+				}
 
-				if (averageViewers === 0) {
-					organicViewersData[year][month][day] = 0;
-					artificialViewersData[year][month][day] = 0;
+				let averageViewers = parseFloat(averageViewersData[year][month][day]);
+				let hostsAndRaids = parseFloat(hostsAndRaidsData[year][month][day]);
+
+				if (averageViewers === parseFloat(0)) {
+					organicViewersData[year][month][day]["organic"] = 0;
+					organicViewersData[year][month][day]["artificial"] = 0;
 					continue;
 				}
 
-				if (hostsAndRaids === 0) {
-					organicViewersData[year][month][day] = averageViewers;
-					artificialViewersData[year][month][day] = 0;
+				if (hostsAndRaids === parseFloat(0)) {
+					organicViewersData[year][month][day]["organic"] = averageViewers;
+					organicViewersData[year][month][day]["artificial"] = 0;
 					continue;
 				}
 
@@ -154,11 +139,11 @@ function splitAverageViewersData(averageViewersData, hostsAndRaidsData) {
 				let organicAverage = averageViewers * percentage;
 				let artificialAverage = averageViewers - organicAverage;
 		
-				organicViewersData[year][month][day] = organicAverage.toFixed(2);
-				artificialViewersData[year][month][day] = artificialAverage.toFixed(2);
+				organicViewersData[year][month][day]["organic"] = organicAverage;
+				organicViewersData[year][month][day]["artificial"] = artificialAverage;
 			}
 		}
 	}
 
-	return { organicViewersData, artificialViewersData };
+	return organicViewersData;
 }

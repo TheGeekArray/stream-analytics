@@ -12,10 +12,9 @@ export default {
 		streamData: streamDataPath
 	},
 	files: {
-		settings: path.join(userDataPath, '/settings.json'),
-		averageViewers: path.join(streamDataPath, '/average-viewers.json'),
-		organicAverageViewers: path.join(streamDataPath, '/organic-average-viewers.json'),
-		artificialAverageViewers: path.join(streamDataPath, '/artificial-average-viewers.json'),
-		hostsAndRaids: path.join(streamDataPath, '/hosts-and-raids.json')
+		"Settings": path.join(userDataPath, '/settings.json'),
+		"Average Viewers": path.join(streamDataPath, '/average-viewers.json'),
+		"Organic Viewers": path.join(streamDataPath, '/organic-average-viewers.json'),
+		"Hosts & Raids": path.join(streamDataPath, '/hosts-and-raids.json')
 	}
 }
