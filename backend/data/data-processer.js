@@ -37,7 +37,8 @@ function mapData(topic, dates, topicCount, data) {
 	let topicData = getData(topic);
 
 	if (topicData == null) {
-		logger.error("No data for mapData");
+		logger.debug("No data for mapData");
+		topicData = {};
 		return;
 	}
 
@@ -105,7 +106,8 @@ function splitAverageViewersData(averageViewersData, hostsAndRaidsData) {
 	let organicViewersData = getData("Organic Viewers");
 
 	if (organicViewersData == null) {
-		logger.error("No data for splitAverageViewersData");
+		logger.debug("No data for splitAverageViewersData");
+		organicViewersData = {};
 		return;
 	}
 
