@@ -1,3 +1,5 @@
+"use strict";
+
 import logger from '../utils/logger';
 import { getData } from './data-access';
 

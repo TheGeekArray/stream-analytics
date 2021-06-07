@@ -4,6 +4,7 @@ import { ipcMain } from 'electron';
 import fs from 'fs-extra';
 import filePaths from './file-paths';
 import dataProcesser from './data-processer';
+import dataTranslator from './data-translator';
 import logger from '../utils/logger';
 
 let loadedData = {};
@@ -41,8 +42,9 @@ let setupListeners = function() {
 		});
 	});
 
-	ipcMain.on("dataRequested", function(event, topic) {
-		event.reply("dataLoaded", loadedData[topic]);
+	ipcMain.on("dataRequested", function(event, timeUnit, topic) {
+		const translatedData = dataTranslator.getGroupedData(timeUnit, loadedData[topic]);
+		event.reply("dataLoaded", translatedData);
 	});
 
 	ipcMain.on("startingDateSet", function(date) {

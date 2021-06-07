@@ -3,10 +3,10 @@
 		<div class="header">
 			<FileReader class="file-reader-component"/>
 			<div class="data-display-options">
-				<EmptyDaysOption v-if="loaded && showEmptyDaysOption" v-bind:isChecked="hideEmptyDays" @change="hideEmptyDays = $event; updateData();" class="empty-days-option-component"/>
+				<EmptyDaysOption v-if="loaded && showEmptyDaysOption" v-bind:isChecked="hideEmptyDays" @change="hideEmptyDays = $event; sendDataRequestedEvent();" class="empty-days-option-component"/>
 				<TimeUnitPicker 
 					v-if="loaded"
-					@change="timeUnit = $event; updateData(); showEmptyDaysOption = $event === 'Day' || $event === 'Week'"
+					@change="timeUnit = $event; sendDataRequestedEvent(); showEmptyDaysOption = $event === 'Day' || $event === 'Week'"
 					class="time-unit-picker-component"
 				/>
 			</div>
@@ -21,8 +21,8 @@
 	import Bar from '@/components/Bar.vue';
 	import FileReader from '@/components/FileReader.vue';
 	import TimeUnitPicker from '@/components/TimeUnitPicker.vue';
-	import DataProcesser from '@/components/DataProcesser.vue';
 	import EmptyDaysOption from '@/components/EmptyDaysOption.vue';
+	import { ipcRenderer } from 'electron';
 
 	export default {
 		name: 'AverageViewers',
@@ -32,9 +32,9 @@
 			TimeUnitPicker,
 			EmptyDaysOption
 		},
-		mixins: [DataProcesser],
 		data: () => ({
 			loaded: false,
+			initialData: {},
 			chartdata: {},
 			options: {},
 			barKey: 0,
@@ -43,40 +43,53 @@
 			hideEmptyDays: false
 		}),
 		created() {
-			this.setView("Organic Viewers");
+			this.setupListeners();
 		},
 		beforeMount() {
 			this.options = this.getOptions();
+			this.sendDataRequestedEvent();
+		},
+		destroyed() {
+			ipcRenderer.removeListener("dataProcessed", this.sendDataRequestedEvent);
+			ipcRenderer.removeListener("dataLoaded", this.setInitialData);
 		},
 		watch: {
 			initialData: function() {
 				this.updateData();
 				
-				if (Object.keys(this.initialData).length > 0)  {
+				if (Object.keys(this.initialData.data["organic"]).length > 0)  {
 					this.loaded = true;
 				}
 			}
 		},
 		methods: {
+			setupListeners: function() {
+				ipcRenderer.on("dataProcessed", this.sendDataRequestedEvent);
+				ipcRenderer.on("dataLoaded", this.setInitialData);
+			},
+			sendDataRequestedEvent: function() {
+				ipcRenderer.send("dataRequested", this.timeUnit, "Organic Viewers");
+			},
+			setInitialData: function(event, data) {
+				this.initialData = data;
+			},
 			updateData() {
-				let organicViewersData = this.retrieveGroupedData(this.timeUnit, this.initialData);
-
 				if (this.hideEmptyDays) {
-					let data = organicViewersData.data.organic;
+					let data = this.initialData.data.organic;
 					
 					let index = 0;
 					while (index < data.length) {
 						if (data[index] === 0) {
-							organicViewersData.data.organic.splice(index, 1);
-							organicViewersData.data.artificial.splice(index, 1);
-							organicViewersData.labels.splice(index, 1);
+							this.initialData.data["organic"].splice(index, 1);
+							this.initialData.data["artificial"].splice(index, 1);
+							this.initialData.labels.splice(index, 1);
 						} else {
 							++index;
 						}
 					}
 				}
 
-				this.chartdata = this.getChartData(organicViewersData);
+				this.chartdata = this.getChartData(this.initialData);
 				this.barKey++;
 			},
 			getChartData: function(organicViewersData) {
