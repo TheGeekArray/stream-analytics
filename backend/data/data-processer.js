@@ -1,5 +1,4 @@
-import Logger from '../utils/logger';
-import filePaths from './file-paths';
+import logger from '../utils/logger';
 import { getData } from './data-access';
 
 export default {
@@ -35,7 +34,10 @@ export default {
 function mapData(topic, dates, topicCount, data) {
 	let topicData = getData(topic);
 
-	if (topicData == null) return;
+	if (topicData == null) {
+		logger.error("No data for mapData");
+		return;
+	}
 
 	let count = 0;
 	for (let line of data) {
@@ -101,7 +103,7 @@ function splitAverageViewersData(averageViewersData, hostsAndRaidsData) {
 	let organicViewersData = getData("Organic Viewers");
 
 	if (organicViewersData == null) {
-		Logger.error("No data for splitAverageViewersData");
+		logger.error("No data for splitAverageViewersData");
 		return;
 	}
 

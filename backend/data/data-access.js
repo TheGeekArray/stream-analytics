@@ -34,8 +34,7 @@ let setupListeners = function() {
 		
 		dataProcesser.processData(data).then(processedData => {
 			for (let topic in processedData) {
-				writeToDataFile(topic, processedData[topic]).then(() => {
-					logger.debug(`Processed ${topic} data`);
+				writeToFile(topic, processedData[topic]).then(() => {
 					event.reply("dataProcessed");
 				});
 			}
@@ -46,10 +45,10 @@ let setupListeners = function() {
 		event.reply("dataLoaded", loadedData[topic]);
 	});
 
-	ipcMain.on("startingDateSet", function(event, date) {
+	ipcMain.on("startingDateSet", function(date) {
 		logger.info(`Setting starting date...`);
 		let settings = { startingDate: date };
-		writeToSettingsFile(event, settings);
+		writeToFile("Settings", settings);
 	});
 }
 
@@ -63,34 +62,25 @@ function setupFile(file, filePath) {
 		loadedData[file] = {};
 		logger.info(`Created ${file} file...`);
 	} catch (err) {
-		logger.error('[setupFile]' + err);
+		logger.debug(`[setupFile]` + err);
 	}
 }
 
-async function writeToDataFile(topic, topicData) {
+async function writeToFile(topic, topicData) {
 	loadedData[topic] = topicData;
 
 	try {
 		fs.writeFile(filePaths.files[topic], JSON.stringify(topicData, null, 4), function(err) {
 			if (err) {
-				logger.error(`[writeToDataFile]`, err);
+				logger.error(`[writeToFile]`, err);
+			} else {
+				logger.debug(`Processed ${topic} data`);
 			}
 		});
 	} catch (err) {
-		logger.error('[writeToDataFile]' + err, true);
+		logger.error(`[writeFile]` + err, true);
 	}
 	
 }
 
-function writeToSettingsFile(event, settings) {
-	try {
-		fs.writeFile(filePaths.files["Settings"], JSON.stringify(settings, null, 4), function() {
-			event.reply("settingsUpdated");
-			logger.success(`Updated settings`);
-		});
-	} catch (err) {
-		logger.error('[writeToSettingsFile]' + err, true);
-	}
-	
-}
 export { setupFolders, setupFiles, setupListeners, getData };
