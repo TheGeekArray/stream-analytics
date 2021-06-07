@@ -3,10 +3,10 @@
 		<div class="header">
 			<FileReader class="file-reader-component"/>
 			<div class="data-display-options">
-				<EmptyDaysOption v-if="loaded && showEmptyDaysOption" v-bind:isChecked="hideEmptyDays" @change="hideEmptyDays = $event; sendDataRequestedEvent();" class="empty-days-option-component"/>
+				<EmptyDaysOption v-if="loaded && emptyDaysOptionVisible" v-bind:isChecked="hideEmptyDays" @change="hideEmptyDays = $event; sendDataRequestedEvent();" class="empty-days-option-component"/>
 				<TimeUnitPicker 
 					v-if="loaded"
-					@change="timeUnit = $event; sendDataRequestedEvent(); showEmptyDaysOption = $event !== 'Month' || $event !== 'Year'"
+					@change="timeUnit = $event; sendDataRequestedEvent(); showEmptyDaysOption($event)"
 					class="time-unit-picker-component"
 				/>
 			</div>
@@ -39,7 +39,7 @@
 			options: {},
 			barKey: 0,
 			timeUnit: "30 days",
-			showEmptyDaysOption: true,
+			emptyDaysOptionVisible: true,
 			hideEmptyDays: false
 		}),
 		created() {
@@ -72,6 +72,13 @@
 			},
 			setInitialData: function(event, data) {
 				this.initialData = data;
+			},
+			showEmptyDaysOption(value) {
+				if (value === 'Month' || value === 'Year') {
+					this.emptyDaysOptionVisible = false;
+				} else {
+					this.emptyDaysOptionVisible = true;
+				}
 			},
 			updateData() {
 				if (this.hideEmptyDays) {
