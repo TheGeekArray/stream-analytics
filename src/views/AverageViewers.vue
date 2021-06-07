@@ -6,7 +6,7 @@
 				<EmptyDaysOption v-if="loaded && showEmptyDaysOption" v-bind:isChecked="hideEmptyDays" @change="hideEmptyDays = $event; sendDataRequestedEvent();" class="empty-days-option-component"/>
 				<TimeUnitPicker 
 					v-if="loaded"
-					@change="timeUnit = $event; sendDataRequestedEvent(); showEmptyDaysOption = $event === 'Day' || $event === 'Week'"
+					@change="timeUnit = $event; sendDataRequestedEvent(); showEmptyDaysOption = $event !== 'Month' || $event !== 'Year'"
 					class="time-unit-picker-component"
 				/>
 			</div>
@@ -38,7 +38,7 @@
 			chartdata: {},
 			options: {},
 			barKey: 0,
-			timeUnit: "Day",
+			timeUnit: "30 days",
 			showEmptyDaysOption: true,
 			hideEmptyDays: false
 		}),

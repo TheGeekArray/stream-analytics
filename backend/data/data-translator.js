@@ -3,6 +3,8 @@
 export default {
 	getGroupedData(timeUnit, data) {
 		switch(timeUnit) {
+		case "30 days":
+			return groupDataInThirtyDays(data);
 		case "Day":
 			return groupDataInDays(data);
 		case "Week":
@@ -12,9 +14,25 @@ export default {
 		case "Year":
 			return groupDataInYears(data);
 		default:
-			return groupDataInDays(data);
+			return groupDataInThirtyDays(data);
 		}
 	}
+}
+
+function groupDataInThirtyDays(data) {
+	let dayData = groupDataInDays(data);
+	let organicDayData = dayData.data.organic;
+	let artificialDayData = dayData.data.artificial;
+
+	if (!dayData.data || organicDayData.length < 0) return;
+
+	return {
+		data: {
+			organic: organicDayData.slice((organicDayData.length - 30), organicDayData.length),
+			artificial: artificialDayData.slice((artificialDayData.length - 30), artificialDayData.length)
+		}, 
+		labels: dayData.labels.slice((dayData.labels.length - 30), dayData.labels.length)
+	};
 }
 
 function groupDataInDays(data) {
