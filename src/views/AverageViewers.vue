@@ -3,10 +3,16 @@
 		<div class="header">
 			<FileReader class="file-reader-component"/>
 			<div class="data-display-options">
-				<EmptyDaysOption v-if="loaded && emptyDaysOptionVisible" v-bind:isChecked="hideEmptyDays" @change="hideEmptyDays = $event; sendDataRequestedEvent();" class="empty-days-option-component"/>
+				<EmptyDaysOption 
+					v-if="loaded"
+					v-bind:isChecked="hideEmptyDaysEnabled"
+					v-bind:timeUnit="timeUnit"
+					@change="hideEmptyDaysEnabled = $event; sendDataRequestedEvent();"
+					class="empty-days-option-component"
+				/>
 				<TimeUnitPicker 
 					v-if="loaded"
-					@change="timeUnit = $event; sendDataRequestedEvent(); showEmptyDaysOption($event)"
+					@change="timeUnit = $event; sendDataRequestedEvent();"
 					class="time-unit-picker-component"
 				/>
 			</div>
@@ -39,8 +45,7 @@
 			options: {},
 			barKey: 0,
 			timeUnit: "30 days",
-			emptyDaysOptionVisible: true,
-			hideEmptyDays: false
+			hideEmptyDaysEnabled: false
 		}),
 		created() {
 			this.setupListeners();
@@ -73,31 +78,27 @@
 			setInitialData: function(event, data) {
 				this.initialData = data;
 			},
-			showEmptyDaysOption(value) {
-				if (value === 'Month' || value === 'Year') {
-					this.emptyDaysOptionVisible = false;
-				} else {
-					this.emptyDaysOptionVisible = true;
-				}
-			},
 			updateData() {
-				if (this.hideEmptyDays) {
-					let data = this.initialData.data.organic;
-					
-					let index = 0;
-					while (index < data.length) {
-						if (data[index] === 0) {
-							this.initialData.data["organic"].splice(index, 1);
-							this.initialData.data["artificial"].splice(index, 1);
-							this.initialData.labels.splice(index, 1);
-						} else {
-							++index;
-						}
-					}
+				if (this.hideEmptyDaysEnabled) {
+					this.hideEmptyDays();
 				}
 
 				this.chartdata = this.getChartData(this.initialData);
 				this.barKey++;
+			},
+			hideEmptyDays: function() {
+				let data = this.initialData.data.organic;
+				
+				let index = 0;
+				while (index < data.length) {
+					if (data[index] === 0) {
+						this.initialData.data["organic"].splice(index, 1);
+						this.initialData.data["artificial"].splice(index, 1);
+						this.initialData.labels.splice(index, 1);
+					} else {
+						++index;
+					}
+				}
 			},
 			getChartData: function(organicViewersData) {
 				return {
