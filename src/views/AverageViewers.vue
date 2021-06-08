@@ -104,7 +104,7 @@
 				return {
 					labels: organicViewersData.labels,
 					datasets: [{
-						label: "Organic Viewers",
+						label: "Organic",
 						backgroundColor: "#772ce8",
 						data: organicViewersData.data.organic,
 						trendlineLinear: {
@@ -114,7 +114,7 @@
 						}
 					},
 					{
-						label: "Artificial Viewers",
+						label: "Hosts/raids/embeds",
 						backgroundColor: "#18181b",
 						data: organicViewersData.data.artificial
 					}]
