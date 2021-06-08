@@ -58,14 +58,27 @@ let getData = function(topic) {
 	return loadedData[topic];
 };
 
-function setupFile(file, filePath) {
+async function setupFile(file, filePath) {
 	try {
 		fs.writeFileSync(filePath, JSON.stringify({}), { encoding: "utf8", flag: "wx", mode: 0o666 });
 		loadedData[file] = {};
 		logger.info(`Created ${file} file...`);
 	} catch (err) {
 		logger.debug(`[setupFile]` + err);
+		await readFile(file, filePath);
 	}
+}
+
+async function readFile(file, filePath) {
+	fs.readFile(filePath, 'utf8', function(err, data) {
+		if (err) {
+			logger.error(err);
+		} else {
+			if (data) {
+				loadedData[file] = JSON.parse(data);
+			}
+		}
+	});
 }
 
 async function writeToFile(topic, topicData) {
