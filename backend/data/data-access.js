@@ -47,6 +47,11 @@ let setupListeners = function() {
 		event.reply("dataLoaded", translatedData);
 	});
 
+	ipcMain.on("rangeDataRequested", function(event, range, topic) {
+		const translatedData = dataTranslator.getRangedData(range, loadedData[topic]);
+		event.reply("rangedDataLoaded", translatedData);
+	});
+
 	ipcMain.on("startingDateSet", function(date) {
 		logger.info(`Setting starting date...`);
 		let settings = { startingDate: date };
