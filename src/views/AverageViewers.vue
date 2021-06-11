@@ -3,6 +3,7 @@
 		<div class="header">
 			<FileReader class="file-reader-component"/>
 			<div class="data-display-options">
+				<DatePicker @change="dateRange = $event; sendRangeDataRequestedEvent();" />
 				<EmptyDaysOption 
 					v-if="loaded"
 					v-bind:isChecked="hideEmptyDaysEnabled"
@@ -28,6 +29,7 @@
 	import FileReader from '@/components/FileReader.vue';
 	import TimeUnitPicker from '@/components/TimeUnitPicker.vue';
 	import EmptyDaysOption from '@/components/EmptyDaysOption.vue';
+	import DatePicker from '@/components/DatePicker.vue';
 	import { ipcRenderer } from 'electron';
 
 	export default {
@@ -36,7 +38,8 @@
 			Bar,
 			FileReader,
 			TimeUnitPicker,
-			EmptyDaysOption
+			EmptyDaysOption,
+			DatePicker
 		},
 		data: () => ({
 			loaded: false,
@@ -45,7 +48,8 @@
 			options: {},
 			barKey: 0,
 			timeUnit: "30 days",
-			hideEmptyDaysEnabled: false
+			hideEmptyDaysEnabled: false,
+			dateRange: {}
 		}),
 		created() {
 			this.setupListeners();
@@ -71,9 +75,13 @@
 			setupListeners: function() {
 				ipcRenderer.on("dataProcessed", this.sendDataRequestedEvent);
 				ipcRenderer.on("dataLoaded", this.setInitialData);
+				ipcRenderer.on("rangedDataLoaded", this.setInitialData);
 			},
 			sendDataRequestedEvent: function() {
 				ipcRenderer.send("dataRequested", this.timeUnit, "Organic Viewers");
+			},
+			sendRangeDataRequestedEvent: function() {
+				ipcRenderer.send("rangeDataRequested", this.dateRange, "Organic Viewers");
 			},
 			setInitialData: function(event, data) {
 				this.initialData = data;
@@ -124,6 +132,9 @@
 				return {
 					responsive: true,
 					maintainAspectRatio: false,
+					legend: {
+						position: "bottom"
+					},
 					tooltips: {
 						mode: "x",
 						callbacks: {
