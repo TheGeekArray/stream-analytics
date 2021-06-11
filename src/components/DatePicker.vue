@@ -34,5 +34,10 @@ export default {
 <style scoped>
 	.date-picker {
 		display: flex;
+		height: 25px;
+	}
+
+	#start-date {
+		margin-right: 20px;
 	}
 </style>

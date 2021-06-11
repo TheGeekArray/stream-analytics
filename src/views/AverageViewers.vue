@@ -1,22 +1,19 @@
 <template>
 	<div class="home">
 		<div class="header">
-			<FileReader class="file-reader-component"/>
-			<div class="data-display-options">
-				<DatePicker @change="dateRange = $event; sendRangeDataRequestedEvent();" />
-				<EmptyDaysOption 
-					v-if="loaded"
-					v-bind:isChecked="hideEmptyDaysEnabled"
-					v-bind:timeUnit="timeUnit"
-					@change="hideEmptyDaysEnabled = $event; sendDataRequestedEvent();"
-					class="empty-days-option-component"
-				/>
-				<TimeUnitPicker 
-					v-if="loaded"
-					@change="timeUnit = $event; sendDataRequestedEvent();"
-					class="time-unit-picker-component"
-				/>
-			</div>
+			<DatePicker @change="dateRange = $event; sendRangeDataRequestedEvent();" />
+			<EmptyDaysOption 
+				v-if="loaded"
+				v-bind:isChecked="hideEmptyDaysEnabled"
+				v-bind:timeUnit="timeUnit"
+				@change="hideEmptyDaysEnabled = $event; sendDataRequestedEvent();"
+				class="empty-days-option-component"
+			/>
+			<TimeUnitPicker 
+				v-if="loaded"
+				@change="timeUnit = $event; sendDataRequestedEvent();"
+				class="time-unit-picker-component"
+			/>
 		</div>
 		<div class="bar-container">
 			<Bar v-if="loaded" v-bind:data="chartdata" v-bind:options="options" :key="barKey"/>
@@ -26,7 +23,6 @@
 
 <script>
 	import Bar from '@/components/Bar.vue';
-	import FileReader from '@/components/FileReader.vue';
 	import TimeUnitPicker from '@/components/TimeUnitPicker.vue';
 	import EmptyDaysOption from '@/components/EmptyDaysOption.vue';
 	import DatePicker from '@/components/DatePicker.vue';
@@ -36,7 +32,6 @@
 		name: 'AverageViewers',
 		components: {
 			Bar,
-			FileReader,
 			TimeUnitPicker,
 			EmptyDaysOption,
 			DatePicker
@@ -182,14 +177,16 @@
 
 	.header {
 		display: flex;
-		justify-content: space-between;
+		height: 60px;
+		align-items: center;
 	}
 
-	.data-display-options {
-		display: flex;
+	.empty-days-option-component {
+		margin-left: auto;
 	}
 
 	.time-unit-picker-component {
-		margin-left: 30px;
+		justify-self: flex-end;
+		margin-left: 20px;
 	}
 </style>

@@ -1,5 +1,6 @@
 <template>
 	<div id="app">
+		<FileReader class="file-reader-component"/>
 		<!-- <div id="nav">
 			<router-link to="/" v-if="this.$route.path !== '/'" class="menu-item-home">
 				<font-awesome-icon icon="reply" class="back-icon" />
@@ -9,6 +10,17 @@
 		<router-view/>
 	</div>
 </template>
+
+<script>
+	import FileReader from '@/components/FileReader.vue';
+
+	export default {
+		name: "App",
+		components: {
+			FileReader
+		}
+	}
+</script>
 
 <style>
 	body {
@@ -21,10 +33,9 @@
 		font-family: Avenir, Helvetica, Arial, sans-serif;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
-		text-align: center;
 		color: #616569;
 		width: 95%;
-		margin: 0 auto;
+		margin: 30px auto;
 	}
 
 	#nav {
