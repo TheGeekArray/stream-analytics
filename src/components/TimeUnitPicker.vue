@@ -9,8 +9,8 @@
 <script>
 	export default {
 		data: () => ({ 
-			selected: "30 days",
-			timeUnits: ["30 days", "Day", "Week", "Month", "Year"]
+			selected: "Day",
+			timeUnits: ["Day", "Week", "Month", "Year"]
 		}),
 		methods: {
 			getValue(event) {

@@ -42,14 +42,9 @@ let setupListeners = function() {
 		});
 	});
 
-	ipcMain.on("dataRequested", function(event, timeUnit, topic) {
-		const translatedData = dataTranslator.getGroupedData(timeUnit, loadedData[topic]);
+	ipcMain.on("dataRequested", function(event, timeUnit, range, topic) {
+		const translatedData = dataTranslator.getGroupedData(timeUnit, range, loadedData[topic]);
 		event.reply("dataLoaded", translatedData);
-	});
-
-	ipcMain.on("rangeDataRequested", function(event, range, topic) {
-		const translatedData = dataTranslator.getRangedData(range, loadedData[topic]);
-		event.reply("rangedDataLoaded", translatedData);
 	});
 
 	ipcMain.on("startingDateSet", function(date) {

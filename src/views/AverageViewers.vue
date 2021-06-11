@@ -1,7 +1,7 @@
 <template>
 	<div class="home">
 		<div class="header">
-			<DatePicker @change="dateRange = $event; sendRangeDataRequestedEvent();" />
+			<DatePicker @change="dateRange = $event; sendDataRequestedEvent();" />
 			<EmptyDaysOption 
 				v-if="loaded"
 				v-bind:isChecked="hideEmptyDaysEnabled"
@@ -42,9 +42,12 @@
 			chartdata: {},
 			options: {},
 			barKey: 0,
-			timeUnit: "30 days",
+			timeUnit: "Day",
 			hideEmptyDaysEnabled: false,
-			dateRange: {}
+			dateRange: {
+				start: "",
+				end: ""
+			}
 		}),
 		created() {
 			this.setupListeners();
@@ -73,10 +76,7 @@
 				ipcRenderer.on("rangedDataLoaded", this.setInitialData);
 			},
 			sendDataRequestedEvent: function() {
-				ipcRenderer.send("dataRequested", this.timeUnit, "Organic Viewers");
-			},
-			sendRangeDataRequestedEvent: function() {
-				ipcRenderer.send("rangeDataRequested", this.dateRange, "Organic Viewers");
+				ipcRenderer.send("dataRequested", this.timeUnit, this.dateRange, "Organic Viewers");
 			},
 			setInitialData: function(event, data) {
 				this.initialData = data;
