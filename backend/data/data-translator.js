@@ -35,8 +35,6 @@ export default {
 			args.range.start = startDate.split("-");
 		}
 
-		console.log(args.range);
-
 		switch(timeUnit) {
 		case "Day":
 			return groupDataInDays(args);
