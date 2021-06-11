@@ -140,9 +140,7 @@
 							title: function(tooltipItems, data) {
 								return data.labels[tooltipItems[0].index];
 							},
-							footer: function(tooltipItems, data) {
-								if (data.datasets[0].label !== "Organic Viewers") return null;
-
+							footer: function(tooltipItems) {
 								let total = 0;
 								for (let i = 0; i < tooltipItems.length; i++) {
 									total += parseFloat(tooltipItems[i].yLabel);
