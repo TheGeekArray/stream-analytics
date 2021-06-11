@@ -1,5 +1,7 @@
 "use strict";
 
+import moment from 'moment';
+
 export default {
 	getGroupedData(timeUnit, data) {
 		switch(timeUnit) {
@@ -16,6 +18,74 @@ export default {
 		default:
 			return groupDataInThirtyDays(data);
 		}
+	},
+	getRangedData(range, data) {
+		let organicData = [];
+		let artificialData = [];
+		let labels = [];
+
+		let splittedStartDate = range.start.split("-");
+		let splittedEndDate = range.end.split("-");
+
+		let flags = {
+			start: {
+				year: false,
+				month: false,
+				day: false
+			},
+			end: {
+				year: false,
+				month: false,
+				day: false
+			}
+		}
+
+		for (let year in data) {
+			if (flags.end.day) break;
+			if (!flags.start.year && splittedStartDate[0] !== year) {
+				continue;
+			} else {
+				flags.start.year = true;
+			}
+
+			for (let month in data[year]) {
+				if (flags.end.day) break;
+
+				const formattedMonth = moment().month(month).format('MM');
+				if (!flags.start.month && splittedStartDate[1] !== formattedMonth) {
+					continue;
+				} else {
+					flags.start.month = true;
+				}
+	
+				for (let day in data[year][month]) {
+					if (flags.end.day) break;
+
+					const dayNumber = day.split(" ")[1];
+					if (!flags.start.day && splittedStartDate[2] !== dayNumber) {
+						continue;
+					} else {
+						flags.start.day = true;
+					}
+
+					organicData.push(data[year][month][day]["organic"]);
+					artificialData.push(data[year][month][day]["artificial"]);
+					labels.push(month + " " + day.split(" ")[1]);
+
+					if (splittedEndDate[0] === year && splittedEndDate[1] === formattedMonth && splittedEndDate[2] === dayNumber) {
+						flags.end.day = true;
+					}
+				}
+			}
+		}
+		
+		return {
+			data: {
+				organic: organicData,
+				artificial: artificialData
+			}, 
+			labels: labels 
+		};
 	}
 }
 
