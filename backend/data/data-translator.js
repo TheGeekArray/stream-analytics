@@ -2,6 +2,14 @@
 
 import moment from 'moment';
 
+/**
+ * @typedef FormattedData
+ * @property {Object} data
+ * @property {String[]} data.organic
+ * @property {String[]} data.artificial
+ * @property {String[]} labels
+ */
+
 export default {
 	getGroupedData(timeUnit, data) {
 		switch(timeUnit) {
@@ -20,9 +28,14 @@ export default {
 		}
 	},
 	getRangedData(range, data) {
-		let organicData = [];
-		let artificialData = [];
-		let labels = [];
+		/** @type {FormattedData} */
+		let rangedData = {
+			data: {
+				organic: [],
+				artificial: []
+			}, 
+			labels: []
+		}
 
 		let splittedStartDate = range.start.split("-");
 		let splittedEndDate = range.end.split("-");
@@ -33,15 +46,11 @@ export default {
 				month: false,
 				day: false
 			},
-			end: {
-				year: false,
-				month: false,
-				day: false
-			}
+			end: false
 		}
 
 		for (let year in data) {
-			if (flags.end.day) break;
+			if (flags.end) break;
 			if (!flags.start.year && splittedStartDate[0] !== year) {
 				continue;
 			} else {
@@ -49,7 +58,7 @@ export default {
 			}
 
 			for (let month in data[year]) {
-				if (flags.end.day) break;
+				if (flags.end) break;
 
 				const formattedMonth = moment().month(month).format('MM');
 				if (!flags.start.month && splittedStartDate[1] !== formattedMonth) {
@@ -59,7 +68,7 @@ export default {
 				}
 	
 				for (let day in data[year][month]) {
-					if (flags.end.day) break;
+					if (flags.end) break;
 
 					const dayNumber = day.split(" ")[1];
 					if (!flags.start.day && splittedStartDate[2] !== dayNumber) {
@@ -68,24 +77,18 @@ export default {
 						flags.start.day = true;
 					}
 
-					organicData.push(data[year][month][day]["organic"]);
-					artificialData.push(data[year][month][day]["artificial"]);
-					labels.push(month + " " + day.split(" ")[1]);
+					rangedData.data.organic.push(data[year][month][day]["organic"]);
+					rangedData.data.artificial.push(data[year][month][day]["artificial"]);
+					rangedData.labels.push(month + " " + day.split(" ")[1]);
 
 					if (splittedEndDate[0] === year && splittedEndDate[1] === formattedMonth && splittedEndDate[2] === dayNumber) {
-						flags.end.day = true;
+						flags.end = true;
 					}
 				}
 			}
 		}
 		
-		return {
-			data: {
-				organic: organicData,
-				artificial: artificialData
-			}, 
-			labels: labels 
-		};
+		return rangedData;
 	}
 }
 
