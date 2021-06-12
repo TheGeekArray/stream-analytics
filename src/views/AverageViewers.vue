@@ -1,7 +1,7 @@
 <template>
 	<div class="home">
 		<div class="header">
-			<DatePicker @change="dateRange = $event; sendDataRequestedEvent();" />
+			<DatePicker v-if="loaded" @change="dateRange = $event; sendDataRequestedEvent();" />
 			<EmptyDaysOption 
 				v-if="loaded"
 				v-bind:isChecked="hideEmptyDaysEnabled"
