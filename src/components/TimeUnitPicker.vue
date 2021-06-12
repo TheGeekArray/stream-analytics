@@ -1,8 +1,14 @@
 <template>
 	<div class="time-unit-dropdown">
-		<select id="time-unit-dropdown-select" name="time-units" @change="getValue" v-model="selected">
-			<option v-for="(unit, index) in timeUnits" :key="index" :value="unit">{{unit}}</option>
-		</select>
+		<div class="select" v-on:click="optionsVisible = !optionsVisible;" v-clickoutside="hideOptions">
+			<span>{{selected}}</span>
+			<font-awesome-icon v-if="!optionsVisible" icon="caret-down" class="caret-icon" />
+			<font-awesome-icon v-else icon="caret-up" class="caret-icon" />
+			<div class="select-options-container" v-show="optionsVisible">
+				<div v-for="(unit, index) in timeUnits" :key="index" v-on:click="selected = unit; $emit('change', unit)" :value="unit" class="select-option">{{unit}}</div>
+			</div>
+		</div>
+		
 	</div>
 </template>
 
@@ -10,12 +16,64 @@
 	export default {
 		data: () => ({ 
 			selected: "30 days",
-			timeUnits: ["30 days", "Day", "Week", "Month", "Year"]
+			timeUnits: ["30 days", "Day", "Week", "Month", "Year"],
+			optionsVisible: false
 		}),
 		methods: {
-			getValue(event) {
-				this.$emit("change", event.target.value);
+			hideOptions: function() {
+				this.optionsVisible = false;
 			}
 		}
 	}
 </script>
+
+<style scoped>
+	.caret-icon {
+		color: #fff;
+		margin-left: auto;
+	}
+
+	.select {
+		position: relative;
+		display: flex;
+		align-items: center;
+		user-select: none;
+		flex-wrap: wrap;
+		font-size: 15px;
+		width: 80px;
+		padding: 12px 20px;
+		background:  #3f3f3f;
+		border: none;
+		color: #FFF;
+		border-radius: 3px;
+		cursor: pointer;
+	}
+
+	.select span {
+		margin-left: auto;
+		margin-right: 10px;
+	}
+
+	.select .select-options-container {
+		width: 100%;
+		margin-top: 10px;
+		position: absolute;
+		background: #3f3f3f;
+		top: 40px;
+		left: 0;
+		border-radius: 3px;
+		box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.3);
+	}
+
+	.select .select-options-container .select-option {
+		padding: 10px;
+	}
+
+	.select-option:hover {
+		background: #2b2a2a;
+	}
+
+	.select:focus {
+		outline: 1px solid rgb(134, 134, 134);
+	}
+</style>

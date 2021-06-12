@@ -23,7 +23,7 @@
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
 		text-align: center;
-		color: #616569;
+		color: #8f959b;
 		width: 95%;
 		margin: 0 auto;
 	}
@@ -36,7 +36,7 @@
 
 	#nav a {
 		font-weight: bold;
-		color:#616569;
+		color:#8f959b;
 		text-decoration: none;
 	}
 
