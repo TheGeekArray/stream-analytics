@@ -47,7 +47,7 @@
 
 	#nav a {
 		font-weight: bold;
-		color:#616569;
+		color:#8f959b;
 		text-decoration: none;
 	}
 
