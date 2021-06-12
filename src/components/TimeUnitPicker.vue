@@ -1,6 +1,6 @@
 <template>
 	<div class="time-unit-dropdown">
-		<div class="select" v-on:click="optionsVisible = !optionsVisible;" v-clickoutside="hideOptions">
+		<div class="select" v-bind:class="{ active: optionsVisible }" v-on:click="optionsVisible = !optionsVisible;" v-clickoutside="hideOptions">
 			<span>{{selected}}</span>
 			<font-awesome-icon v-if="!optionsVisible" icon="caret-down" class="caret-icon" />
 			<font-awesome-icon v-else icon="caret-up" class="caret-icon" />
@@ -47,6 +47,11 @@
 		color: #FFF;
 		border-radius: 3px;
 		cursor: pointer;
+	}
+
+	.select:hover,
+	.active {
+		background: #2b2a2a;
 	}
 
 	.select span {
