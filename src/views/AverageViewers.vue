@@ -1,5 +1,5 @@
 <template>
-	<div class="home">
+	<div class="average-viewers">
 		<div class="header">
 			<DatePicker v-if="loaded" @change="dateRange = $event; sendDataRequestedEvent();" />
 			<EmptyDaysOption 
@@ -174,11 +174,6 @@
 </script>
 
 <style scoped>
-	.home {
-		width: 100%;
-		margin-top: 50px;
-	}
-
 	.header {
 		display: flex;
 		height: 60px;

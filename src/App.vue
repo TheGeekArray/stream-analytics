@@ -1,22 +1,25 @@
 <template>
 	<div id="app">
-		<FileReader class="file-reader-component"/>
-		<!-- <div id="nav">
-			<router-link to="/" v-if="this.$route.path !== '/'" class="menu-item-home">
+		<div id="nav">
+			<Navigation class="navigation" />
+			<FileReader class="file-reader-component"/>
+			<!-- <router-link to="/" v-if="this.$route.path !== '/'" class="menu-item-home">
 				<font-awesome-icon icon="reply" class="back-icon" />
 			</router-link>
-			<router-link to="/settings"><font-awesome-icon icon="cog" class="settings-icon" /></router-link>
-		</div> -->
-		<router-view/>
+			<router-link to="/settings"><font-awesome-icon icon="cog" class="settings-icon" /></router-link> -->
+		</div>
+		<router-view class="content"/>
 	</div>
 </template>
 
 <script>
+	import Navigation from '@/components/Navigation.vue';
 	import FileReader from '@/components/FileReader.vue';
 
 	export default {
 		name: "App",
 		components: {
+			Navigation,
 			FileReader
 		}
 	}
@@ -28,6 +31,7 @@
 		margin: 0;
 		padding: 0;
 		background-color: #242424;
+		overflow: hidden;
 	}
 
 	#app {
@@ -36,14 +40,23 @@
 		-moz-osx-font-smoothing: grayscale;
 		font-size: 14px;
 		color: #888e94;
+		width: 100%;
+		
+	}
+
+	.content {
 		width: 95%;
 		margin: 30px auto;
 	}
 
 	#nav {
+		height: 100px;
+		background: rgb(26, 26, 26);
 		display: flex;
-		justify-content: flex-end;
-		width: 100%;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0 30px;
 	}
 
 	#nav a {
