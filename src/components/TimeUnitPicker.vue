@@ -41,7 +41,7 @@
 		flex-wrap: wrap;
 		font-size: 15px;
 		width: 80px;
-		padding: 12px 20px;
+		padding: 10px 15px;
 		background:  #3f3f3f;
 		border: none;
 		color: #FFF;
@@ -63,6 +63,7 @@
 		left: 0;
 		border-radius: 3px;
 		box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.3);
+		text-align: center;
 	}
 
 	.select .select-options-container .select-option {
