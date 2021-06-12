@@ -30,18 +30,17 @@
 <style scoped>
 	.caret-icon {
 		color: #fff;
-		margin-left: auto;
 	}
 
 	.select {
 		position: relative;
 		display: flex;
 		align-items: center;
+		justify-content: center;
 		user-select: none;
 		flex-wrap: wrap;
-		font-size: 15px;
-		width: 80px;
-		padding: 10px 15px;
+		width: 70px;
+		padding: 10px 10px;
 		background:  #3f3f3f;
 		border: none;
 		color: #FFF;
@@ -49,14 +48,13 @@
 		cursor: pointer;
 	}
 
+	.select span {
+		margin-right: 10px;
+	}
+
 	.select:hover,
 	.active {
 		background: #2b2a2a;
-	}
-
-	.select span {
-		margin-left: auto;
-		margin-right: 10px;
 	}
 
 	.select .select-options-container {
@@ -67,7 +65,7 @@
 		top: 40px;
 		left: 0;
 		border-radius: 3px;
-		box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.3);
+		box-shadow: 0px 3px 10px 0px rgba(0, 0, 0, 0.3);
 		text-align: center;
 	}
 

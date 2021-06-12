@@ -34,7 +34,7 @@
 		font-family: Avenir, Helvetica, Arial, sans-serif;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
-		font-size: 15px;
+		font-size: 14px;
 		color: #888e94;
 		width: 95%;
 		margin: 30px auto;

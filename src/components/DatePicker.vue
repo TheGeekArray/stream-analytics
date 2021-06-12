@@ -26,7 +26,36 @@ export default {
 <style scoped>
 	.date-picker {
 		display: flex;
-		height: 25px;
+	}
+
+	input {
+		background: #3f3f3f;
+		border: none;
+		box-shadow: none;
+		color: #fff;
+		padding: 8px 10px;
+		font-family: Avenir, Helvetica, Arial, sans-serif;
+		border-radius: 3px;
+		text-align: center;
+		font-size: 14px;
+	}
+	input::-webkit-datetime-edit-month-field,
+	input::-webkit-datetime-edit-day-field,
+	input::-webkit-datetime-edit-year-field {
+		color: #fff;
+	}
+
+	input:hover {
+		background: #2b2a2a;
+	}
+
+	input:focus,
+	input:active {
+		outline: none;
+	}
+
+	input::-webkit-calendar-picker-indicator {
+		filter: invert(1);
 	}
 
 	#start-date {

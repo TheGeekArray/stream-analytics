@@ -2,7 +2,7 @@
 	<div class="hide-empty-days-option">
 		<div class="checkbox-container" v-on:click="checked = !checked; $emit('change', checked)">
 			<span class="checkbox"><span v-show="checked" class="checkbox-checked"></span></span>
-			<span class="checkbox-label">Hide non-stream {{unit}}</span>
+			<span class="checkbox-label">Hide {{unit}} not streamed</span>
 		</div>
 	</div>
 </template>
@@ -54,7 +54,7 @@ export default {
 	.checkbox {
 		width: 15px;
 		height: 15px;
-		background-color: #b8babb;
+		background-color: #e2e2e2;
 		margin-right: 10px;
 		position: relative;
 	}
