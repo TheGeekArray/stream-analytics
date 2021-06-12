@@ -1,6 +1,7 @@
 <template>
 	<label class="text-reader">
-		<input type="file" @change="loadTextFromFile">
+		Upload .csv file
+		<input type="file" accept=".csv" @change="loadTextFromFile" style="display: none">
 	</label>
 </template>
 
@@ -23,3 +24,22 @@
 		}
 	};
 </script>
+
+<style scoped>
+	.text-reader {
+		background:  #3f3f3f;
+		border-radius: 3px;
+		display: inline-block;
+		padding: 10px 15px;
+		cursor: pointer;
+		color: #fff;
+	}
+
+	.text-reader:hover {
+		background: #2b2a2a;
+	}
+
+	input {
+		display: none;
+	}
+</style>
