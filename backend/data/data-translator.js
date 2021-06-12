@@ -94,7 +94,7 @@ function groupDataInDays(args) {
 
 				groupedData.data.organic.push(data[year][month][day]["organic"]);
 				groupedData.data.artificial.push(data[year][month][day]["artificial"]);
-				groupedData.labels.push(month + " " + day.split(" ")[1]);
+				groupedData.labels.push(month + " " + day.split(" ")[1] + " " + year);
 
 				if (range.end[0] === year && range.end[1] === formattedMonth && range.end[2] === dayNumber) {
 					flags.end = true;

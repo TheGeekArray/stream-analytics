@@ -158,6 +158,10 @@
 					scales: {
 						xAxes: [{
 							stacked: true,
+							ticks: {
+								autoSkip: true,
+								autoSkipPadding: 5
+							}
 						}],
 						yAxes: [{
 							stacked: true
