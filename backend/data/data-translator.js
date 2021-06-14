@@ -12,92 +12,100 @@ import moment from 'moment';
 
 export default {
 	getGroupedData(timeUnit, range, data) {
-		const args = {
-			data: data,
-			range: {
-				start: range.start.split("-"),
-				end: range.end.split("-"),
-				flags: {
-					start: {
-						year: false,
-						month: false,
-						day: false
-					},
-					end: false
-				}
-			},
-		}
-
-		if (!range.start || !range.end) {
-			const today = moment().format("YYYY-MM-DD");
-			const startDate = moment(today).subtract("30", "days").format("YYYY-MM-DD");
-			args.range.end = today.split("-");
-			args.range.start = startDate.split("-");
-		}
+		let rangeDates = getRangeDates(range);
+		let rangeFlags = getRangeFlags();
 
 		switch(timeUnit) {
 		case "Day":
-			return groupDataInDays(args);
+			return getGroupedDataInDays(data, rangeDates, rangeFlags);
 		case "Week":
-			return groupDataInWeeks(args);
+			return getGroupedDataInWeeks(data, rangeDates, rangeFlags);
 		case "Month":
-			return groupDataInMonths(args);
+			return getGroupedDataInMonths(data, rangeDates, rangeFlags);
 		case "Year":
-			return groupDataInYears(args);
+			return getGroupedDataInYears(data, rangeDates, rangeFlags);
 		default:
-			return groupDataInDays(args);
+			return getGroupedDataInDays(data, rangeDates, rangeFlags);
 		}
-	},
+	}
 }
 
-function groupDataInDays(args) {
-	let data = args.data;
-	let range = args.range;
-	let flags = range.flags;
+function getRangeDates(range) {
+	if (!range.start || !range.end) {
+		const today = moment().format("YYYY-MM-DD");
+		const startDate = moment(today).subtract("30", "days").format("YYYY-MM-DD");
 
+		return {
+			start: startDate.split("-"),
+			end: today.split("-")
+		};
+	}
+
+	return {
+		start: range.start.split("-"),
+		end: range.end.split("-")
+	};
+}
+
+function getRangeFlags() {
+	return {
+		start: {
+			year: false,
+			month: false,
+			day: false
+		},
+		end: false
+	}
+}
+
+function getGroupedDataFormat() {
 	/** @type {FormattedData} */
-	let groupedData = {
+	return {
 		data: {
 			organic: [],
 			artificial: []
 		}, 
 		labels: []
 	}
+}
+
+function getGroupedDataInDays(data, rangeDates, rangeFlags) {
+	let groupedData = getGroupedDataFormat();
 
 	for (let year in data) {
-		if (flags.end) break;
-		if (!flags.start.year && range.start[0] !== year) {
+		if (rangeFlags.end) break;
+		if (!rangeFlags.start.year && rangeDates.start[0] !== year) {
 			continue;
 		} else {
-			flags.start.year = true;
+			rangeFlags.start.year = true;
 		}
 
 		for (let month in data[year]) {
-			if (flags.end) break;
+			if (rangeFlags.end) break;
 
 			const formattedMonth = moment().month(month).format('MM');
-			if (!flags.start.month && range.start[1] !== formattedMonth) {
+			if (!rangeFlags.start.month && rangeDates.start[1] !== formattedMonth) {
 				continue;
 			} else {
-				flags.start.month = true;
+				rangeFlags.start.month = true;
 			}
-	
+
 			for (let day in data[year][month]) {
-				if (flags.end) break;
+				if (rangeFlags.end) break;
 
 				const dayNumber = day.split(" ")[1];
-				if (!flags.start.day && range.start[2] !== dayNumber) {
+				if (!rangeFlags.start.day && rangeDates.start[2] !== dayNumber) {
 					continue;
 				} else {
-					flags.start.day = true;
+					rangeFlags.start.day = true;
 				}
 
 				groupedData.data.organic.push(data[year][month][day]["organic"]);
 				groupedData.data.artificial.push(data[year][month][day]["artificial"]);
 				groupedData.labels.push(month + " " + day.split(" ")[1] + " " + year);
 
-				if (range.end[0] === year && range.end[1] === formattedMonth && range.end[2] === dayNumber) {
-					flags.end = true;
+				if (rangeDates.end[0] === year && rangeDates.end[1] === formattedMonth && rangeDates.end[2] === dayNumber) {
+					rangeFlags.end = true;
 				}
 			}
 		}
@@ -106,50 +114,38 @@ function groupDataInDays(args) {
 	return groupedData;
 }
 
-function groupDataInWeeks(args) {
-	let data = args.data;
-	let range = args.range;
-	let flags = range.flags;
-
-	/** @type {FormattedData} */
-	let groupedData = {
-		data: {
-			organic: [],
-			artificial: []
-		}, 
-		labels: []
-	}
-
+function getGroupedDataInWeeks(data, rangeDates, rangeFlags) {
+	let groupedData = getGroupedDataFormat();
 	let organicWeekDataTotal = 0;
 	let artificialWeekDataTotal = 0;
 	let divisor = 0;
 
 	for (let year in data) {
-		if (flags.end) break;
-		if (!flags.start.year && range.start[0] !== year) {
+		if (rangeFlags.end) break;
+		if (!rangeFlags.start.year && rangeDates.start[0] !== year) {
 			continue;
 		} else {
-			flags.start.year = true;
+			rangeFlags.start.year = true;
 		}
 
 		for (let month in data[year]) {
-			if (flags.end) break;
+			if (rangeFlags.end) break;
 
 			const formattedMonth = moment().month(month).format('MM');
-			if (!flags.start.month && range.start[1] !== formattedMonth) {
+			if (!rangeFlags.start.month && rangeDates.start[1] !== formattedMonth) {
 				continue;
 			} else {
-				flags.start.month = true;
+				rangeFlags.start.month = true;
 			}
 
 			for (let day in data[year][month]) {
-				if (flags.end) break;
+				if (rangeFlags.end) break;
 
 				const dayNumber = day.split(" ")[1];
-				if (!flags.start.day && range.start[2] !== dayNumber) {
+				if (!rangeFlags.start.day && rangeDates.start[2] !== dayNumber) {
 					continue;
 				} else {
-					flags.start.day = true;
+					rangeFlags.start.day = true;
 				}
 
 				organicWeekDataTotal += data[year][month][day]["organic"];
@@ -176,8 +172,8 @@ function groupDataInWeeks(args) {
 					divisor = 0;
 				}
 
-				if (range.end[0] === year && range.end[1] === formattedMonth && range.end[2] === dayNumber) {
-					flags.end = true;
+				if (rangeDates.end[0] === year && rangeDates.end[1] === formattedMonth && rangeDates.end[2] === dayNumber) {
+					rangeFlags.end = true;
 				}
 			}
 		}
@@ -186,36 +182,25 @@ function groupDataInWeeks(args) {
 	return groupedData;
 }
 
-function groupDataInMonths(args) {
-	let data = args.data;
-	let range = args.range;
-	let flags = range.flags;
-
-	/** @type {FormattedData} */
-	let groupedData = {
-		data: {
-			organic: [],
-			artificial: []
-		}, 
-		labels: []
-	}
+function getGroupedDataInMonths(data, rangeDates, rangeFlags) {
+	let groupedData = getGroupedDataFormat();
 
 	for (let year in data) {
-		if (flags.end) break;
-		if (!flags.start.year && range.start[0] !== year) {
+		if (rangeFlags.end) break;
+		if (!rangeFlags.start.year && rangeDates.start[0] !== year) {
 			continue;
 		} else {
-			flags.start.year = true;
+			rangeFlags.start.year = true;
 		}
 
 		for (let month in data[year]) {
-			if (flags.end) break;
+			if (rangeFlags.end) break;
 
 			const formattedMonth = moment().month(month).format('MM');
-			if (!flags.start.month && range.start[1] !== formattedMonth) {
+			if (!rangeFlags.start.month && rangeDates.start[1] !== formattedMonth) {
 				continue;
 			} else {
-				flags.start.month = true;
+				rangeFlags.start.month = true;
 			}
 
 			let organicMonthDataTotal = 0;
@@ -223,13 +208,13 @@ function groupDataInMonths(args) {
 			let divisor = 0;
 
 			for (let day in data[year][month]) {
-				if (flags.end) break;
+				if (rangeFlags.end) break;
 
 				const dayNumber = day.split(" ")[1];
-				if (!flags.start.day && range.start[2] !== dayNumber) {
+				if (!rangeFlags.start.day && rangeDates.start[2] !== dayNumber) {
 					continue;
 				} else {
-					flags.start.day = true;
+					rangeFlags.start.day = true;
 				}
 
 				if (data[year][month][day]["organic"] === parseFloat(0)) continue;
@@ -237,8 +222,8 @@ function groupDataInMonths(args) {
 				artificialMonthdataTotal += data[year][month][day]["artificial"];
 				divisor++;
 
-				if (range.end[0] === year && range.end[1] === formattedMonth && range.end[2] === dayNumber) {
-					flags.end = true;
+				if (rangeDates.end[0] === year && rangeDates.end[1] === formattedMonth && rangeDates.end[2] === dayNumber) {
+					rangeFlags.end = true;
 				}
 			}
 
@@ -248,29 +233,19 @@ function groupDataInMonths(args) {
 		}
 	}
 
+
 	return groupedData;
 }
 
-function groupDataInYears(args) {
-	let data = args.data;
-	let range = args.range;
-	let flags = range.flags;
-
-	/** @type {FormattedData} */
-	let groupedData = {
-		data: {
-			organic: [],
-			artificial: []
-		}, 
-		labels: []
-	}
+function getGroupedDataInYears(data, rangeDates, rangeFlags) {
+	let groupedData = getGroupedDataFormat();
 
 	for (let year in data) {
-		if (flags.end) break;
-		if (!flags.start.year && range.start[0] !== year) {
+		if (rangeFlags.end) break;
+		if (!rangeFlags.start.year && rangeDates.start[0] !== year) {
 			continue;
 		} else {
-			flags.start.year = true;
+			rangeFlags.start.year = true;
 		}
 
 		let organicYearDataTotal = 0;
@@ -278,23 +253,23 @@ function groupDataInYears(args) {
 		let divisor = 0;
 
 		for (let month in data[year]) {
-			if (flags.end) break;
+			if (rangeFlags.end) break;
 
 			const formattedMonth = moment().month(month).format('MM');
-			if (!flags.start.month && range.start[1] !== formattedMonth) {
+			if (!rangeFlags.start.month && rangeDates.start[1] !== formattedMonth) {
 				continue;
 			} else {
-				flags.start.month = true;
+				rangeFlags.start.month = true;
 			}
 
 			for (let day in data[year][month]) {
-				if (flags.end) break;
+				if (rangeFlags.end) break;
 
 				const dayNumber = day.split(" ")[1];
-				if (!flags.start.day && range.start[2] !== dayNumber) {
+				if (!rangeFlags.start.day && rangeDates.start[2] !== dayNumber) {
 					continue;
 				} else {
-					flags.start.day = true;
+					rangeFlags.start.day = true;
 				}
 
 				if (data[year][month][day]["organic"] === parseFloat(0)) continue;
@@ -302,8 +277,8 @@ function groupDataInYears(args) {
 				artificialYearDataTotal += data[year][month][day]["artificial"];
 				divisor++;
 
-				if (range.end[0] === year && range.end[1] === formattedMonth && range.end[2] === dayNumber) {
-					flags.end = true;
+				if (rangeDates.end[0] === year && rangeDates.end[1] === formattedMonth && rangeDates.end[2] === dayNumber) {
+					rangeFlags.end = true;
 				}
 			}
 		}
