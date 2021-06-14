@@ -112,8 +112,9 @@ function splitAverageViewersData(averageViewersData, hostsAndRaidsData) {
 				}
 
 				const percentage = (100 - hostsAndRaids) / 100;
+				const organicAverage = averageViewers * percentage;
 		
-				organicViewersData[year][month][day]["organic"] = averageViewers * percentage;
+				organicViewersData[year][month][day]["organic"] = organicAverage;
 				organicViewersData[year][month][day]["artificial"] = averageViewers - organicAverage;
 			}
 		}
