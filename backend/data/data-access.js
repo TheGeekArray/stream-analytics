@@ -3,8 +3,8 @@
 import { ipcMain } from 'electron';
 import fs from 'fs-extra';
 import filePaths from './file-paths';
+import dataMapper from './data-mapper';
 import dataProcesser from './data-processer';
-import dataTranslator from './data-translator';
 import logger from '../utils/logger';
 
 let loadedData = {};
@@ -33,7 +33,7 @@ let setupListeners = function() {
 	ipcMain.on("fileUploaded", async function(event, data) {
 		logger.info(`Processing uploaded file...`);
 		
-		dataProcesser.processData(data).then(processedData => {
+		dataMapper.mapData(data).then(processedData => {
 			for (let topic in processedData) {
 				writeToFile(topic, processedData[topic]).then(() => {
 					event.reply("dataProcessed");
@@ -43,7 +43,7 @@ let setupListeners = function() {
 	});
 
 	ipcMain.on("dataRequested", function(event, timeUnit, range, topic) {
-		const translatedData = dataTranslator.getGroupedData(timeUnit, range, loadedData[topic]);
+		const translatedData = dataProcesser.getGroupedData(timeUnit, range, loadedData[topic]);
 		event.reply("dataLoaded", translatedData);
 	});
 

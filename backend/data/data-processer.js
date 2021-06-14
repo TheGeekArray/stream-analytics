@@ -1,153 +1,292 @@
 "use strict";
 
-import logger from '../utils/logger';
-import { getData } from './data-access';
+import moment from 'moment';
+
+/**
+ * @typedef FormattedData
+ * @property {Object} data
+ * @property {String[]} data.organic
+ * @property {String[]} data.artificial
+ * @property {String[]} labels
+ */
 
 export default {
-	async processData(data) {
-		const splittedData = splitData(data);
-		const topics = splittedData.shift();
-		const dates = getDates(splittedData);
-		let processedData = {};
+	getGroupedData(timeUnit, range, data) {
+		let rangeDates = getRangeDates(range);
+		let rangeFlags = getRangeFlags();
 
-		let count = 0;
-		for (let topic of topics) {
-			switch (topic) {
-			case "Average Viewers":
-				processedData["Average Viewers"] = mapData(topic, dates, count, splittedData);
-			case "Hosts and Raids Viewers (%)":
-				let newTopic = "Hosts & Raids";
-				processedData[newTopic] = mapData(newTopic, dates, count, splittedData);
-			}
-
-			count++;
+		switch(timeUnit) {
+		case "Day":
+			return getGroupedDataInDays(data, rangeDates, rangeFlags);
+		case "Week":
+			return getGroupedDataInWeeks(data, rangeDates, rangeFlags);
+		case "Month":
+			return getGroupedDataInMonths(data, rangeDates, rangeFlags);
+		case "Year":
+			return getGroupedDataInYears(data, rangeDates, rangeFlags);
+		default:
+			return getGroupedDataInDays(data, rangeDates, rangeFlags);
 		}
-
-		const averageViewersData = processedData["Average Viewers"];
-		const hostsAndRaidsData = processedData["Hosts & Raids"];
-		const organicViewersData = splitAverageViewersData(averageViewersData, hostsAndRaidsData);
-
-		processedData["Organic Viewers"] = organicViewersData;
-
-		return processedData;
 	}
 }
 
-function mapData(topic, dates, topicCount, data) {
-	let topicData = getData(topic);
+function getRangeDates(range) {
+	if (!range.start || !range.end) {
+		const today = moment().format("YYYY-MM-DD");
+		const startDate = moment(today).subtract("30", "days").format("YYYY-MM-DD");
 
-	if (topicData == null) {
-		logger.debug("No data for mapData");
-		topicData = {};
+		return {
+			start: startDate.split("-"),
+			end: today.split("-")
+		};
 	}
 
-	let count = 0;
-	for (let line of data) {
-		let date = getSplittedDate(dates[count]);
-
-		if (!topicData.hasOwnProperty(date.year)) {
-			topicData[date.year] = {};
-		}
-		if (!topicData[date.year].hasOwnProperty(date.month)) {
-			topicData[date.year][date.month] = {};
-		}
-
-		topicData[date.year][date.month][date.dayName + " " + date.dayDate] = parseFloat(line[topicCount]);
-
-		count++;
-	}
-
-	return topicData;
-}
-
-function getDates(data) {
-	const dates = [];
-
-	for (let row of data) {
-		dates.push(row[0]);
-	}
-
-	return dates;
-}
-
-function getSplittedDate(date) {
-	let splittedDate = {
-		year: "",
-		dayDate: "",
-		month: "",
-		dayName: ""
+	return {
+		start: range.start.split("-"),
+		end: range.end.split("-")
 	};
-
-	let dateArray = date.split(" ");
-
-	let count = 3;
-	for (let timeUnit in splittedDate) {
-		splittedDate[timeUnit] = dateArray[count];
-		count--;
-	}
-
-	return splittedDate;
 }
 
-function splitData(data) {
-	const dataToSplit = data.split("\n");
-	const splittedData = [];
-
-	for (let line of dataToSplit) {
-		let splittedLine = line.split(",");
-		splittedData.push(splittedLine);
+function getRangeFlags() {
+	return {
+		start: {
+			year: false,
+			month: false,
+			day: false
+		},
+		end: false
 	}
-
-	return splittedData;
 }
 
-function splitAverageViewersData(averageViewersData, hostsAndRaidsData) {
-	let organicViewersData = getData("Organic Viewers");
-
-	if (organicViewersData == null) {
-		logger.debug("No data for splitAverageViewersData");
-		organicViewersData = {};
+function getGroupedDataFormat() {
+	/** @type {FormattedData} */
+	return {
+		data: {
+			organic: [],
+			artificial: []
+		}, 
+		labels: []
 	}
+}
 
-	for (let year in averageViewersData) {
-		if (!organicViewersData.hasOwnProperty(year)) {
-			organicViewersData[year] = {};
+function getGroupedDataInDays(data, rangeDates, rangeFlags) {
+	let groupedData = getGroupedDataFormat();
+
+	for (let year in data) {
+		if (rangeFlags.end) break;
+		if (!rangeFlags.start.year && rangeDates.start[0] !== year) {
+			continue;
+		} else {
+			rangeFlags.start.year = true;
 		}
 
-		for (let month in averageViewersData[year]) {
-			if (!organicViewersData.hasOwnProperty(month)) {
-				organicViewersData[year][month] = {};
+		for (let month in data[year]) {
+			if (rangeFlags.end) break;
+
+			const formattedMonth = moment().month(month).format('MM');
+			if (!rangeFlags.start.month && rangeDates.start[1] !== formattedMonth) {
+				continue;
+			} else {
+				rangeFlags.start.month = true;
 			}
 
-			for (let day in averageViewersData[year][month]) {
-				if (!organicViewersData.hasOwnProperty(day)) {
-					organicViewersData[year][month][day] = {};
-				}
+			for (let day in data[year][month]) {
+				if (rangeFlags.end) break;
 
-				let averageViewers = parseFloat(averageViewersData[year][month][day]);
-				let hostsAndRaids = parseFloat(hostsAndRaidsData[year][month][day]);
-
-				if (averageViewers === parseFloat(0)) {
-					organicViewersData[year][month][day]["organic"] = 0;
-					organicViewersData[year][month][day]["artificial"] = 0;
+				const dayNumber = day.split(" ")[1];
+				if (!rangeFlags.start.day && rangeDates.start[2] !== dayNumber) {
 					continue;
+				} else {
+					rangeFlags.start.day = true;
 				}
 
-				if (hostsAndRaids === parseFloat(0)) {
-					organicViewersData[year][month][day]["organic"] = averageViewers;
-					organicViewersData[year][month][day]["artificial"] = 0;
-					continue;
-				}
+				groupedData.data.organic.push(data[year][month][day]["organic"]);
+				groupedData.data.artificial.push(data[year][month][day]["artificial"]);
+				groupedData.labels.push(month + " " + day.split(" ")[1] + " " + year);
 
-				let percentage = (100 - hostsAndRaids) / 100;
-				let organicAverage = averageViewers * percentage;
-				let artificialAverage = averageViewers - organicAverage;
-		
-				organicViewersData[year][month][day]["organic"] = organicAverage;
-				organicViewersData[year][month][day]["artificial"] = artificialAverage;
+				if (rangeDates.end[0] === year && rangeDates.end[1] === formattedMonth && rangeDates.end[2] === dayNumber) {
+					rangeFlags.end = true;
+				}
 			}
 		}
 	}
+	
+	return groupedData;
+}
 
-	return organicViewersData;
+function getGroupedDataInWeeks(data, rangeDates, rangeFlags) {
+	let groupedData = getGroupedDataFormat();
+	let organicWeekDataTotal = 0;
+	let artificialWeekDataTotal = 0;
+	let divisor = 0;
+
+	for (let year in data) {
+		if (rangeFlags.end) break;
+		if (!rangeFlags.start.year && rangeDates.start[0] !== year) {
+			continue;
+		} else {
+			rangeFlags.start.year = true;
+		}
+
+		for (let month in data[year]) {
+			if (rangeFlags.end) break;
+
+			const formattedMonth = moment().month(month).format('MM');
+			if (!rangeFlags.start.month && rangeDates.start[1] !== formattedMonth) {
+				continue;
+			} else {
+				rangeFlags.start.month = true;
+			}
+
+			for (let day in data[year][month]) {
+				if (rangeFlags.end) break;
+
+				const dayNumber = day.split(" ")[1];
+				if (!rangeFlags.start.day && rangeDates.start[2] !== dayNumber) {
+					continue;
+				} else {
+					rangeFlags.start.day = true;
+				}
+
+				organicWeekDataTotal += data[year][month][day]["organic"];
+				artificialWeekDataTotal += data[year][month][day]["artificial"];
+
+				if (data[year][month][day]["organic"] > parseFloat(0)) {
+					divisor++;
+				}
+
+				let dayName = day.split(" ")[0];
+				if (dayName === "Sat") {
+					
+					if (organicWeekDataTotal === parseFloat(0)) {
+						groupedData.data.organic.push(0);
+						groupedData.data.artificial.push(0);
+					} else {
+						groupedData.data.organic.push(organicWeekDataTotal / divisor);
+						groupedData.data.artificial.push(artificialWeekDataTotal / divisor);
+					}
+					
+					groupedData.labels.push(month + " " + day.split(" ")[1]);
+					organicWeekDataTotal = 0;
+					artificialWeekDataTotal = 0;
+					divisor = 0;
+				}
+
+				if (rangeDates.end[0] === year && rangeDates.end[1] === formattedMonth && rangeDates.end[2] === dayNumber) {
+					rangeFlags.end = true;
+				}
+			}
+		}
+	}
+
+	return groupedData;
+}
+
+function getGroupedDataInMonths(data, rangeDates, rangeFlags) {
+	let groupedData = getGroupedDataFormat();
+
+	for (let year in data) {
+		if (rangeFlags.end) break;
+		if (!rangeFlags.start.year && rangeDates.start[0] !== year) {
+			continue;
+		} else {
+			rangeFlags.start.year = true;
+		}
+
+		for (let month in data[year]) {
+			if (rangeFlags.end) break;
+
+			const formattedMonth = moment().month(month).format('MM');
+			if (!rangeFlags.start.month && rangeDates.start[1] !== formattedMonth) {
+				continue;
+			} else {
+				rangeFlags.start.month = true;
+			}
+
+			let organicMonthDataTotal = 0;
+			let artificialMonthdataTotal = 0;
+			let divisor = 0;
+
+			for (let day in data[year][month]) {
+				if (rangeFlags.end) break;
+
+				const dayNumber = day.split(" ")[1];
+				if (!rangeFlags.start.day && rangeDates.start[2] !== dayNumber) {
+					continue;
+				} else {
+					rangeFlags.start.day = true;
+				}
+
+				if (data[year][month][day]["organic"] === parseFloat(0)) continue;
+				organicMonthDataTotal += data[year][month][day]["organic"];
+				artificialMonthdataTotal += data[year][month][day]["artificial"];
+				divisor++;
+
+				if (rangeDates.end[0] === year && rangeDates.end[1] === formattedMonth && rangeDates.end[2] === dayNumber) {
+					rangeFlags.end = true;
+				}
+			}
+
+			groupedData.data.organic.push(organicMonthDataTotal / divisor);
+			groupedData.data.artificial.push(artificialMonthdataTotal / divisor);
+			groupedData.labels.push(month + " " + year);
+		}
+	}
+
+
+	return groupedData;
+}
+
+function getGroupedDataInYears(data, rangeDates, rangeFlags) {
+	let groupedData = getGroupedDataFormat();
+
+	for (let year in data) {
+		if (rangeFlags.end) break;
+		if (!rangeFlags.start.year && rangeDates.start[0] !== year) {
+			continue;
+		} else {
+			rangeFlags.start.year = true;
+		}
+
+		let organicYearDataTotal = 0;
+		let artificialYearDataTotal = 0;
+		let divisor = 0;
+
+		for (let month in data[year]) {
+			if (rangeFlags.end) break;
+
+			const formattedMonth = moment().month(month).format('MM');
+			if (!rangeFlags.start.month && rangeDates.start[1] !== formattedMonth) {
+				continue;
+			} else {
+				rangeFlags.start.month = true;
+			}
+
+			for (let day in data[year][month]) {
+				if (rangeFlags.end) break;
+
+				const dayNumber = day.split(" ")[1];
+				if (!rangeFlags.start.day && rangeDates.start[2] !== dayNumber) {
+					continue;
+				} else {
+					rangeFlags.start.day = true;
+				}
+
+				if (data[year][month][day]["organic"] === parseFloat(0)) continue;
+				organicYearDataTotal += data[year][month][day]["organic"];
+				artificialYearDataTotal += data[year][month][day]["artificial"];
+				divisor++;
+
+				if (rangeDates.end[0] === year && rangeDates.end[1] === formattedMonth && rangeDates.end[2] === dayNumber) {
+					rangeFlags.end = true;
+				}
+			}
+		}
+
+		groupedData.data.organic.push(organicYearDataTotal / divisor);
+		groupedData.data.artificial.push(artificialYearDataTotal / divisor);
+		groupedData.labels.push(year);
+	}
+
+	return groupedData;
 }
