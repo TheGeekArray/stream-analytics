@@ -15,6 +15,9 @@ export default {
 		"Settings": path.join(userDataPath, '/settings.json'),
 		"Average Viewers": path.join(streamDataPath, '/average-viewers.json'),
 		"Organic Viewers": path.join(streamDataPath, '/organic-average-viewers.json'),
-		"Hosts & Raids": path.join(streamDataPath, '/hosts-and-raids.json')
+		"Hosts & Raids": path.join(streamDataPath, '/hosts-and-raids.json'),
+		"Minutes Watched": path.join(streamDataPath, '/minutes-watched.json'),
+		"Unique Viewers": path.join(streamDataPath, '/unique-viewers.json'),
+		"Minutes Per Viewer": path.join(streamDataPath, '/minutes-per-viewer.json')
 	}
 }

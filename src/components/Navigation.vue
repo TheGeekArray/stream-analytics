@@ -3,7 +3,8 @@
 		<font-awesome-icon class="menu-icon" icon="bars" v-on:click="collapsed = false"/>
 		<div class="navigation-window" v-show="!collapsed" v-bind:class="{ hidden: collapsed }">
 			<font-awesome-icon icon="reply" class="return-button" v-on:click="collapsed = true"/>
-			<router-link to="/" class="organic-viewers-link"><span v-on:click="collapsed = true">Organic vs. Artifical viewers</span></router-link>
+			<router-link to="/" class="navigation-item"><span v-on:click="collapsed = true">Organic vs. Artifical viewers</span></router-link>
+			<router-link to="/minutes-per-viewer" class="navigation-item"><span v-on:click="collapsed = true">Minutes Watched Per Unique Viewer</span></router-link>
 		</div>
 	</div>
 </template>
@@ -74,17 +75,17 @@ export default {
 		color: #505050;
 	}
 
-	.organic-viewers-link {
+	.navigation-item {
 		font-size: 16px;
 		margin-top: 50px;
 		align-self: center;
 	}
 
-	.organic-viewers-link span {
+	.navigation-item span {
 		color: #888e94;
 	}
 
-	.organic-viewers-link span:hover {
+	.navigation-item span:hover {
 		color: #505050;
 	}
 </style>

@@ -4,7 +4,8 @@ import { ipcMain } from 'electron';
 import fs from 'fs-extra';
 import filePaths from './file-paths';
 import dataMapper from './data-mapper';
-import dataProcesser from './data-processer';
+import organicViewersProcesser from './data-processers/organic-viewers-processer';
+import minutesPerViewerProcesser from './data-processers/minutes-per-viewer-processer';
 import logger from '../utils/logger';
 
 let loadedData = {};
@@ -33,9 +34,9 @@ let setupListeners = function() {
 	ipcMain.on("fileUploaded", async function(event, data) {
 		logger.info(`Processing uploaded file...`);
 		
-		dataMapper.mapData(data).then(processedData => {
-			for (let topic in processedData) {
-				writeToFile(topic, processedData[topic]).then(() => {
+		dataMapper.mapData(data).then(mappedData => {
+			for (let topic in mappedData) {
+				writeToFile(topic, mappedData[topic]).then(() => {
 					event.reply("dataProcessed");
 				});
 			}
@@ -43,8 +44,20 @@ let setupListeners = function() {
 	});
 
 	ipcMain.on("dataRequested", function(event, timeUnit, range, topic) {
-		const translatedData = dataProcesser.getGroupedData(timeUnit, range, loadedData[topic]);
-		event.reply("dataLoaded", translatedData);
+		let processedData = {};
+
+		switch (topic) {
+		case "Organic Viewers":
+			processedData = organicViewersProcesser.getGroupedData(timeUnit, range, loadedData[topic]);
+			break;
+		case "Minutes Per Viewer":
+			processedData = minutesPerViewerProcesser.getGroupedData(timeUnit, range, loadedData[topic]);
+			break;
+		default:
+			return;
+		}
+
+		event.reply("dataLoaded", processedData);
 	});
 
 	ipcMain.on("startingDateSet", function(date) {

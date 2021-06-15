@@ -7,7 +7,7 @@ export default {
 	async mapData(data) {
 		const splittedData = splitData(data);
 		const topics = splittedData.shift();
-		const dates = data.map(row => row[0]);
+		const dates = splittedData.map(row => row[0]);
 		const mappedData = {};
 
 		let count = 0;
@@ -16,13 +16,18 @@ export default {
 			case "Average Viewers":
 				mappedData["Average Viewers"] = mapDataForTopic(topic, dates, count, splittedData);
 			case "Hosts and Raids Viewers (%)":
-				mappedData["Hosts & Raids"] = mapDataForTopic(newTopic, dates, count, splittedData);
+				mappedData["Hosts & Raids"] = mapDataForTopic("Hosts & Raids", dates, count, splittedData);
+			case "Minutes Watched":
+				mappedData["Minutes Watched"] = mapDataForTopic(topic, dates, count, splittedData);
+			case "Unique Viewers":
+				mappedData["Unique Viewers"] = mapDataForTopic(topic, dates, count, splittedData);
 			}
 
 			count++;
 		}
 
-		mappedData["Organic Viewers"] = splitAverageViewersData(mappedData["Average Viewers"], mappedData["Hosts & Raids"]);
+		mappedData["Organic Viewers"] = mapOrganicViewersData(mappedData["Average Viewers"], mappedData["Hosts & Raids"]);
+		mappedData["Minutes Per Viewer"] = mapMinutesPerViewerData(mappedData["Minutes Watched"], mappedData["Unique Viewers"]);
 
 		return mappedData;
 	}
@@ -57,14 +62,15 @@ function mapDataForTopic(topic, dates, topicCount, data) {
 
 function getSplittedDate(date) {
 	const dateArray = date.split(" ");
-	const splittedDate = {
-		year: "",
-		dayDate: "",
-		month: "",
-		dayName: ""
-	};
+	const timeUnits = ["dayName", "month", "dayDate", "year"];
 
-	return Object.keys(splittedData).map((timeUnit, index) => splittedDate[timeUnit] = dateArray[index]);
+	const splittedDate = timeUnits.reduce(
+		(date, currentValue, index) => {
+			date[currentValue] = dateArray[index];
+			return date;
+		}, {});
+
+	return splittedDate;
 }
 
 function splitData(data) {
@@ -73,11 +79,11 @@ function splitData(data) {
 	return dataToSplit.map(line => line.split(","));
 }
 
-function splitAverageViewersData(averageViewersData, hostsAndRaidsData) {
+function mapOrganicViewersData(averageViewersData, hostsAndRaidsData) {
 	let organicViewersData = getData("Organic Viewers");
 
 	if (organicViewersData == null) {
-		logger.debug("No data for splitAverageViewersData");
+		logger.debug("No data for mapOrganicViewersData");
 		organicViewersData = {};
 	}
 
@@ -121,4 +127,43 @@ function splitAverageViewersData(averageViewersData, hostsAndRaidsData) {
 	}
 
 	return organicViewersData;
+}
+
+function mapMinutesPerViewerData(minutesWatchedData, uniqueViewersData) {
+	let minutesPerViewerData = getData("Minutes Per Viewer");
+
+	if (minutesPerViewerData == null) {
+		logger.debug("No data for mapMinutesPerViewerData");
+		minutesPerViewerData = {};
+	}
+
+	for (const year in uniqueViewersData) {
+		if (!minutesPerViewerData.hasOwnProperty(year)) {
+			minutesPerViewerData[year] = {};
+		}
+
+		for (const month in uniqueViewersData[year]) {
+			if (!minutesPerViewerData.hasOwnProperty(month)) {
+				minutesPerViewerData[year][month] = {};
+			}
+
+			for (const day in uniqueViewersData[year][month]) {
+				if (!minutesPerViewerData.hasOwnProperty(day)) {
+					minutesPerViewerData[year][month][day] = 0;
+				}
+
+				const uniqueViewers = parseFloat(uniqueViewersData[year][month][day]);
+				const minutesWatched = parseFloat(minutesWatchedData[year][month][day]);
+
+				if (uniqueViewers === parseFloat(0) || minutesWatched === parseFloat(0)) {
+					minutesPerViewerData[year][month][day] = 0;
+					continue;
+				}
+		
+				minutesPerViewerData[year][month][day] = minutesWatched / uniqueViewers;
+			}
+		}
+	}
+
+	return minutesPerViewerData;
 }
