@@ -3,8 +3,10 @@
 		<font-awesome-icon class="menu-icon" icon="bars" v-on:click="collapsed = false"/>
 		<div class="navigation-window" v-show="!collapsed" v-bind:class="{ hidden: collapsed }">
 			<font-awesome-icon icon="reply" class="return-button" v-on:click="collapsed = true"/>
-			<router-link to="/" class="navigation-item"><span v-on:click="collapsed = true">Organic vs. Artifical viewers</span></router-link>
-			<router-link to="/minutes-per-viewer" class="navigation-item"><span v-on:click="collapsed = true">Minutes Watched Per Unique Viewer</span></router-link>
+			<div class="navigation-items-container">
+				<router-link to="/" class="navigation-item"><span v-on:click="collapsed = true">Organic vs. Artificial Viewers</span></router-link>
+				<router-link to="/minutes-per-viewer" class="navigation-item"><span v-on:click="collapsed = true">Minutes Watched Per Unique Viewer</span></router-link>
+			</div>
 		</div>
 	</div>
 </template>
@@ -35,9 +37,9 @@ export default {
 		background: #242424;
 		box-shadow: 5px 10px 10px 10px rgb(0, 0, 0, 0.1);
 		z-index: 9999;
+		animation: slideIn 0.1s;
 		display: flex;
 		flex-direction: column;
-		animation: slideIn 0.1s;
 	}
 
 	.navigation-window .hidden {
@@ -55,16 +57,22 @@ export default {
 		to { width: 0; }
 	}
 
+	#menu-icon {
+		height: 25px;
+		width: 25px;
+	}
+
 	.menu-icon {
 		cursor: pointer;
+		color: #885cca;
 	}
 
 	.menu-icon:hover {
-		color: #505050;
+		color: #542897;
 	}
 
 	.return-button {
-		color: #888e94;
+		color: #885cca;
 		margin-top: 20px;
 		margin-right: 20px;
 		align-self: flex-end;
@@ -72,20 +80,30 @@ export default {
 	}
 
 	.return-button:hover {
-		color: #505050;
+		color: #542897;
+	}
+
+	.navigation-items-container {
+		display: flex;
+		flex-direction: column;
+		margin-top: 50px;
+		width: 100%;
 	}
 
 	.navigation-item {
-		font-size: 16px;
-		margin-top: 50px;
-		align-self: center;
+		font-size: 15px;
+		align-self: flex-start;
+		font-weight: normal;
 	}
 
 	.navigation-item span {
 		color: #888e94;
+		padding: 20px;
+		width: 260px;
+		display: block;
 	}
 
 	.navigation-item span:hover {
-		color: #505050;
+		background: rgb(26, 26, 26);
 	}
 </style>

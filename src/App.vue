@@ -60,7 +60,6 @@
 	}
 
 	#nav a {
-		font-weight: bold;
 		color:#8f959b;
 		text-decoration: none;
 	}
