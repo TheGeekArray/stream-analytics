@@ -2,7 +2,7 @@ import Vue from 'vue';
 import App from './App.vue';
 import router from './router';
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faCog, faReply, faCaretDown, faCaretUp, faBars } from '@fortawesome/free-solid-svg-icons';
+import { faCog, faReply, faCaretDown, faCaretUp, faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 
@@ -11,6 +11,7 @@ library.add(faReply);
 library.add(faCaretDown);
 library.add(faCaretUp);
 library.add(faBars);
+library.add(faTimes);
 
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 

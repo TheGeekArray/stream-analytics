@@ -2,7 +2,7 @@
 	<div class="navigation">
 		<font-awesome-icon class="menu-icon" icon="bars" v-on:click="collapsed = false"/>
 		<div class="navigation-window" v-show="!collapsed" v-bind:class="{ hidden: collapsed }">
-			<font-awesome-icon icon="reply" class="return-button" v-on:click="collapsed = true"/>
+			<font-awesome-icon icon="times" class="return-button" v-on:click="collapsed = true"/>
 			<div class="navigation-items-container">
 				<router-link to="/" class="navigation-item"><span v-on:click="collapsed = true">Organic vs. Artificial Viewers</span></router-link>
 				<router-link to="/minutes-per-viewer" class="navigation-item"><span v-on:click="collapsed = true">Minutes Watched Per Unique Viewer</span></router-link>
