@@ -17,6 +17,10 @@
 		</div>
 		<div class="bar-container">
 			<Bar v-if="loaded" v-bind:data="chartdata" v-bind:options="options" :key="barKey"/>
+			<div class="organic-range-average">
+				<span class="range-average-label">Total Organic Average</span>
+				<span class="range-average">{{rangeTotal}}</span>
+			</div>
 		</div>
 	</div>
 </template>
@@ -47,7 +51,8 @@
 			dateRange: {
 				start: "",
 				end: ""
-			}
+			},
+			rangeTotal: ""
 		}),
 		created() {
 			this.setupListeners();
@@ -86,6 +91,8 @@
 					this.hideEmptyDays();
 				}
 
+				this.rangeTotal = this.getRangeTotal().toFixed(2);
+
 				this.chartdata = this.getChartData(this.initialData);
 				this.barKey++;
 			},
@@ -102,6 +109,12 @@
 						++index;
 					}
 				}
+			},
+			getRangeTotal: function() {
+				const organicData = this.initialData.data["organic"];
+				const total = organicData.reduce((previousValue, currentValue) => previousValue + currentValue);
+
+				return total / organicData.filter(value => value !== 0).length;
 			},
 			getChartData: function(organicViewersData) {
 				return {
@@ -187,5 +200,36 @@
 	.time-unit-picker-component {
 		justify-self: flex-end;
 		margin-left: 20px;
+	}
+
+	.bar-container {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.organic-range-average {
+		text-align: center;
+		background: #18181b;
+		width: 140px;
+		height: 60px;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		padding: 10px;
+		align-self: flex-end;
+		margin-top: -25px;
+		border-radius: 3px;
+	}
+
+	.range-average-label {
+		flex-basis: 100%;
+		font-size: 13px;
+	}
+
+	.range-average {
+		font-weight: 700;
+		font-size: 22px;
+		color: #772ce8;
+		flex-basis: 100%;
 	}
 </style>
