@@ -15,8 +15,8 @@
 				class="time-unit-picker-component"
 			/>
 		</div>
-		<div class="bar-container">
-			<Bar v-if="loaded" v-bind:data="chartdata" v-bind:options="options" :key="barKey"/>
+		<div class="bar-container" v-if="loaded">
+			<Bar v-bind:data="chartdata" v-bind:options="options" :key="barKey"/>
 			<div class="organic-range-average">
 				<span class="range-average-label">Total Organic Average</span>
 				<span class="range-average">{{rangeTotal}}</span>
@@ -70,6 +70,7 @@
 				this.updateData();
 				
 				if (Object.keys(this.initialData.data["organic"]).length > 0)  {
+					this.rangeTotal = this.getRangeTotal().toFixed(2);
 					this.loaded = true;
 				}
 			}
@@ -90,8 +91,6 @@
 				if (this.hideEmptyDaysEnabled) {
 					this.hideEmptyDays();
 				}
-
-				this.rangeTotal = this.getRangeTotal().toFixed(2);
 
 				this.chartdata = this.getChartData(this.initialData);
 				this.barKey++;
