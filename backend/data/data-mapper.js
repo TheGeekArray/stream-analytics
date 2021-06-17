@@ -12,15 +12,10 @@ export default {
 
 		let count = 0;
 		for (const topic of topics) {
-			switch (topic) {
-			case "Average Viewers":
-				mappedData["Average Viewers"] = mapDataForTopic(topic, dates, count, splittedData);
-			case "Hosts and Raids Viewers (%)":
+			if (topic === "Hosts and Raids Viewers (%)") {
 				mappedData["Hosts & Raids"] = mapDataForTopic("Hosts & Raids", dates, count, splittedData);
-			case "Minutes Watched":
-				mappedData["Minutes Watched"] = mapDataForTopic(topic, dates, count, splittedData);
-			case "Unique Viewers":
-				mappedData["Unique Viewers"] = mapDataForTopic(topic, dates, count, splittedData);
+			} else {
+				mappedData[topic] = mapDataForTopic(topic, dates, count, splittedData);
 			}
 
 			count++;

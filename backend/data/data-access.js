@@ -25,8 +25,12 @@ let setupFolders = function() {
 
 let setupFiles = function() {
 	logger.info("Creating missing files...");
-	for (let file in filePaths.files) {
-		setupFile(file, filePaths.files[file]);
+	for (let file in filePaths.files.original) {
+		setupFile(file, filePaths.files.original[file]);
+	}
+
+	for (let file in filePaths.files.custom) {
+		setupFile(file, filePaths.files.custom[file]);
 	}
 }
 
@@ -98,7 +102,7 @@ async function writeToFile(topic, topicData) {
 	loadedData[topic] = topicData;
 
 	try {
-		fs.writeFile(filePaths.files[topic], JSON.stringify(topicData, null, 4), function(err) {
+		fs.writeFile(filePaths.files.original[topic], JSON.stringify(topicData, null, 4), function(err) {
 			if (err) {
 				logger.error(`[writeToFile]`, err);
 			} else {
