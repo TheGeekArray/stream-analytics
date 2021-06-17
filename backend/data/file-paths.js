@@ -4,12 +4,14 @@ import path from 'path';
 const appDataPath = app.getPath("appData");
 const userDataPath = appDataPath + path.sep + "Stream Analytics";
 const streamDataPath = userDataPath + path.sep + "data";
+const uploadedFilesPath = userDataPath + path.sep + "uploaded";
 
 export default {
 	folders: {
 		appData: appDataPath,
 		userData: userDataPath,
-		streamData: streamDataPath
+		streamData: streamDataPath,
+		uploadedFiles: uploadedFilesPath
 	},
 	files: {
 		original: {

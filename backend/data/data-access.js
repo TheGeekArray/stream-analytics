@@ -7,6 +7,8 @@ import dataMapper from './data-mapper';
 import organicViewersProcesser from './data-processers/organic-viewers-processer';
 import minutesPerViewerProcesser from './data-processers/minutes-per-viewer-processer';
 import logger from '../utils/logger';
+import path from 'path';
+import moment from 'moment';
 
 let loadedData = {};
 
@@ -15,11 +17,16 @@ let setupFolders = function() {
 	if (!fs.pathExistsSync(filePaths.folders.userData)) {
 		fs.mkdirSync(filePaths.folders.userData);
 		logger.info("Creating user data folder...");
+	}
 
-		if (!fs.pathExistsSync(filePaths.folders.streamData)) {
-			fs.mkdirSync(filePaths.folders.streamData);
-			logger.info("Creating stream data folder...");
-		}
+	if (!fs.pathExistsSync(filePaths.folders.streamData)) {
+		fs.mkdirSync(filePaths.folders.streamData);
+		logger.info("Creating stream data folder...");
+	}
+
+	if (!fs.pathExistsSync(filePaths.folders.uploadedFiles)) {
+		fs.mkdirSync(filePaths.folders.uploadedFiles);
+		logger.info("Creating uploaded files folder...");
 	}
 }
 
@@ -37,6 +44,10 @@ let setupFiles = function() {
 let setupListeners = function() {
 	ipcMain.on("fileUploaded", async function(event, data) {
 		logger.info(`Processing uploaded file...`);
+
+		fs.writeFile(path.join(filePaths.folders.uploadedFiles, moment().format("YYYY-MM-DD") + '.csv'), data, function() {
+			logger.info(`Processed file saved`);
+		});
 		
 		dataMapper.mapData(data).then(mappedData => {
 			for (let topic in mappedData) {
