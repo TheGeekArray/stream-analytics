@@ -2,12 +2,14 @@
 
 import logger from '../utils/logger';
 import { getData } from './data-access';
+import moment from 'moment';
 
 export default {
 	async mapData(data) {
 		const splittedData = splitData(data);
 		const topics = splittedData.shift();
 		const dates = splittedData.map(row => row[0]);
+		const fileName = getFileName(dates[0], dates[dates.length - 1]);
 		const mappedData = {};
 
 		let count = 0;
@@ -24,7 +26,7 @@ export default {
 		mappedData["Organic Viewers"] = mapOrganicViewersData(mappedData["Average Viewers"], mappedData["Hosts & Raids"]);
 		mappedData["Minutes Per Viewer"] = mapMinutesPerViewerData(mappedData["Minutes Watched"], mappedData["Unique Viewers"]);
 
-		return mappedData;
+		return {mappedData, fileName};
 	}
 }
 
@@ -53,6 +55,16 @@ function mapDataForTopic(topic, dates, topicCount, data) {
 	}
 
 	return topicData;
+}
+
+function getFileName(start, end) {
+	const splittedStartDate = getSplittedDate(start);
+	const splittedEndDate = getSplittedDate(end);
+
+	const startDate = splittedStartDate.year + moment().month(splittedStartDate.month).format('MM') + splittedStartDate.dayDate;
+	const endDate = splittedEndDate.year + moment().month(splittedEndDate.month).format('MM') + splittedEndDate.dayDate;
+
+	return startDate + "-" + endDate;
 }
 
 function getSplittedDate(date) {

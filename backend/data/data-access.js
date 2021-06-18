@@ -8,7 +8,6 @@ import organicViewersProcesser from './data-processers/organic-viewers-processer
 import minutesPerViewerProcesser from './data-processers/minutes-per-viewer-processer';
 import logger from '../utils/logger';
 import path from 'path';
-import moment from 'moment';
 
 let loadedData = {};
 
@@ -32,26 +31,24 @@ let setupFolders = function() {
 
 let setupFiles = function() {
 	logger.info("Creating missing files...");
-	for (let file in filePaths.files.original) {
-		setupFile(file, filePaths.files.original[file]);
-	}
-
-	for (let file in filePaths.files.custom) {
-		setupFile(file, filePaths.files.custom[file]);
+	for (let file in filePaths.files) {
+		setupFile(file, filePaths.files[file]);
 	}
 }
 
 let setupListeners = function() {
 	ipcMain.on("fileUploaded", async function(event, data) {
 		logger.info(`Processing uploaded file...`);
-
-		fs.writeFile(path.join(filePaths.folders.uploadedFiles, moment().format("YYYY-MM-DD") + '.csv'), data, function() {
-			logger.info(`Processed file saved`);
-		});
 		
-		dataMapper.mapData(data).then(mappedData => {
-			for (let topic in mappedData) {
-				writeToFile(topic, mappedData[topic]).then(() => {
+		dataMapper.mapData(data).then((result) => {
+			const uploadedFilePath = path.join(filePaths.folders.uploadedFiles, '/' + result.fileName + '.csv');
+			console.log(uploadedFilePath);
+			fs.writeFile(uploadedFilePath, data, function() {
+				logger.info(`Processed file saved`);
+			});
+
+			for (let topic in result.mappedData) {
+				writeToFile(topic, result.mappedData[topic]).then(() => {
 					event.reply("dataProcessed");
 				});
 			}
@@ -113,7 +110,7 @@ async function writeToFile(topic, topicData) {
 	loadedData[topic] = topicData;
 
 	try {
-		fs.writeFile(filePaths.files.original[topic], JSON.stringify(topicData, null, 4), function(err) {
+		fs.writeFile(filePaths.files[topic], JSON.stringify(topicData, null, 4), function(err) {
 			if (err) {
 				logger.error(`[writeToFile]`, err);
 			} else {
@@ -121,9 +118,8 @@ async function writeToFile(topic, topicData) {
 			}
 		});
 	} catch (err) {
-		logger.error(`[writeFile]` + err, true);
+		logger.error(`[writeToFile]` + err, true);
 	}
-	
 }
 
 export { setupFolders, setupFiles, setupListeners, getData };
