@@ -15,9 +15,9 @@
 </template>
 
 <script>
-	import DatePicker from '@/components/ChartHeader/DatePicker';
-	import EmptyDaysOption from '@/components/ChartHeader/EmptyDaysOption';
-	import TimeUnitPicker from '@/components/ChartHeader/TimeUnitPicker';
+	import DatePicker from '@/components/Chart/ChartHeader/DatePicker';
+	import EmptyDaysOption from '@/components/Chart/ChartHeader/EmptyDaysOption';
+	import TimeUnitPicker from '@/components/Chart/ChartHeader/TimeUnitPicker';
 	import { ipcRenderer } from 'electron';
 
 	export default {

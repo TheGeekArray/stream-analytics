@@ -5,7 +5,7 @@
 		name: "Chart",
 		data: () => ({
 			loaded: false,
-			initialData: [],
+			streamData: [],
 			labels: {},
 			chartdata: {},
 			options: {},
@@ -13,10 +13,10 @@
 			hideEmptyDaysEnabled: false
 		}),
 		watch: {
-			initialData: function() {		
+			streamData: function() {		
 				this.updateData();
 
-				if (Object.keys(this.initialData[0]).length > 0)  {
+				if (Object.keys(this.streamData[0]).length > 0)  {
 					this.loaded = true;
 				}
 			}
@@ -30,18 +30,18 @@
 		},
 		destroyed() {
 			ipcRenderer.removeListener("dataProcessed", this.sendDataRequestedEvent);
-			ipcRenderer.removeListener("dataLoaded", this.setInitialData);
+			ipcRenderer.removeListener("dataLoaded", this.setStreamData);
 		},
 		methods: {
 			setupListeners: function() {
-				ipcRenderer.on("dataLoaded", this.setInitialData);
+				ipcRenderer.on("dataLoaded", this.setStreamData);
 				ipcRenderer.on("dataProcessed", this.sendDataRequestedEvent);
 			},
 			sendDataRequestedEvent: function() {
 				ipcRenderer.send("dataRequested", this.view);
 			},
-			setInitialData: function(event, data, labels) {
-				this.initialData = data;
+			setStreamData: function(event, data, labels) {
+				this.streamData = data;
 				this.labels = labels;
 			},
 			updateData() {
@@ -53,12 +53,12 @@
 				this.barKey++;
 			},
 			hideEmptyDays: function() {
-				let data = this.initialData[0];
+				let data = this.streamData[0];
 				
 				let index = 0;
 				while (index < data.length) {
 					if (data[index] === 0) {
-						for (let dataSet of this.initialData) {
+						for (let dataSet of this.streamData) {
 							dataSet.splice(index, 1);
 						}
 						this.labels.splice(index, 1);
@@ -72,7 +72,7 @@
 					[{
 						label: this.legendLabels[0],
 						backgroundColor: "#772ce8",
-						data: this.initialData[0],
+						data: this.streamData[0],
 						trendlineLinear: {
 							style: "rgba(141,141,141, .8)",
 							lineStyle: "dotted|solid",
@@ -80,11 +80,11 @@
 						}
 					}];
 
-				if (this.initialData.length === 2) {
+				if (this.streamData.length === 2) {
 					datasets.push({
 						label: this.legendLabels[1],
 						backgroundColor: "#18181b",
-						data: this.initialData[1]
+						data: this.streamData[1]
 					});
 				}
 

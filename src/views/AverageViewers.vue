@@ -2,7 +2,7 @@
 	<div class="average-viewers">
 		<ChartHeader v-if="loaded" v-bind:view="view" @change="hideEmptyDaysEnabled = $event; updateData()" />
 		<div class="bar-container" v-if="loaded">
-			<Bar v-bind:data="chartdata" v-bind:options="options" :key="barKey"/>
+			<BarChart v-bind:data="chartdata" v-bind:options="options" :key="barKey"/>
 			<div class="organic-range-average">
 				<span class="range-average-label">Total Organic Average</span>
 				<span class="range-average">{{rangeTotal}}</span>
@@ -12,15 +12,15 @@
 </template>
 
 <script>
-	import Chart from '@/components/Chart.vue';
-	import Bar from '@/components/Bar.vue';
-	import ChartHeader from '@/components/ChartHeader.vue';
+	import Chart from '@/components/Chart/Chart.vue';
+	import BarChart from '@/components/BarChart.vue';
+	import ChartHeader from '@/components/Chart/ChartHeader/ChartHeader.vue';
 
 	export default {
 		name: 'AverageViewers',
 		extends: Chart,
 		components: {
-			Bar,
+			BarChart,
 			ChartHeader
 		},
 		data: () => ({
@@ -29,8 +29,8 @@
 			legendLabels: ["Organic", "Hosts/raids/embeds"]
 		}),
 		watch: {
-			initialData: function() {
-				if (Object.keys(this.initialData[0]).length > 0)  {
+			streamData: function() {
+				if (Object.keys(this.streamData[0]).length > 0)  {
 					this.rangeTotal = this.getRangeTotal().toFixed(2);
 					this.loaded = true;
 				}
@@ -38,7 +38,7 @@
 		},
 		methods: {
 			getRangeTotal: function() {
-				const organicData = this.initialData[0];
+				const organicData = this.streamData[0];
 				const total = organicData.reduce((previousValue, currentValue) => previousValue + currentValue);
 
 				return total / organicData.filter(value => value !== 0).length;
