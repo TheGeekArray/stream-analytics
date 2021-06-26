@@ -228,7 +228,7 @@
 	.range-average {
 		font-weight: 700;
 		font-size: 22px;
-		color: #772ce8;
+		color: #885cca;
 		flex-basis: 100%;
 	}
 </style>
