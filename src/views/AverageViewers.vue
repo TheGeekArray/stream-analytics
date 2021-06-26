@@ -1,6 +1,6 @@
 <template>
 	<div class="average-viewers">
-		<ChartHeader v-if="loaded" @change="timeUnit = $event.timeUnit; hideEmptyDaysEnabled = $event.hideEmptyDaysEnabled; dateRange = $event.dateRange; sendDataRequestedEvent()" />
+		<ChartHeader v-if="loaded" v-bind:view="view" @change="hideEmptyDaysEnabled = $event; updateData()" />
 		<div class="bar-container" v-if="loaded">
 			<Bar v-bind:data="chartdata" v-bind:options="options" :key="barKey"/>
 			<div class="organic-range-average">
@@ -23,6 +23,7 @@
 			ChartHeader
 		},
 		data: () => ({
+			view: "Organic Viewers",
 			loaded: false,
 			initialData: {},
 			chartdata: {},
@@ -63,7 +64,7 @@
 				ipcRenderer.on("dataLoaded", this.setInitialData);
 			},
 			sendDataRequestedEvent: function() {
-				ipcRenderer.send("dataRequested", this.timeUnit, this.dateRange, "Organic Viewers");
+				ipcRenderer.send("dataRequested", this.timeUnit, this.dateRange, this.view);
 			},
 			setInitialData: function(event, data) {
 				this.initialData = data;

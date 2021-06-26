@@ -1,6 +1,6 @@
 <template>
 	<div class="minutes-per-viewer">
-		<ChartHeader v-if="loaded" @change="timeUnit = $event.timeUnit; hideEmptyDaysEnabled = $event.hideEmptyDaysEnabled; dateRange = $event.dateRange; sendDataRequestedEvent()" />
+		<ChartHeader v-if="loaded" v-bind:view="view" @change="hideEmptyDaysEnabled = $event;" />
 		<div class="bar-container">
 			<Bar v-if="loaded" v-bind:data="chartdata" v-bind:options="options" :key="barKey"/>
 		</div>
@@ -19,6 +19,7 @@
 			ChartHeader
 		},
 		data: () => ({
+			view: "Minutes Per Viewer",
 			loaded: false,
 			initialData: {},
 			chartdata: {},
@@ -57,7 +58,7 @@
 				ipcRenderer.on("dataLoaded", this.setInitialData);
 			},
 			sendDataRequestedEvent: function() {
-				ipcRenderer.send("dataRequested", this.timeUnit, this.dateRange, "Minutes Per Viewer");
+				ipcRenderer.send("dataRequested", this.timeUnit, this.dateRange, this.view);
 			},
 			setInitialData: function(event, data) {
 				this.initialData = data;
