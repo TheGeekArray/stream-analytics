@@ -34,7 +34,7 @@ export function setupListeners() {
 		});
 	});
 
-	ipcMain.on("dataRequested", function(event, timeUnit, range, topic) {
+	ipcMain.on("dataRequested", function(event, topic, range = { start: "", end: "" }, timeUnit = "Day") {
 		let processedData = {};
 
 		switch (topic) {

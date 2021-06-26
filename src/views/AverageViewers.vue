@@ -29,12 +29,7 @@
 			chartdata: {},
 			options: {},
 			barKey: 0,
-			timeUnit: "Day",
 			hideEmptyDaysEnabled: false,
-			dateRange: {
-				start: "",
-				end: ""
-			},
 			rangeTotal: ""
 		}),
 		created() {
@@ -64,7 +59,7 @@
 				ipcRenderer.on("dataLoaded", this.setInitialData);
 			},
 			sendDataRequestedEvent: function() {
-				ipcRenderer.send("dataRequested", this.timeUnit, this.dateRange, this.view);
+				ipcRenderer.send("dataRequested", this.view);
 			},
 			setInitialData: function(event, data) {
 				this.initialData = data;

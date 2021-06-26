@@ -38,7 +38,7 @@
 		}),
 		methods: {
 			sendDataRequestedEvent: function() {
-				ipcRenderer.send("dataRequested", this.timeUnit, this.dateRange, this.view);
+				ipcRenderer.send("dataRequested", this.view, this.dateRange, this.timeUnit);
 			}
 		}
 	}
