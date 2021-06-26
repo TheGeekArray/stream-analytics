@@ -15,12 +15,12 @@
 </template>
 
 <script>
-import DatePicker from '@/components/DatePicker';
-import EmptyDaysOption from '@/components/EmptyDaysOption';
-import TimeUnitPicker from '@/components/TimeUnitPicker';
+import DatePicker from '@/components/ChartHeader/DatePicker';
+import EmptyDaysOption from '@/components/ChartHeader/EmptyDaysOption';
+import TimeUnitPicker from '@/components/ChartHeader/TimeUnitPicker';
 
 export default {
-	name: 'Header',
+	name: 'ChartHeader',
 	components: {
 			DatePicker,
 			EmptyDaysOption,
