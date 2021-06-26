@@ -1,7 +1,7 @@
 .DS_Store
 node_modules
 /dist
-release.txt
+release.md
 
 # local env files
 .env.local
