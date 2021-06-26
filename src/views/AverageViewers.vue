@@ -1,20 +1,6 @@
 <template>
 	<div class="average-viewers">
-		<div class="header">
-			<DatePicker v-if="loaded" @change="dateRange = $event; sendDataRequestedEvent();" />
-			<EmptyDaysOption 
-				v-if="loaded"
-				v-bind:isChecked="hideEmptyDaysEnabled"
-				v-bind:timeUnit="timeUnit"
-				@change="hideEmptyDaysEnabled = $event; sendDataRequestedEvent();"
-				class="empty-days-option-component"
-			/>
-			<TimeUnitPicker 
-				v-if="loaded"
-				@change="timeUnit = $event; sendDataRequestedEvent();"
-				class="time-unit-picker-component"
-			/>
-		</div>
+		<Header v-if="loaded"/>
 		<div class="bar-container" v-if="loaded">
 			<Bar v-bind:data="chartdata" v-bind:options="options" :key="barKey"/>
 			<div class="organic-range-average">
@@ -27,18 +13,14 @@
 
 <script>
 	import Bar from '@/components/Bar.vue';
-	import TimeUnitPicker from '@/components/TimeUnitPicker.vue';
-	import EmptyDaysOption from '@/components/EmptyDaysOption.vue';
-	import DatePicker from '@/components/DatePicker.vue';
+	import Header from '@/components/Header.vue';
 	import { ipcRenderer } from 'electron';
 
 	export default {
 		name: 'AverageViewers',
 		components: {
 			Bar,
-			TimeUnitPicker,
-			EmptyDaysOption,
-			DatePicker
+			Header
 		},
 		data: () => ({
 			loaded: false,
@@ -186,21 +168,6 @@
 </script>
 
 <style scoped>
-	.header {
-		display: flex;
-		height: 60px;
-		align-items: center;
-	}
-
-	.empty-days-option-component {
-		margin-left: auto;
-	}
-
-	.time-unit-picker-component {
-		justify-self: flex-end;
-		margin-left: 20px;
-	}
-
 	.bar-container {
 		display: flex;
 		flex-direction: column;
