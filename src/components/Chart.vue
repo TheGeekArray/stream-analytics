@@ -13,8 +13,12 @@
 			hideEmptyDaysEnabled: false
 		}),
 		watch: {
-			initialData: function() {
+			initialData: function() {		
 				this.updateData();
+
+				if (Object.keys(this.initialData[0]).length > 0)  {
+					this.loaded = true;
+				}
 			}
 		},
 		created() {
@@ -88,6 +92,44 @@
 					labels: this.labels,
 					datasets: datasets
 				}
+			},
+			getOptions: function() {
+				return {
+					responsive: true,
+					maintainAspectRatio: false,
+					legend: {
+						position: "bottom"
+					},
+					tooltips: {
+						mode: "x",
+						callbacks: {
+							label: function(tooltipItem, data) {
+								var label = data.datasets[tooltipItem.datasetIndex].label || '';
+
+								if (label) {
+									label += ': ';
+								}
+
+								label += (tooltipItem.yLabel % 1 !== 0 ? tooltipItem.yLabel.toFixed(2) : tooltipItem.yLabel);
+								return label;
+							}
+						}
+					},
+					scales: {
+						xAxes: [{
+							ticks: {
+								autoSkip: true,
+								autoSkipPadding: 5
+							}
+						}],
+						yAxes: [{
+							ticks: {
+								min: 0
+							}
+							
+						}]
+					}
+				};
 			}
 		}
 	}

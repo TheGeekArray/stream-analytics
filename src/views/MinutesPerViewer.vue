@@ -22,53 +22,6 @@
 		data: () => ({
 			view: "Minutes Per Viewer",
 			legendLabels: ["Minutes per viewer"]
-		}),
-		watch: {
-			initialData: function() {		
-				if (Object.keys(this.initialData[0]).length > 0)  {
-					this.loaded = true;
-				}
-			}
-		},
-		methods: {
-			getOptions: function() {
-				return {
-					responsive: true,
-					maintainAspectRatio: false,
-					legend: {
-						position: "bottom"
-					},
-					tooltips: {
-						mode: "x",
-						callbacks: {
-							label: function(tooltipItem, data) {
-								var label = data.datasets[tooltipItem.datasetIndex].label || '';
-
-								if (label) {
-									label += ': ';
-								}
-
-								label += (tooltipItem.yLabel % 1 !== 0 ? tooltipItem.yLabel.toFixed(2) : tooltipItem.yLabel);
-								return label;
-							}
-						}
-					},
-					scales: {
-						xAxes: [{
-							ticks: {
-								autoSkip: true,
-								autoSkipPadding: 5
-							}
-						}],
-						yAxes: [{
-							ticks: {
-								min: 0
-							}
-							
-						}]
-					}
-				};
-			}
-		}
+		})
 	}
 </script>
