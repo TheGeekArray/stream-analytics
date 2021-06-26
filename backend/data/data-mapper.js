@@ -1,7 +1,7 @@
 "use strict";
 
 import logger from '../utils/logger';
-import { getData } from './data-access';
+import * as dataAccess from './data-access';
 import moment from 'moment';
 
 export default {
@@ -31,9 +31,10 @@ export default {
 }
 
 function mapDataForTopic(topic, dates, topicCount, data) {
-	let topicData = getData(topic);
+	let topicData = dataAccess.getData(topic);
 
 	if (topicData == null) {
+		console.log(topic);
 		logger.debug("No data for mapData");
 		topicData = {};
 	}
@@ -87,7 +88,7 @@ function splitData(data) {
 }
 
 function mapOrganicViewersData(averageViewersData, hostsAndRaidsData) {
-	let organicViewersData = getData("Organic Viewers");
+	let organicViewersData = dataAccess.getData("Organic Viewers");
 
 	if (organicViewersData == null) {
 		logger.debug("No data for mapOrganicViewersData");
@@ -137,7 +138,7 @@ function mapOrganicViewersData(averageViewersData, hostsAndRaidsData) {
 }
 
 function mapMinutesPerViewerData(minutesWatchedData, uniqueViewersData) {
-	let minutesPerViewerData = getData("Minutes Per Viewer");
+	let minutesPerViewerData = dataAccess.getData("Minutes Per Viewer");
 
 	if (minutesPerViewerData == null) {
 		logger.debug("No data for mapMinutesPerViewerData");

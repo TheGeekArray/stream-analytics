@@ -2,53 +2,32 @@
 
 import { ipcMain } from 'electron';
 import fs from 'fs-extra';
-import filePaths from './file-paths';
+import filePaths from '../file-paths';
 import dataMapper from './data-mapper';
 import organicViewersProcesser from './data-processers/organic-viewers-processer';
 import minutesPerViewerProcesser from './data-processers/minutes-per-viewer-processer';
 import logger from '../utils/logger';
 import path from 'path';
+import * as fileHandler from '../utils/file-handler';
 
 let loadedData = {};
 
-let setupFolders = function() {
-	logger.info("Creating missing folders...");
-	if (!fs.pathExistsSync(filePaths.folders.userData)) {
-		fs.mkdirSync(filePaths.folders.userData);
-		logger.info("Creating user data folder...");
-	}
-
-	if (!fs.pathExistsSync(filePaths.folders.streamData)) {
-		fs.mkdirSync(filePaths.folders.streamData);
-		logger.info("Creating stream data folder...");
-	}
-
-	if (!fs.pathExistsSync(filePaths.folders.uploadedFiles)) {
-		fs.mkdirSync(filePaths.folders.uploadedFiles);
-		logger.info("Creating uploaded files folder...");
-	}
-}
-
-let setupFiles = function() {
-	logger.info("Creating missing files...");
-	for (let file in filePaths.files) {
-		setupFile(file, filePaths.files[file]);
-	}
-}
-
-let setupListeners = function() {
+export function setupListeners() {
 	ipcMain.on("fileUploaded", async function(event, data) {
 		logger.info(`Processing uploaded file...`);
 		
 		dataMapper.mapData(data).then((result) => {
 			const uploadedFilePath = path.join(filePaths.folders.uploadedFiles, '/' + result.fileName + '.csv');
-			console.log(uploadedFilePath);
 			fs.writeFile(uploadedFilePath, data, function() {
 				logger.info(`Processed file saved`);
 			});
 
 			for (let topic in result.mappedData) {
-				writeToFile(topic, result.mappedData[topic]).then(() => {
+				if (topic === "Date") {
+					continue;
+				}
+
+				fileHandler.writeToFile(topic, result.mappedData[topic]).then(() => {
 					event.reply("dataProcessed");
 				});
 			}
@@ -75,51 +54,14 @@ let setupListeners = function() {
 	ipcMain.on("startingDateSet", function(date) {
 		logger.info(`Setting starting date...`);
 		let settings = { startingDate: date };
-		writeToFile("Settings", settings);
+		fileHandler.writeToFile("Settings", settings);
 	});
 }
 
-let getData = function(topic) {
+export function getData(topic) {
 	return loadedData[topic];
 };
 
-async function setupFile(file, filePath) {
-	try {
-		fs.writeFileSync(filePath, JSON.stringify({}), { encoding: "utf8", flag: "wx", mode: 0o666 });
-		loadedData[file] = {};
-		logger.info(`Created ${file} file...`);
-	} catch (err) {
-		logger.debug(`[setupFile]` + err);
-		await readFile(file, filePath);
-	}
+export function setLoadedData(file, data) {
+	loadedData[file] = data;
 }
-
-async function readFile(file, filePath) {
-	fs.readFile(filePath, 'utf8', function(err, data) {
-		if (err) {
-			logger.error(err);
-		} else {
-			if (data) {
-				loadedData[file] = JSON.parse(data);
-			}
-		}
-	});
-}
-
-async function writeToFile(topic, topicData) {
-	loadedData[topic] = topicData;
-
-	try {
-		fs.writeFile(filePaths.files[topic], JSON.stringify(topicData, null, 4), function(err) {
-			if (err) {
-				logger.error(`[writeToFile]`, err);
-			} else {
-				logger.debug(`Processed ${topic} data`);
-			}
-		});
-	} catch (err) {
-		logger.error(`[writeToFile]` + err, true);
-	}
-}
-
-export { setupFolders, setupFiles, setupListeners, getData };

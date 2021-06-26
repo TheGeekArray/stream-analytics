@@ -1,4 +1,4 @@
-// "use strict";
+"use strict";
 
 // https://en.wikipedia.org/wiki/ANSI_escape_code
 
