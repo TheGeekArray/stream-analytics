@@ -1,6 +1,6 @@
 <template>
 	<div class="minutes-per-viewer">
-		<Header v-if="loaded"/>
+		<Header v-if="loaded" @change="timeUnit = $event.timeUnit; hideEmptyDaysEnabled = $event.hideEmptyDaysEnabled; dateRange = $event.dateRange; sendDataRequestedEvent()" />
 		<div class="bar-container">
 			<Bar v-if="loaded" v-bind:data="chartdata" v-bind:options="options" :key="barKey"/>
 		</div>

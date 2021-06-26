@@ -1,18 +1,47 @@
 <template>
 	<div class="header">
-		<DatePicker @change="dateRange = $event; sendDataRequestedEvent();" />
+		<DatePicker @change="dateRange = $event; updateData();" />
 		<EmptyDaysOption 
 			v-bind:isChecked="hideEmptyDaysEnabled"
 			v-bind:timeUnit="timeUnit"
-			@change="hideEmptyDaysEnabled = $event; sendDataRequestedEvent();"
+			@change="hideEmptyDaysEnabled = $event; updateData();"
 			class="empty-days-option-component"
 		/>
 		<TimeUnitPicker 
-			@change="timeUnit = $event; sendDataRequestedEvent();"
+			@change="timeUnit = $event; updateData();"
 			class="time-unit-picker-component"
 		/>
 	</div>
 </template>
+
+<script>
+import DatePicker from '@/components/DatePicker';
+import EmptyDaysOption from '@/components/EmptyDaysOption';
+import TimeUnitPicker from '@/components/TimeUnitPicker';
+
+export default {
+	name: 'Header',
+	components: {
+			DatePicker,
+			EmptyDaysOption,
+			TimeUnitPicker
+		},
+		data: () => ({
+			timeUnit: "Day",
+			hideEmptyDaysEnabled: false,
+			dateRange: {
+				start: "",
+				end: ""
+			}
+		}),
+		methods: {
+			updateData() {
+				this.$emit("change", {timeUnit: this.timeUnit, hideEmptyDaysEnabled: this.hideEmptyDaysEnabled, dateRange: this.dateRange});
+			}
+		}
+}
+</script>
+
 
 <style scoped>
 	.header {

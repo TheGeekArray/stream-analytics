@@ -1,6 +1,6 @@
 <template>
 	<div class="average-viewers">
-		<Header v-if="loaded"/>
+		<Header v-if="loaded" @change="timeUnit = $event.timeUnit; hideEmptyDaysEnabled = $event.hideEmptyDaysEnabled; dateRange = $event.dateRange; sendDataRequestedEvent()" />
 		<div class="bar-container" v-if="loaded">
 			<Bar v-bind:data="chartdata" v-bind:options="options" :key="barKey"/>
 			<div class="organic-range-average">
