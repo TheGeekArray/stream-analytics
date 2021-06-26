@@ -61,7 +61,6 @@
 			setupListeners: function() {
 				ipcRenderer.on("dataProcessed", this.sendDataRequestedEvent);
 				ipcRenderer.on("dataLoaded", this.setInitialData);
-				ipcRenderer.on("rangedDataLoaded", this.setInitialData);
 			},
 			sendDataRequestedEvent: function() {
 				ipcRenderer.send("dataRequested", this.timeUnit, this.dateRange, "Organic Viewers");
