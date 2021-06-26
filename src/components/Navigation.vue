@@ -4,8 +4,12 @@
 		<div class="navigation-window" v-show="!collapsed" v-bind:class="{ hidden: collapsed }">
 			<font-awesome-icon icon="times" class="return-button" v-on:click="collapsed = true"/>
 			<div class="navigation-items-container">
-				<router-link to="/" class="navigation-item"><span v-on:click="collapsed = true">Organic vs. Artificial Viewers</span></router-link>
-				<router-link to="/minutes-per-viewer" class="navigation-item"><span v-on:click="collapsed = true">Minutes Watched Per Unique Viewer</span></router-link>
+				<router-link to="/" class="navigation-item" exact-active-class="navigation-item-active">
+					<span v-on:click="collapsed = true">Organic vs. Artificial Viewers</span>
+				</router-link>
+				<router-link to="/minutes-per-viewer" exact-active-class="navigation-item-active" class="navigation-item">
+					<span v-on:click="collapsed = true">Minutes Watched Per Unique Viewer</span>
+				</router-link>
 			</div>
 		</div>
 	</div>
@@ -103,7 +107,9 @@ export default {
 		display: block;
 	}
 
+	.navigation-item-active span,
 	.navigation-item span:hover {
 		background: rgb(26, 26, 26);
+		color: #885cca;
 	}
 </style>
