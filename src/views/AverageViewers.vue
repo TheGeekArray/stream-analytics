@@ -12,42 +12,24 @@
 </template>
 
 <script>
+	import Chart from '@/components/Chart.vue';
 	import Bar from '@/components/Bar.vue';
 	import ChartHeader from '@/components/ChartHeader.vue';
-	import { ipcRenderer } from 'electron';
 
 	export default {
 		name: 'AverageViewers',
+		extends: Chart,
 		components: {
 			Bar,
 			ChartHeader
 		},
 		data: () => ({
 			view: "Organic Viewers",
-			loaded: false,
-			initialData: [],
-			labels: {},
-			chartdata: {},
-			options: {},
-			barKey: 0,
-			hideEmptyDaysEnabled: false,
-			rangeTotal: ""
+			rangeTotal: "",
+			legendLabels: ["Organic", "Hosts/raids/embeds"]
 		}),
-		created() {
-			this.setupListeners();
-		},
-		beforeMount() {
-			this.options = this.getOptions();
-			this.sendDataRequestedEvent();
-		},
-		destroyed() {
-			ipcRenderer.removeListener("dataProcessed", this.sendDataRequestedEvent);
-			ipcRenderer.removeListener("dataLoaded", this.setInitialData);
-		},
 		watch: {
 			initialData: function() {
-				this.updateData();
-				
 				if (Object.keys(this.initialData[0]).length > 0)  {
 					this.rangeTotal = this.getRangeTotal().toFixed(2);
 					this.loaded = true;
@@ -55,64 +37,11 @@
 			}
 		},
 		methods: {
-			setupListeners: function() {
-				ipcRenderer.on("dataProcessed", this.sendDataRequestedEvent);
-				ipcRenderer.on("dataLoaded", this.setInitialData);
-			},
-			sendDataRequestedEvent: function() {
-				ipcRenderer.send("dataRequested", this.view);
-			},
-			setInitialData: function(event, data, labels) {
-				this.initialData = data;
-				this.labels = labels;
-			},
-			updateData() {
-				if (this.hideEmptyDaysEnabled) {
-					this.hideEmptyDays();
-				}
-
-				this.chartdata = this.getChartData();
-				this.barKey++;
-			},
-			hideEmptyDays: function() {
-				let data = this.initialData[0];
-				
-				let index = 0;
-				while (index < data.length) {
-					if (data[index] === 0) {
-						this.initialData[0].splice(index, 1);
-						this.initialData[1].splice(index, 1);
-						this.labels.splice(index, 1);
-					} else {
-						++index;
-					}
-				}
-			},
 			getRangeTotal: function() {
 				const organicData = this.initialData[0];
 				const total = organicData.reduce((previousValue, currentValue) => previousValue + currentValue);
 
 				return total / organicData.filter(value => value !== 0).length;
-			},
-			getChartData: function() {
-				return {
-					labels: this.labels,
-					datasets: [{
-						label: "Organic",
-						backgroundColor: "#772ce8",
-						data: this.initialData[0],
-						trendlineLinear: {
-							style: "rgba(141,141,141, .8)",
-							lineStyle: "dotted|solid",
-							width: 2
-						}
-					},
-					{
-						label: "Hosts/raids/embeds",
-						backgroundColor: "#18181b",
-						data: this.initialData[1]
-					}]
-				}
 			},
 			getOptions: function() {
 				return {

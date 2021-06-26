@@ -8,92 +8,29 @@
 </template>
 
 <script>
+	import Chart from '@/components/Chart.vue';
 	import Bar from '@/components/Bar.vue';
 	import ChartHeader from '@/components/ChartHeader.vue';
-	import { ipcRenderer } from 'electron';
 
 	export default {
 		name: 'MinutesPerViewer',
+		extends: Chart,
 		components: {
 			Bar,
 			ChartHeader
 		},
 		data: () => ({
 			view: "Minutes Per Viewer",
-			loaded: false,
-			initialData: [],
-			labels: {},
-			chartdata: {},
-			options: {},
-			barKey: 0,
-			hideEmptyDaysEnabled: false
+			legendLabels: ["Minutes per viewer"]
 		}),
-		created() {
-			this.setupListeners();
-		},
-		beforeMount() {
-			this.options = this.getOptions();
-			this.sendDataRequestedEvent();
-		},
-		destroyed() {
-			ipcRenderer.removeListener("dataProcessed", this.sendDataRequestedEvent);
-			ipcRenderer.removeListener("dataLoaded", this.setInitialData);
-		},
 		watch: {
-			initialData: function() {
-				this.updateData();
-				
+			initialData: function() {		
 				if (Object.keys(this.initialData[0]).length > 0)  {
 					this.loaded = true;
 				}
 			}
 		},
 		methods: {
-			setupListeners: function() {
-				ipcRenderer.on("dataProcessed", this.sendDataRequestedEvent);
-				ipcRenderer.on("dataLoaded", this.setInitialData);
-			},
-			sendDataRequestedEvent: function() {
-				ipcRenderer.send("dataRequested", this.view);
-			},
-			setInitialData: function(event, data, labels) {
-				this.initialData = data;
-				this.labels = labels;
-			},
-			updateData() {
-				if (this.hideEmptyDaysEnabled) {
-					this.hideEmptyDays();
-				}
-
-				this.chartdata = this.getChartData();
-				this.barKey++;
-			},
-			hideEmptyDays: function() {	
-				let index = 0;
-				while (index < this.initialData.length) {
-					if (this.initialData[index] === 0) {
-						this.initialData.splice(index, 1);
-						this.labels.splice(index, 1);
-					} else {
-						++index;
-					}
-				}
-			},
-			getChartData: function() {
-				return {
-					labels: this.labels,
-					datasets: [{
-						label: "Minutes per viewer",
-						backgroundColor: "#772ce8",
-						data: this.initialData[0],
-						trendlineLinear: {
-							style: "rgba(141,141,141, .8)",
-							lineStyle: "dotted|solid",
-							width: 2
-						}
-					}]
-				}
-			},
 			getOptions: function() {
 				return {
 					responsive: true,
