@@ -25,7 +25,8 @@
 		data: () => ({
 			view: "Organic Viewers",
 			loaded: false,
-			initialData: {},
+			initialData: [],
+			labels: {},
 			chartdata: {},
 			options: {},
 			barKey: 0,
@@ -47,7 +48,7 @@
 			initialData: function() {
 				this.updateData();
 				
-				if (Object.keys(this.initialData.data["organic"]).length > 0)  {
+				if (Object.keys(this.initialData[0]).length > 0)  {
 					this.rangeTotal = this.getRangeTotal().toFixed(2);
 					this.loaded = true;
 				}
@@ -61,44 +62,45 @@
 			sendDataRequestedEvent: function() {
 				ipcRenderer.send("dataRequested", this.view);
 			},
-			setInitialData: function(event, data) {
+			setInitialData: function(event, data, labels) {
 				this.initialData = data;
+				this.labels = labels;
 			},
 			updateData() {
 				if (this.hideEmptyDaysEnabled) {
 					this.hideEmptyDays();
 				}
 
-				this.chartdata = this.getChartData(this.initialData);
+				this.chartdata = this.getChartData();
 				this.barKey++;
 			},
 			hideEmptyDays: function() {
-				let data = this.initialData.data.organic;
+				let data = this.initialData[0];
 				
 				let index = 0;
 				while (index < data.length) {
 					if (data[index] === 0) {
-						this.initialData.data["organic"].splice(index, 1);
-						this.initialData.data["artificial"].splice(index, 1);
-						this.initialData.labels.splice(index, 1);
+						this.initialData[0].splice(index, 1);
+						this.initialData[1].splice(index, 1);
+						this.labels.splice(index, 1);
 					} else {
 						++index;
 					}
 				}
 			},
 			getRangeTotal: function() {
-				const organicData = this.initialData.data["organic"];
+				const organicData = this.initialData[0];
 				const total = organicData.reduce((previousValue, currentValue) => previousValue + currentValue);
 
 				return total / organicData.filter(value => value !== 0).length;
 			},
-			getChartData: function(organicViewersData) {
+			getChartData: function() {
 				return {
-					labels: organicViewersData.labels,
+					labels: this.labels,
 					datasets: [{
 						label: "Organic",
 						backgroundColor: "#772ce8",
-						data: organicViewersData.data.organic,
+						data: this.initialData[0],
 						trendlineLinear: {
 							style: "rgba(141,141,141, .8)",
 							lineStyle: "dotted|solid",
@@ -108,7 +110,7 @@
 					{
 						label: "Hosts/raids/embeds",
 						backgroundColor: "#18181b",
-						data: organicViewersData.data.artificial
+						data: this.initialData[1]
 					}]
 				}
 			},

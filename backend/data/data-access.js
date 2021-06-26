@@ -35,20 +35,26 @@ export function setupListeners() {
 	});
 
 	ipcMain.on("dataRequested", function(event, topic, range = { start: "", end: "" }, timeUnit = "Day") {
-		let processedData = {};
+		let processedData = [];
+		let labels = {};
 
 		switch (topic) {
 		case "Organic Viewers":
-			processedData = organicViewersProcesser.getGroupedData(timeUnit, range, loadedData[topic]);
+			let averageViewersData = organicViewersProcesser.getGroupedData(timeUnit, range, loadedData[topic]);
+			processedData.push(averageViewersData.data.organic);
+			processedData.push(averageViewersData.data.artificial);
+			labels = averageViewersData.labels;
 			break;
 		case "Minutes Per Viewer":
-			processedData = minutesPerViewerProcesser.getGroupedData(timeUnit, range, loadedData[topic]);
+			let minutesPerViewerData = minutesPerViewerProcesser.getGroupedData(timeUnit, range, loadedData[topic]);
+			processedData.push(minutesPerViewerData.data);
+			labels = minutesPerViewerData.labels;
 			break;
 		default:
 			return;
 		}
 
-		event.reply("dataLoaded", processedData);
+		event.reply("dataLoaded", processedData, labels);
 	});
 
 	ipcMain.on("startingDateSet", function(date) {

@@ -21,7 +21,8 @@
 		data: () => ({
 			view: "Minutes Per Viewer",
 			loaded: false,
-			initialData: {},
+			initialData: [],
+			labels: {},
 			chartdata: {},
 			options: {},
 			barKey: 0,
@@ -42,7 +43,7 @@
 			initialData: function() {
 				this.updateData();
 				
-				if (Object.keys(this.initialData.data).length > 0)  {
+				if (Object.keys(this.initialData[0]).length > 0)  {
 					this.loaded = true;
 				}
 			}
@@ -55,37 +56,36 @@
 			sendDataRequestedEvent: function() {
 				ipcRenderer.send("dataRequested", this.view);
 			},
-			setInitialData: function(event, data) {
+			setInitialData: function(event, data, labels) {
 				this.initialData = data;
+				this.labels = labels;
 			},
 			updateData() {
 				if (this.hideEmptyDaysEnabled) {
 					this.hideEmptyDays();
 				}
 
-				this.chartdata = this.getChartData(this.initialData);
+				this.chartdata = this.getChartData();
 				this.barKey++;
 			},
-			hideEmptyDays: function() {
-				let data = this.initialData.data;
-				
+			hideEmptyDays: function() {	
 				let index = 0;
-				while (index < data.length) {
-					if (data[index] === 0) {
-						this.initialData.data.splice(index, 1);
-						this.initialData.labels.splice(index, 1);
+				while (index < this.initialData.length) {
+					if (this.initialData[index] === 0) {
+						this.initialData.splice(index, 1);
+						this.labels.splice(index, 1);
 					} else {
 						++index;
 					}
 				}
 			},
-			getChartData: function(data) {
+			getChartData: function() {
 				return {
-					labels: data.labels,
+					labels: this.labels,
 					datasets: [{
 						label: "Minutes per viewer",
 						backgroundColor: "#772ce8",
-						data: data.data,
+						data: this.initialData[0],
 						trendlineLinear: {
 							style: "rgba(141,141,141, .8)",
 							lineStyle: "dotted|solid",
