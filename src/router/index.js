@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import OrganicViewers from '../views/Charts/OrganicViewers.vue';
 import MinutesPerViewer from '../views/Charts/MinutesPerViewer.vue';
+import ChattersVsLurkers from '../views/Charts/ChattersVsLurkers.vue';
 import Chart from '../views/Chart.vue';
 
 Vue.use(VueRouter);
@@ -17,13 +18,20 @@ const routes = [
 			},
 			{
 				path: 'organic-viewers',
+				name: 'Organic Viewers',
 				component: OrganicViewers,
 				props: true
 			},
 			{
 				path: 'minutes-per-viewer',
+				name: 'Minutes Per Viewer',
 				component: MinutesPerViewer
 			},
+			{
+				path: 'chatters-vs-lurkers',
+				name: 'Chatters vs. Lurkers',
+				component: ChattersVsLurkers
+			}
 		]
 	},
 	{
