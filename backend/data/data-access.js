@@ -6,7 +6,7 @@ import filePaths from '../file-paths';
 import dataMapper from './data-mapper';
 import organicViewersProcesser from './data-processers/organic-viewers';
 import minutesPerViewerProcesser from './data-processers/minutes-per-viewer';
-import lurkersVsChattersProcesser from './data-processers/chatters-vs-lurkers';
+import lurkersVsChattersProcesser from './data-processers/lurkers-vs-chatters';
 import logger from '../utils/logger';
 import path from 'path';
 import * as fileHandler from '../utils/file-handler';

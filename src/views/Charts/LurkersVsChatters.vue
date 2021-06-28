@@ -1,5 +1,5 @@
 <template>
-	<div class="chatters-vs-lurkers">
+	<div class="lurkers-vs-chatters">
 		<BarChart v-bind:data="chartdata" v-bind:options="options" :key="barKey"/>
 	</div>
 </template>
@@ -8,7 +8,7 @@
 	import BarChart from '@/components/ChartTypes/BarChart.vue';
 
 	export default {
-		name: 'ChattersVsLurkers',
+		name: 'LurkersVsChatters',
 		components: {
 			BarChart
 		},

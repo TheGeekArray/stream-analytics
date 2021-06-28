@@ -10,8 +10,8 @@
 				<router-link to="/minutes-per-viewer" exact-active-class="navigation-item-active" class="navigation-item">
 					<span v-on:click="collapsed = true">Minutes Watched Per Unique Viewer</span>
 				</router-link>
-				<router-link to="/chatters-vs-lurkers" exact-active-class="navigation-item-active" class="navigation-item">
-					<span v-on:click="collapsed = true">Chatters vs. Lurkers</span>
+				<router-link to="/lurkers-vs-chatters" exact-active-class="navigation-item-active" class="navigation-item">
+					<span v-on:click="collapsed = true">Lurkers vs. Chatters</span>
 				</router-link>
 			</div>
 		</div>

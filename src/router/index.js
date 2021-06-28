@@ -2,7 +2,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import OrganicViewers from '../views/Charts/OrganicViewers.vue';
 import MinutesPerViewer from '../views/Charts/MinutesPerViewer.vue';
-import ChattersVsLurkers from '../views/Charts/ChattersVsLurkers.vue';
+import LurkersVsChatters from '../views/Charts/LurkersVsChatters.vue';
 import Chart from '../views/Chart.vue';
 
 Vue.use(VueRouter);
@@ -28,9 +28,9 @@ const routes = [
 				component: MinutesPerViewer
 			},
 			{
-				path: 'chatters-vs-lurkers',
+				path: 'lurkers-vs-chatters',
 				name: 'Lurkers vs. Chatters',
-				component: ChattersVsLurkers
+				component: LurkersVsChatters
 			}
 		]
 	},
