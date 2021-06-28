@@ -4,7 +4,7 @@
 		<div class="navigation-window" v-show="!collapsed" v-bind:class="{ hidden: collapsed }">
 			<font-awesome-icon icon="times" class="return-button" v-on:click="collapsed = true"/>
 			<div class="navigation-items-container">
-				<router-link to="/" class="navigation-item" exact-active-class="navigation-item-active">
+				<router-link to="/organic-viewers" class="navigation-item" exact-active-class="navigation-item-active">
 					<span v-on:click="collapsed = true">Organic vs. Artificial Viewers</span>
 				</router-link>
 				<router-link to="/minutes-per-viewer" exact-active-class="navigation-item-active" class="navigation-item">

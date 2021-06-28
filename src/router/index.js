@@ -1,22 +1,30 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import AverageViewers from '../views/AverageViewers.vue';
+import OrganicViewers from '../views/OrganicViewers.vue';
+import MinutesPerViewer from '../views/MinutesPerViewer.vue';
+import Chart from '../views/Chart.vue';
 
 Vue.use(VueRouter);
 
 const routes = [
 	{
 		path: '/',
-		name: 'AverageViewers',
-		component: AverageViewers
-	},
-	{
-		path: '/minutes-per-viewer',
-		name: 'MinutesPerViewer',
-		// route level code-splitting
-		// this generates a separate chunk (about.[hash].js) for this route
-		// which is lazy-loaded when the route is visited.
-		component: () => import(/* webpackChunkName: "settings" */ '../views/MinutesPerViewer.vue')
+		component: Chart,
+		children: [
+			{
+				path: '',
+				redirect: 'organic-viewers'
+			},
+			{
+				path: 'organic-viewers',
+				component: OrganicViewers,
+				props: true
+			},
+			{
+				path: 'minutes-per-viewer',
+				component: MinutesPerViewer
+			},
+		]
 	},
 	{
 		path: '/settings',

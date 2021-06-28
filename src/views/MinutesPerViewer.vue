@@ -1,27 +1,96 @@
 <template>
 	<div class="minutes-per-viewer">
-		<ChartHeader v-if="loaded" v-bind:view="view" @change="hideEmptyDaysEnabled = $event;" />
-		<div class="bar-container">
-			<BarChart v-if="loaded" v-bind:data="chartdata" v-bind:options="options" :key="barKey"/>
-		</div>
+		<BarChart v-bind:data="chartdata" v-bind:options="options" :key="barKey"/>
 	</div>
 </template>
 
 <script>
-	import Chart from '@/components/Chart/Chart.vue';
 	import BarChart from '@/components/BarChart.vue';
-	import ChartHeader from '@/components/Chart/ChartHeader/ChartHeader.vue';
 
 	export default {
 		name: 'MinutesPerViewer',
-		extends: Chart,
 		components: {
-			BarChart,
-			ChartHeader
+			BarChart
+		},
+		props: {
+			streamData: Array,
+			labels: Array
 		},
 		data: () => ({
-			view: "Minutes Per Viewer",
-			legendLabels: ["Minutes per viewer"]
-		})
+			legendLabels: ["Minutes per viewer"],
+			chartdata: {},
+			options: {},
+			barKey: 0
+		}),
+		beforeMount() {
+			this.options = this.getOptions();
+		},
+		mounted() {
+			this.updateData();
+		},
+		watch: {
+			streamData: function() {
+				this.updateData();
+			}
+		},
+		methods: {
+			updateData() {
+				this.chartdata = this.getChartData();
+				this.barKey++;
+			},
+			getChartData: function() {
+				return {
+					labels: this.labels,
+					datasets: [{
+						label: this.legendLabels[0],
+						backgroundColor: "#772ce8",
+						data: this.streamData[0],
+						trendlineLinear: {
+							style: "rgba(141,141,141, .8)",
+							lineStyle: "dotted|solid",
+							width: 2
+						}
+					}]
+				}
+			},
+			getOptions: function() {
+				return {
+					responsive: true,
+					maintainAspectRatio: false,
+					legend: {
+						position: "bottom"
+					},
+					tooltips: {
+						mode: "x",
+						callbacks: {
+							label: function(tooltipItem, data) {
+								var label = data.datasets[tooltipItem.datasetIndex].label || '';
+
+								if (label) {
+									label += ': ';
+								}
+
+								label += (tooltipItem.yLabel % 1 !== 0 ? tooltipItem.yLabel.toFixed(2) : tooltipItem.yLabel);
+								return label;
+							}
+						}
+					},
+					scales: {
+						xAxes: [{
+							ticks: {
+								autoSkip: true,
+								autoSkipPadding: 5
+							}
+						}],
+						yAxes: [{
+							ticks: {
+								min: 0
+							}
+							
+						}]
+					}
+				};
+			}
+		}
 	}
 </script>

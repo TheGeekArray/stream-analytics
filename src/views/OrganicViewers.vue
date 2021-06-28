@@ -1,7 +1,6 @@
 <template>
-	<div class="average-viewers">
-		<ChartHeader v-if="loaded" v-bind:view="view" @change="hideEmptyDaysEnabled = $event; updateData()" />
-		<div class="bar-container" v-if="loaded">
+	<div class="organic-viewers">
+		<div class="bar-container">
 			<BarChart v-bind:data="chartdata" v-bind:options="options" :key="barKey"/>
 			<div class="organic-range-average">
 				<span class="range-average-label">Total Organic Average</span>
@@ -12,36 +11,67 @@
 </template>
 
 <script>
-	import Chart from '@/components/Chart/Chart.vue';
 	import BarChart from '@/components/BarChart.vue';
-	import ChartHeader from '@/components/Chart/ChartHeader/ChartHeader.vue';
 
 	export default {
-		name: 'AverageViewers',
-		extends: Chart,
+		name: 'OrganicViewers',
 		components: {
-			BarChart,
-			ChartHeader
+			BarChart
+		},
+		props: {
+			streamData: Array,
+			labels: Array
 		},
 		data: () => ({
-			view: "Organic Viewers",
 			rangeTotal: "",
-			legendLabels: ["Organic", "Hosts/raids/embeds"]
+			legendLabels: ["Organic", "Hosts/raids/embeds"],
+			chartdata: {},
+			options: {},
+			barKey: 0
 		}),
+		beforeMount() {
+			this.options = this.getOptions();
+		},
+		mounted() {
+			this.updateData();
+		},
 		watch: {
 			streamData: function() {
-				if (Object.keys(this.streamData[0]).length > 0)  {
-					this.rangeTotal = this.getRangeTotal().toFixed(2);
-					this.loaded = true;
-				}
+				this.updateData();
 			}
 		},
 		methods: {
+			updateData() {
+				this.rangeTotal = this.getRangeTotal().toFixed(2);
+
+				this.chartdata = this.getChartData();
+				this.barKey++;
+			},
 			getRangeTotal: function() {
 				const organicData = this.streamData[0];
 				const total = organicData.reduce((previousValue, currentValue) => previousValue + currentValue);
 
 				return total / organicData.filter(value => value !== 0).length;
+			},
+			getChartData: function() {
+				return {
+					labels: this.labels,
+					datasets: [{
+						label: this.legendLabels[0],
+						backgroundColor: "#772ce8",
+						data: this.streamData[0],
+						trendlineLinear: {
+							style: "rgba(141,141,141, .8)",
+							lineStyle: "dotted|solid",
+							width: 2
+						}
+					},
+					{
+						label: this.legendLabels[1],
+						backgroundColor: "#18181b",
+						data: this.streamData[1]
+					}]
+				}
 			},
 			getOptions: function() {
 				return {
