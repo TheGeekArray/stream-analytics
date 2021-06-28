@@ -5,7 +5,7 @@
 </template>
 
 <script>
-	import BarChart from '@/components/BarChart.vue';
+	import BarChart from '@/components/ChartTypes/BarChart.vue';
 
 	export default {
 		name: 'MinutesPerViewer',

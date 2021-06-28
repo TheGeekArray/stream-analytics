@@ -13,8 +13,8 @@
 </template>
 
 <script>
-	import Navigation from '@/components/Navigation.vue';
-	import FileReader from '@/components/FileReader.vue';
+	import Navigation from '@/components/AppHeader/Navigation.vue';
+	import FileReader from '@/components/AppHeader/FileReader.vue';
 
 	export default {
 		name: "App",

@@ -7,7 +7,7 @@
 
 <script>
 	import { ipcRenderer } from 'electron';
-	import ChartHeader from '@/components/Chart/ChartHeader.vue';
+	import ChartHeader from '@/components/ChartHeader/ChartHeader.vue';
 
 	export default {
 		components: { ChartHeader },

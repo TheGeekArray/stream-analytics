@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import OrganicViewers from '../views/OrganicViewers.vue';
-import MinutesPerViewer from '../views/MinutesPerViewer.vue';
+import OrganicViewers from '../views/Charts/OrganicViewers.vue';
+import MinutesPerViewer from '../views/Charts/MinutesPerViewer.vue';
 import Chart from '../views/Chart.vue';
 
 Vue.use(VueRouter);
