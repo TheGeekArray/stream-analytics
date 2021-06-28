@@ -29,7 +29,7 @@ const routes = [
 			},
 			{
 				path: 'chatters-vs-lurkers',
-				name: 'Chatters vs. Lurkers',
+				name: 'Lurkers vs. Chatters',
 				component: ChattersVsLurkers
 			}
 		]

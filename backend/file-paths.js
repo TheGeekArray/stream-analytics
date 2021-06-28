@@ -47,7 +47,8 @@ export default {
 		"Total Gifted Subs": path.join(streamDataPath, '/total-gifted-subs.json'),
 		"Gifted Tier 1 subs": path.join(streamDataPath, '/gifted-tier-1-subs.json'),
 		"Organic Viewers": path.join(streamDataPath, '/organic-average-viewers.json'),
-		"Minutes Per Viewer": path.join(streamDataPath, '/minutes-per-viewer.json')
+		"Minutes Per Viewer": path.join(streamDataPath, '/minutes-per-viewer.json'),
+		"Lurkers vs. Chatters": path.join(streamDataPath, '/lurkers-vs-chatters.json')
 		
 	}
 }

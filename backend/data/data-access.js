@@ -6,6 +6,7 @@ import filePaths from '../file-paths';
 import dataMapper from './data-mapper';
 import organicViewersProcesser from './data-processers/organic-viewers';
 import minutesPerViewerProcesser from './data-processers/minutes-per-viewer';
+import lurkersVsChattersProcesser from './data-processers/chatters-vs-lurkers';
 import logger from '../utils/logger';
 import path from 'path';
 import * as fileHandler from '../utils/file-handler';
@@ -49,6 +50,12 @@ export function setupListeners() {
 			let minutesPerViewerData = minutesPerViewerProcesser.getGroupedData(timeUnit, range, loadedData[topic]);
 			processedData.push(minutesPerViewerData.data);
 			labels = minutesPerViewerData.labels;
+			break;
+		case "Lurkers vs. Chatters":
+			let lurkersVsChattersData = lurkersVsChattersProcesser.getGroupedData(timeUnit, range, loadedData[topic]);
+			processedData.push(lurkersVsChattersData.data.lurkers);
+			processedData.push(lurkersVsChattersData.data.chatters);
+			labels = lurkersVsChattersData.labels;
 			break;
 		default:
 			return;

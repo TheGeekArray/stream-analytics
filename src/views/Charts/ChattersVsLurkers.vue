@@ -17,7 +17,7 @@
 			labels: Array
 		},
 		data: () => ({
-			legendLabels: ["Chatters", "Lurkers"],
+			legendLabels: ["Lurkers", "Chatters"],
 			chartdata: {},
 			options: {},
 			barKey: 0
