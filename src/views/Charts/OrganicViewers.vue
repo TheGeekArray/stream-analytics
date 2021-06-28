@@ -14,7 +14,6 @@
 	import BarChart from '@/components/ChartTypes/BarChart.vue';
 
 	export default {
-		name: 'OrganicViewers',
 		components: {
 			BarChart
 		},

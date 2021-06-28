@@ -8,7 +8,6 @@
 	import BarChart from '@/components/ChartTypes/BarChart.vue';
 
 	export default {
-		name: 'MinutesPerViewer',
 		components: {
 			BarChart
 		},

@@ -11,9 +11,8 @@
 
 	export default {
 		components: { ChartHeader },
-		name: "Chart",
 		data: () => ({
-			view: "Organic Viewers",
+			view: "",
 			loaded: false,
 			streamData: [],
 			labels: [],
@@ -37,6 +36,7 @@
 		},
 		created() {
 			this.setupListeners();
+			this.view = this.$route.name;
 		},
 		beforeMount() {
 			this.sendDataRequestedEvent();
