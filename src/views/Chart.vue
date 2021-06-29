@@ -31,7 +31,6 @@
 			// eslint-disable-next-line no-unused-vars
 			$route: function(to, from) {
 				this.view = to.name;
-				this.sendDataRequestedEvent();
 			}
 		},
 		created() {

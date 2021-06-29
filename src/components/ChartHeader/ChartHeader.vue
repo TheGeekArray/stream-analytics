@@ -36,6 +36,12 @@
 				end: ""
 			}
 		}),
+		watch: {
+			// eslint-disable-next-line no-unused-vars
+			$route: function(to, from) {
+				this.sendDataRequestedEvent();
+			}
+		},
 		methods: {
 			sendDataRequestedEvent: function() {
 				ipcRenderer.send("dataRequested", this.view, this.dateRange, this.timeUnit);
