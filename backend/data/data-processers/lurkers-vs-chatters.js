@@ -118,7 +118,6 @@ function getGroupedDataInWeeks(data, rangeDates, rangeFlags) {
 	let groupedData = getGroupedDataFormat();
 	let lurkersWeekDataTotal = 0;
 	let chattersWeekDataTotal = 0;
-	let divisor = 0;
 
 	for (let year in data) {
 		if (rangeFlags.end) break;
@@ -151,25 +150,15 @@ function getGroupedDataInWeeks(data, rangeDates, rangeFlags) {
 				lurkersWeekDataTotal += data[year][month][day]["lurkers"];
 				chattersWeekDataTotal += data[year][month][day]["chatters"];
 
-				if (data[year][month][day]["lurkers"] > parseFloat(0)) {
-					divisor++;
-				}
-
 				let dayName = day.split(" ")[0];
 				if (dayName === "Sat") {
 					
-					if (lurkersWeekDataTotal === parseFloat(0)) {
-						groupedData.data.chatters.push(0);
-						groupedData.data.lurkers.push(0);
-					} else {
-						groupedData.data.chatters.push(lurkersWeekDataTotal / divisor);
-						groupedData.data.lurkers.push(chattersWeekDataTotal / divisor);
-					}
-					
+					groupedData.data.lurkers.push(lurkersWeekDataTotal);
+					groupedData.data.chatters.push(chattersWeekDataTotal);
 					groupedData.labels.push(month + " " + day.split(" ")[1]);
+
 					lurkersWeekDataTotal = 0;
 					chattersWeekDataTotal = 0;
-					divisor = 0;
 				}
 
 				if (rangeDates.end[0] === year && rangeDates.end[1] === formattedMonth && rangeDates.end[2] === dayNumber) {
@@ -205,7 +194,6 @@ function getGroupedDataInMonths(data, rangeDates, rangeFlags) {
 
 			let lurkersMonthDataTotal = 0;
 			let chattersMonthdataTotal = 0;
-			let divisor = 0;
 
 			for (let day in data[year][month]) {
 				if (rangeFlags.end) break;
@@ -217,18 +205,16 @@ function getGroupedDataInMonths(data, rangeDates, rangeFlags) {
 					rangeFlags.start.day = true;
 				}
 
-				if (data[year][month][day]["lurkers"] === parseFloat(0)) continue;
 				lurkersMonthDataTotal += data[year][month][day]["lurkers"];
 				chattersMonthdataTotal += data[year][month][day]["chatters"];
-				divisor++;
 
 				if (rangeDates.end[0] === year && rangeDates.end[1] === formattedMonth && rangeDates.end[2] === dayNumber) {
 					rangeFlags.end = true;
 				}
 			}
 
-			groupedData.data.lurkers.push(lurkersMonthDataTotal / divisor);
-			groupedData.data.chatters.push(chattersMonthdataTotal / divisor);
+			groupedData.data.lurkers.push(lurkersMonthDataTotal);
+			groupedData.data.chatters.push(chattersMonthdataTotal);
 			groupedData.labels.push(month + " " + year);
 		}
 	}
@@ -250,7 +236,6 @@ function getGroupedDataInYears(data, rangeDates, rangeFlags) {
 
 		let lurkersYearDataTotal = 0;
 		let chattersYearDataTotal = 0;
-		let divisor = 0;
 
 		for (let month in data[year]) {
 			if (rangeFlags.end) break;
@@ -272,10 +257,8 @@ function getGroupedDataInYears(data, rangeDates, rangeFlags) {
 					rangeFlags.start.day = true;
 				}
 
-				if (data[year][month][day]["lurkers"] === parseFloat(0)) continue;
 				lurkersYearDataTotal += data[year][month][day]["lurkers"];
 				chattersYearDataTotal += data[year][month][day]["chatters"];
-				divisor++;
 
 				if (rangeDates.end[0] === year && rangeDates.end[1] === formattedMonth && rangeDates.end[2] === dayNumber) {
 					rangeFlags.end = true;
@@ -283,8 +266,8 @@ function getGroupedDataInYears(data, rangeDates, rangeFlags) {
 			}
 		}
 
-		groupedData.data.lurkers.push(lurkersYearDataTotal / divisor);
-		groupedData.data.chatters.push(chattersYearDataTotal / divisor);
+		groupedData.data.lurkers.push(lurkersYearDataTotal);
+		groupedData.data.chatters.push(chattersYearDataTotal);
 		groupedData.labels.push(year);
 	}
 
