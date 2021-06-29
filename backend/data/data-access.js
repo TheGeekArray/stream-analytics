@@ -53,8 +53,8 @@ export function setupListeners() {
 			break;
 		case "Lurkers vs. Chatters":
 			let lurkersVsChattersData = lurkersVsChattersProcesser.getGroupedData(timeUnit, range, loadedData[topic]);
-			processedData.push(lurkersVsChattersData.data.lurkers);
 			processedData.push(lurkersVsChattersData.data.chatters);
+			processedData.push(lurkersVsChattersData.data.lurkers);
 			labels = lurkersVsChattersData.labels;
 			break;
 		default:
