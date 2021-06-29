@@ -48,9 +48,7 @@
 		props: ['view'],
 		data: () => ({
 			timeUnit: "Day",
-			hideEmptyDaysEnabled: false,
 			settingsVisible: false,
-			trendlineVisible: true,
 			dateRange: {
 				start: "",
 				end: ""
