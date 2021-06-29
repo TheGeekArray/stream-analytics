@@ -122,11 +122,16 @@
 	.settings-container {
 		position: absolute;
 		background: #3f3f3f;
+		color: #FFF;
 		width: 200px;
 		top: 40px;
 		right: 0;
 		border-radius: 3px;
 		box-shadow: 0px 3px 10px 0px rgba(0, 0, 0, 0.3);
 		padding: 20px;
+	}
+
+	.settings-container div:not(:last-child) {
+		margin-bottom: 20px;
 	}
 </style>
