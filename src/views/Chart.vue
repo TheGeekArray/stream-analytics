@@ -1,7 +1,11 @@
 <template>
 	<div class="chart" v-if="loaded">
-		<ChartHeader v-bind:view="view" @change="shouldHideEmptyDays = $event;" />
-		<router-view v-bind:streamData="streamData" v-bind:labels="labels" />
+		<ChartHeader 
+			v-bind:view="view" 
+			v-on:toggle-empty-days="shouldHideEmptyDays = $event;"
+			v-on:toggle-trendline="shouldHideTrendline = $event;"
+		/>
+		<router-view v-bind:streamData="streamData" v-bind:labels="labels" v-bind:shouldHideTrendline="shouldHideTrendline" />
 	</div>
 </template>
 
@@ -16,7 +20,8 @@
 			loaded: false,
 			streamData: [],
 			labels: [],
-			shouldHideEmptyDays: false
+			shouldHideEmptyDays: false,
+			shouldHideTrendline: false
 		}),
 		watch: {
 			streamData: function() {

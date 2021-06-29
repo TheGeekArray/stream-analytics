@@ -19,7 +19,8 @@
 		},
 		props: {
 			streamData: Array,
-			labels: Array
+			labels: Array,
+			shouldHideTrendline: Boolean
 		},
 		data: () => ({
 			rangeTotal: "",
@@ -53,17 +54,13 @@
 				return total / organicData.filter(value => value !== 0).length;
 			},
 			getChartData: function() {
-				return {
+				let data = {
 					labels: this.labels,
 					datasets: [{
 						label: this.legendLabels[0],
 						backgroundColor: "#772ce8",
 						data: this.streamData[0],
-						trendlineLinear: {
-							style: "rgba(141,141,141, .8)",
-							lineStyle: "dotted|solid",
-							width: 2
-						}
+						
 					},
 					{
 						label: this.legendLabels[1],
@@ -71,6 +68,16 @@
 						data: this.streamData[1]
 					}]
 				}
+
+				if (!this.shouldHideTrendline) {
+					data.datasets[0].trendlineLinear = {
+						style: "rgba(141,141,141, .8)",
+						lineStyle: "dotted|solid",
+						width: 2
+					}
+				}
+
+				return data;
 			},
 			getOptions: function() {
 				return {

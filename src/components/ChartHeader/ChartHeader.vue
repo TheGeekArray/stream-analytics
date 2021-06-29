@@ -8,20 +8,22 @@
 			class="time-unit-picker-component"
 		/>
 
-		<div class="chart-settings">
-			<font-awesome-icon icon="cog" class="button settings-button" v-on:click="settingsVisible = !settingsVisible;" v-clickoutside="hideSettings" />
+		<div class="chart-settings" v-clickoutside="hideSettings">
+			<font-awesome-icon icon="cog" class="button settings-button" v-on:click="settingsVisible = !settingsVisible;" />
 			<div class="settings-container" v-show="settingsVisible">
 				<div class="hide-empty-days">
-					<div class="checkbox-container" v-on:click="hideEmptyDaysEnabled = !hideEmptyDaysEnabled; $emit('change', hideEmptyDaysEnabled); sendDataRequestedEvent()">
-						<span class="checkbox"><span v-show="hideEmptyDaysEnabled" class="checkbox-checked"></span></span>
-						<span class="checkbox-label">Hide {{timeUnit.toLowerCase() + "s"}} not streamed</span>
-					</div>
+					<Checkbox 
+						ref="emptyDays"
+						v-bind:description="`Hide ${timeUnit.toLowerCase() + 's'} not streamed`"
+						v-on:input="$emit('toggle-empty-days', $event); sendDataRequestedEvent()" 
+					/>
 				</div>
 				<div class="hide-trend-line">
-					<div class="checkbox-container" v-on:click="trendlineVisible = !trendlineVisible">
-						<span class="checkbox"><span v-show="trendlineVisible" class="checkbox-checked"></span></span>
-						<span class="checkbox-label">Hide trend line</span>
-					</div>
+					<Checkbox 
+						ref="trendLine"
+						v-bind:description="`Hide trend line`" 
+						v-on:input="$emit('toggle-trendline', $event); sendDataRequestedEvent()"
+					/>
 				</div>
 			</div>
 		</div>
@@ -29,6 +31,7 @@
 </template>
 
 <script>
+	import Checkbox from '@/components/InputComponents/Checkbox';
 	import DatePicker from '@/components/ChartHeader/SubComponents/DatePicker';
 	import TimeUnitPicker from '@/components/ChartHeader/SubComponents/TimeUnitPicker';
 	import { ipcRenderer } from 'electron';
@@ -38,7 +41,8 @@
 		name: 'ChartHeader',
 		components: {
 			DatePicker,
-			TimeUnitPicker
+			TimeUnitPicker,
+			Checkbox
 		},
 		props: ['view'],
 		data: () => ({
@@ -124,41 +128,5 @@
 		border-radius: 3px;
 		box-shadow: 0px 3px 10px 0px rgba(0, 0, 0, 0.3);
 		padding: 20px;
-	}
-
-		.checkbox-container {
-		display: flex;
-		align-items: center;
-		cursor: pointer;
-	}
-
-	.checkbox {
-		width: 15px;
-		height: 15px;
-		background-color: #e2e2e2;
-		margin-right: 10px;
-		position: relative;
-	}
-
-	.checkbox-checked {
-		width: 15px;
-		height: 15px;
-		background: #772ce8;
-		position: absolute;
-		top: 0;
-		left: 0;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.checkbox-checked::after {
-		content: "\2713";
-		color: #fff;
-		font-size: 17px;
-		width: 14px;
-		height: 22px;
-		font-weight: 600;
-		display: inline-block;
 	}
 </style>
