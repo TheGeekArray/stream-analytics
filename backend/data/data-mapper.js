@@ -32,7 +32,7 @@ export default {
 }
 
 function mapDataForTopic(topic, dates, topicCount, data) {
-	let topicData = dataAccess.getData(topic);
+	let topicData = dataAccess.getLoadedData(topic);
 
 	if (topicData == null) {
 		logger.debug("No data for mapData");
@@ -87,8 +87,8 @@ function splitData(data) {
 	return dataToSplit.map(line => line.split(","));
 }
 
-function mapOrganicViewersData(averageViewersData, hostsAndRaidsData) {
-	let organicViewersData = dataAccess.getData("Organic Viewers");
+export function mapOrganicViewersData(averageViewersData, hostsAndRaidsData) {
+	let organicViewersData = dataAccess.getLoadedData("Organic Viewers");
 
 	if (organicViewersData == null) {
 		logger.debug("No data for mapOrganicViewersData");
@@ -137,8 +137,8 @@ function mapOrganicViewersData(averageViewersData, hostsAndRaidsData) {
 	return organicViewersData;
 }
 
-function mapMinutesPerViewerData(minutesWatchedData, uniqueViewersData) {
-	let minutesPerViewerData = dataAccess.getData("Minutes Per Viewer");
+export function mapMinutesPerViewerData(minutesWatchedData, uniqueViewersData) {
+	let minutesPerViewerData = dataAccess.getLoadedData("Minutes Per Viewer");
 
 	if (minutesPerViewerData == null) {
 		logger.debug("No data for mapMinutesPerViewerData");
@@ -176,8 +176,8 @@ function mapMinutesPerViewerData(minutesWatchedData, uniqueViewersData) {
 	return minutesPerViewerData;
 }
 
-function mapLurkersVsChattersData(uniqueViewersData, chattersData) {
-	let lurkersVsChattersData = dataAccess.getData("Lurkers vs. Chatters");
+export function mapLurkersVsChattersData(uniqueViewersData, chattersData) {
+	let lurkersVsChattersData = dataAccess.getLoadedData("Lurkers vs. Chatters");
 
 	if (lurkersVsChattersData == null) {
 		logger.debug("No data for mapLurkersVsChattersData");

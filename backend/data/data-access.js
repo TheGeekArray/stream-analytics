@@ -71,7 +71,7 @@ export function setupListeners() {
 	});
 }
 
-export function getData(topic) {
+export function getLoadedData(topic) {
 	return loadedData[topic];
 };
 
