@@ -202,14 +202,13 @@ function mapLurkersVsChattersData(uniqueViewersData, chattersData) {
 				const uniqueViewers = parseFloat(uniqueViewersData[year][month][day]);
 				const chatters = parseFloat(chattersData[year][month][day]);
 
-				if (uniqueViewers === parseFloat(0)) {
+				if (uniqueViewers === parseFloat(0) || chatters > uniqueViewers) {
 					lurkersVsChattersData[year][month][day]["lurkers"] = 0;
 					lurkersVsChattersData[year][month][day]["chatters"] = 0;
-					continue;
+				} else {
+					lurkersVsChattersData[year][month][day]["lurkers"] = uniqueViewers - chatters;
+					lurkersVsChattersData[year][month][day]["chatters"] = chatters;
 				}
-		
-				lurkersVsChattersData[year][month][day]["lurkers"] = uniqueViewers - chatters;
-				lurkersVsChattersData[year][month][day]["chatters"] = chatters;
 			}
 		}
 	}
