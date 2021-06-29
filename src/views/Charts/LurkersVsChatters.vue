@@ -76,6 +76,16 @@
 
 								label += (tooltipItem.yLabel % 1 !== 0 ? tooltipItem.yLabel.toFixed(2) : tooltipItem.yLabel);
 								return label;
+							},
+							title: function(tooltipItems, data) {
+								return data.labels[tooltipItems[0].index];
+							},
+							footer: function(tooltipItems) {
+								let total = 0;
+								for (let i = 0; i < tooltipItems.length; i++) {
+									total += parseFloat(tooltipItems[i].yLabel);
+								}
+								return 'Total unique viewers: ' + total;
 							}
 						}
 					},
