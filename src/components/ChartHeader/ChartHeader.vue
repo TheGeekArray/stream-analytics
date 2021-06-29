@@ -6,6 +6,7 @@
 		<TimeUnitPicker 
 			@change="timeUnit = $event; sendDataRequestedEvent();"
 			class="time-unit-picker-component"
+			:key="timeUnitPickerKey"
 		/>
 
 		<div class="chart-settings" v-clickoutside="hideSettings">
@@ -53,7 +54,8 @@
 			dateRange: {
 				start: "",
 				end: ""
-			}
+			},
+			timeUnitPickerKey: 0
 		}),
 		watch: {
 			// eslint-disable-next-line no-unused-vars
@@ -70,6 +72,7 @@
 				this.dateRange.end = moment().format('YYYY-MM-DD');
 
 				this.timeUnit = "Day";
+				this.timeUnitPickerKey++;
 
 				this.sendDataRequestedEvent();
 			},
