@@ -2,7 +2,6 @@
 	<div class="date-picker">
 		<input type="date" id="start-date" :max="range.end || today" v-model="range.start" @change="$emit('change', range);">
 		<input type="date" id="end-date" :min="range.start" :max="today" v-model="range.end" @change="$emit('change', range);">
-		<button v-on:click="resetChart">Reset to 30 days</button>
 	</div>
 </template>
 
@@ -18,14 +17,6 @@ export default {
 				start: moment().subtract("30","days").format('YYYY-MM-DD'),
 				end: moment().format('YYYY-MM-DD')
 			}
-		}
-	},
-	methods: {
-		resetChart() {
-			this.range.start = moment().subtract("30","days").format('YYYY-MM-DD');
-			this.range.end = moment().format('YYYY-MM-DD');
-
-			this.$emit('change', this.range);
 		}
 	}
 }
@@ -69,20 +60,5 @@ export default {
 
 	#start-date {
 		margin-right: 20px;
-	}
-
-	button {
-		background: transparent;
-		color: #885cca;
-		border: none;
-		outline: none;
-		cursor: pointer;
-		margin-left: 10px;
-		font-family: Avenir, Helvetica, Arial, sans-serif;
-		font-size: 14px;
-	}
-
-	button:hover {
-		color: #542897;
 	}
 </style>

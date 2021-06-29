@@ -1,6 +1,7 @@
 <template>
 	<div class="header">
 		<DatePicker @change="dateRange = $event; sendDataRequestedEvent();" />
+		<button v-on:click="resetChart">Reset to 30 days</button>
 		<EmptyDaysOption 
 			v-bind:isChecked="hideEmptyDaysEnabled"
 			v-bind:timeUnit="timeUnit"
@@ -19,6 +20,7 @@
 	import EmptyDaysOption from '@/components/ChartHeader/SubComponents/EmptyDaysOption';
 	import TimeUnitPicker from '@/components/ChartHeader/SubComponents/TimeUnitPicker';
 	import { ipcRenderer } from 'electron';
+	import moment from 'moment';
 
 	export default {
 		name: 'ChartHeader',
@@ -45,6 +47,14 @@
 		methods: {
 			sendDataRequestedEvent: function() {
 				ipcRenderer.send("dataRequested", this.view, this.dateRange, this.timeUnit);
+			},
+			resetChart() {
+				this.dateRange.start = moment().subtract("30","days").format('YYYY-MM-DD');
+				this.dateRange.end = moment().format('YYYY-MM-DD');
+
+				this.timeUnit = "Day";
+
+				this.sendDataRequestedEvent();
 			}
 		}
 	}
@@ -65,5 +75,20 @@
 	.time-unit-picker-component {
 		justify-self: flex-end;
 		margin-left: 20px;
+	}
+
+	button {
+		background: transparent;
+		color: #885cca;
+		border: none;
+		outline: none;
+		cursor: pointer;
+		margin-left: 10px;
+		font-family: Avenir, Helvetica, Arial, sans-serif;
+		font-size: 14px;
+	}
+
+	button:hover {
+		color: #542897;
 	}
 </style>
