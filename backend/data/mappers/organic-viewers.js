@@ -1,6 +1,6 @@
 'use strict';
 
-import * as dataAccess from './data-access';
+import * as dataAccess from '../data-access';
 
 export function mapOrganicViewersData(averageViewersData, hostsAndRaidsData) {
 	let organicViewersData = dataAccess.getLoadedData("Organic Viewers");
@@ -29,22 +29,13 @@ export function mapOrganicViewersData(averageViewersData, hostsAndRaidsData) {
 				const hostsAndRaids = parseFloat(hostsAndRaidsData[year][month][day]);
 
 				if (averageViewers === parseFloat(0)) {
-					organicViewersData[year][month][day]["organic"] = 0;
-					organicViewersData[year][month][day]["artificial"] = 0;
-					continue;
-				}
-
-				if (hostsAndRaids === parseFloat(0)) {
-					organicViewersData[year][month][day]["organic"] = averageViewers;
-					organicViewersData[year][month][day]["artificial"] = 0;
+					organicViewersData[year][month][day] = 0;
 					continue;
 				}
 
 				const percentage = (100 - hostsAndRaids) / 100;
-				const organicAverage = averageViewers * percentage;
 		
-				organicViewersData[year][month][day]["organic"] = organicAverage;
-				organicViewersData[year][month][day]["artificial"] = averageViewers - organicAverage;
+				organicViewersData[year][month][day] = averageViewers * percentage;
 			}
 		}
 	}

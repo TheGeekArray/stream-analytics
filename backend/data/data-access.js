@@ -33,9 +33,17 @@ export function setupListeners() {
 		});
 	});
 
-	ipcMain.on("dataRequested", function(event, topic, range = { start: "", end: "" }, timeUnit = "Day") {
-		let data = dataFormatter.formatData(timeUnit, range, topic, loadedData[topic]);
-		event.reply("dataLoaded", data.formattedData, data.labels);
+	ipcMain.on("dataRequested", function(event, topics, range = { start: "", end: "" }, timeUnit = "Day") {
+		let labels = [];
+		let formattedData = [];
+
+		for (let topic of topics) {
+			let data = dataFormatter.formatData(timeUnit, range, loadedData[topic]);
+			formattedData.push(data.formattedData);
+			labels = data.labels;
+		}
+
+		event.reply("dataLoaded", formattedData, labels);
 	});
 
 	ipcMain.on("startingDateSet", function(date) {

@@ -1,7 +1,7 @@
 <template>
 	<div class="chart" v-if="loaded">
 		<ChartHeader 
-			v-bind:view="view" 
+			v-bind:topics="topics" 
 			v-on:toggle-empty-days="shouldHideEmptyDays = $event;"
 			v-on:toggle-trendline="shouldHideTrendline = $event;"
 		/>
@@ -16,7 +16,7 @@
 	export default {
 		components: { ChartHeader },
 		data: () => ({
-			view: "",
+			topics: ["Organic Viewers", "Artificial Viewers"],
 			loaded: false,
 			streamData: [],
 			labels: [],
@@ -35,12 +35,11 @@
 			},
 			// eslint-disable-next-line no-unused-vars
 			$route: function(to, from) {
-				this.view = to.name;
+				this.topics = to.params.topics;
 			}
 		},
 		created() {
 			this.setupListeners();
-			this.view = this.$route.name;
 		},
 		beforeMount() {
 			this.sendDataRequestedEvent();
@@ -55,7 +54,7 @@
 				ipcRenderer.on("dataProcessed", this.sendDataRequestedEvent);
 			},
 			sendDataRequestedEvent: function() {
-				ipcRenderer.send("dataRequested", this.view);
+				ipcRenderer.send("dataRequested", this.topics);
 			},
 			setStreamData: function(event, data, labels) {
 				this.streamData = data;

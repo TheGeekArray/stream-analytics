@@ -4,13 +4,13 @@
 		<div class="navigation-window" v-show="!collapsed" v-bind:class="{ hidden: collapsed }">
 			<font-awesome-icon icon="times" class="return-button" v-on:click="collapsed = true"/>
 			<div class="navigation-items-container">
-				<router-link to="/organic-viewers" class="navigation-item" exact-active-class="navigation-item-active">
+				<router-link :to="{name: 'OrganicViewers', params: { topics: ['Organic Viewers', 'Artificial Viewers']}}" class="navigation-item" exact-active-class="navigation-item-active">
 					<span v-on:click="collapsed = true">Organic vs. Artificial Viewers</span>
 				</router-link>
-				<router-link to="/minutes-per-viewer" exact-active-class="navigation-item-active" class="navigation-item">
+				<router-link :to="{name: 'MinutesPerViewer', params: { topics: ['Minutes Per Viewer']}}" exact-active-class="navigation-item-active" class="navigation-item">
 					<span v-on:click="collapsed = true">Minutes Watched Per Unique Viewer</span>
 				</router-link>
-				<router-link to="/lurkers-vs-chatters" exact-active-class="navigation-item-active" class="navigation-item">
+				<router-link :to="{name: 'LurkersVsChatters', params: { topics: ['Chatters', 'Lurkers']}}" exact-active-class="navigation-item-active" class="navigation-item">
 					<span v-on:click="collapsed = true">Chatters vs. Lurkers</span>
 				</router-link>
 			</div>

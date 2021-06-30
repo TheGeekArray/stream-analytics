@@ -18,19 +18,21 @@ const routes = [
 			},
 			{
 				path: 'organic-viewers',
-				name: 'Organic Viewers',
+				name: 'OrganicViewers',
 				component: OrganicViewers,
 				props: true
 			},
 			{
 				path: 'minutes-per-viewer',
-				name: 'Minutes Per Viewer',
-				component: MinutesPerViewer
+				name: 'MinutesPerViewer',
+				component: MinutesPerViewer,
+				props: true
 			},
 			{
 				path: 'lurkers-vs-chatters',
-				name: 'Lurkers vs. Chatters',
-				component: LurkersVsChatters
+				name: 'LurkersVsChatters',
+				component: LurkersVsChatters,
+				props: true
 			}
 		]
 	},

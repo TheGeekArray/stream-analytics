@@ -1,6 +1,6 @@
 'use strict';
 
-import * as dataAccess from './data-access';
+import * as dataAccess from '../data-access';
 
 export function mapMinutesPerViewerData(minutesWatchedData, uniqueViewersData) {
 	let minutesPerViewerData = dataAccess.getLoadedData("Minutes Per Viewer");

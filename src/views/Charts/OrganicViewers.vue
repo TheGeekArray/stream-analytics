@@ -20,7 +20,8 @@
 		props: {
 			streamData: Array,
 			labels: Array,
-			shouldHideTrendline: Boolean
+			shouldHideTrendline: Boolean,
+			topics: Array
 		},
 		data: () => ({
 			rangeTotal: "",

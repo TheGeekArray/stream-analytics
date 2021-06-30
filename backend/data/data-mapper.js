@@ -2,6 +2,10 @@
 
 import logger from '../utils/logger';
 import * as dataAccess from './data-access';
+import * as organicViewers from './mappers/organic-viewers';
+import * as artificialViewers from './mappers/artificial-viewers';
+import * as minutesPerViewer from './mappers/minutes-per-viewer';
+import * as lurkers from './mappers/lurkers';
 import moment from 'moment';
 
 export default {
@@ -23,9 +27,10 @@ export default {
 			count++;
 		}
 
-		mappedData["Organic Viewers"] = mapOrganicViewersData(mappedData["Average Viewers"], mappedData["Hosts & Raids"]);
-		mappedData["Minutes Per Viewer"] = mapMinutesPerViewerData(mappedData["Minutes Watched"], mappedData["Unique Viewers"]);
-		mappedData["Lurkers vs. Chatters"] = mapLurkersVsChattersData(mappedData["Unique Viewers"], mappedData["Chatters"]);
+		mappedData["Organic Viewers"] = organicViewers.mapOrganicViewersData(mappedData["Average Viewers"], mappedData["Hosts & Raids"]);
+		mappedData["Artificial Viewers"] = artificialViewers.mapArtificialViewersData(mappedData["Average Viewers"], mappedData["Hosts & Raids"]);
+		mappedData["Minutes Per Viewer"] = minutesPerViewer.mapMinutesPerViewerData(mappedData["Minutes Watched"], mappedData["Unique Viewers"]);
+		mappedData["Lurkers vs. Chatters"] = lurkers.mapLurkersData(mappedData["Unique Viewers"], mappedData["Chatters"]);
 
 		return {mappedData, fileName};
 	}
