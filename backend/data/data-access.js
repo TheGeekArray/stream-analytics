@@ -4,9 +4,7 @@ import { ipcMain } from 'electron';
 import fs from 'fs-extra';
 import filePaths from '../file-paths';
 import dataMapper from './data-mapper';
-import organicViewersProcesser from './data-processers/organic-viewers';
-import minutesPerViewerProcesser from './data-processers/minutes-per-viewer';
-import lurkersVsChattersProcesser from './data-processers/lurkers-vs-chatters';
+import * as dataFormatter from './data-formatter';
 import logger from '../utils/logger';
 import path from 'path';
 import * as fileHandler from '../utils/file-handler';
@@ -36,32 +34,8 @@ export function setupListeners() {
 	});
 
 	ipcMain.on("dataRequested", function(event, topic, range = { start: "", end: "" }, timeUnit = "Day") {
-		let processedData = [];
-		let labels = {};
-
-		switch (topic) {
-		case "Organic Viewers":
-			let averageViewersData = organicViewersProcesser.getGroupedData(timeUnit, range, loadedData[topic]);
-			processedData.push(averageViewersData.data.organic);
-			processedData.push(averageViewersData.data.artificial);
-			labels = averageViewersData.labels;
-			break;
-		case "Minutes Per Viewer":
-			let minutesPerViewerData = minutesPerViewerProcesser.getGroupedData(timeUnit, range, loadedData[topic]);
-			processedData.push(minutesPerViewerData.data);
-			labels = minutesPerViewerData.labels;
-			break;
-		case "Lurkers vs. Chatters":
-			let lurkersVsChattersData = lurkersVsChattersProcesser.getGroupedData(timeUnit, range, loadedData[topic]);
-			processedData.push(lurkersVsChattersData.data.chatters);
-			processedData.push(lurkersVsChattersData.data.lurkers);
-			labels = lurkersVsChattersData.labels;
-			break;
-		default:
-			return;
-		}
-
-		event.reply("dataLoaded", processedData, labels);
+		let data = dataFormatter.formatData(timeUnit, range, topic, loadedData[topic]);
+		event.reply("dataLoaded", data.formattedData, data.labels);
 	});
 
 	ipcMain.on("startingDateSet", function(date) {

@@ -3,10 +3,7 @@
 import moment from 'moment';
 
 export default {
-	getGroupedData(timeUnit, range, data) {
-		let rangeDates = getRangeDates(range);
-		let rangeFlags = getRangeFlags();
-
+	formatData(timeUnit, rangeDates, rangeFlags, data) {
 		switch(timeUnit) {
 		case "Day":
 			return getGroupedDataInDays(data, rangeDates, rangeFlags);
@@ -22,44 +19,9 @@ export default {
 	}
 }
 
-function getRangeDates(range) {
-	if (!range.start || !range.end) {
-		const today = moment().format("YYYY-MM-DD");
-		const startDate = moment(today).subtract("30", "days").format("YYYY-MM-DD");
-
-		return {
-			start: startDate.split("-"),
-			end: today.split("-")
-		};
-	}
-
-	return {
-		start: range.start.split("-"),
-		end: range.end.split("-")
-	};
-}
-
-function getRangeFlags() {
-	return {
-		start: {
-			year: false,
-			month: false,
-			day: false
-		},
-		end: false
-	}
-}
-
-function getGroupedDataFormat() {
-	/** @type {FormattedData} */
-	return {
-		data: [], 
-		labels: []
-	}
-}
-
 function getGroupedDataInDays(data, rangeDates, rangeFlags) {
-	let groupedData = getGroupedDataFormat();
+	let formattedData = [[], []];
+	let labels = [];
 
 	for (let year in data) {
 		if (rangeFlags.end) break;
@@ -89,8 +51,9 @@ function getGroupedDataInDays(data, rangeDates, rangeFlags) {
 					rangeFlags.start.day = true;
 				}
 
-				groupedData.data.push(data[year][month][day]);
-				groupedData.labels.push(month + " " + day.split(" ")[1] + " " + year);
+				formattedData[0].push(data[year][month][day]["organic"]);
+				formattedData[1].push(data[year][month][day]["artificial"]);
+				labels.push(month + " " + day.split(" ")[1] + " " + year);
 
 				if (rangeDates.end[0] === year && rangeDates.end[1] === formattedMonth && rangeDates.end[2] === dayNumber) {
 					rangeFlags.end = true;
@@ -99,12 +62,14 @@ function getGroupedDataInDays(data, rangeDates, rangeFlags) {
 		}
 	}
 	
-	return groupedData;
+	return {formattedData, labels};
 }
 
 function getGroupedDataInWeeks(data, rangeDates, rangeFlags) {
-	let groupedData = getGroupedDataFormat();
-	let weekDataTotal = 0;
+	let formattedData = [[], []];
+	let labels = [];
+	let organicWeekDataTotal = 0;
+	let artificialWeekDataTotal = 0;
 	let divisor = 0;
 
 	for (let year in data) {
@@ -135,23 +100,27 @@ function getGroupedDataInWeeks(data, rangeDates, rangeFlags) {
 					rangeFlags.start.day = true;
 				}
 
-				weekDataTotal += data[year][month][day];
+				organicWeekDataTotal += data[year][month][day]["organic"];
+				artificialWeekDataTotal += data[year][month][day]["artificial"];
 
-				if (data[year][month][day] > parseFloat(0)) {
+				if (data[year][month][day]["organic"] > parseFloat(0)) {
 					divisor++;
 				}
 
 				let dayName = day.split(" ")[0];
 				if (dayName === "Sat") {
 					
-					if (weekDataTotal === parseFloat(0)) {
-						groupedData.data.push(0);
+					if (organicWeekDataTotal === parseFloat(0)) {
+						formattedData[0].push(0);
+						formattedData[1].push(0);
 					} else {
-						groupedData.data.push(weekDataTotal / divisor);
+						formattedData[0].push(organicWeekDataTotal / divisor);
+						formattedData[1].push(artificialWeekDataTotal / divisor);
 					}
 					
-					groupedData.labels.push(month + " " + day.split(" ")[1]);
-					weekDataTotal = 0;
+					labels.push(month + " " + day.split(" ")[1]);
+					organicWeekDataTotal = 0;
+					artificialWeekDataTotal = 0;
 					divisor = 0;
 				}
 
@@ -162,11 +131,12 @@ function getGroupedDataInWeeks(data, rangeDates, rangeFlags) {
 		}
 	}
 
-	return groupedData;
+	return {formattedData, labels};
 }
 
 function getGroupedDataInMonths(data, rangeDates, rangeFlags) {
-	let groupedData = getGroupedDataFormat();
+	let formattedData = [[], []];
+	let labels = [];
 
 	for (let year in data) {
 		if (rangeFlags.end) break;
@@ -186,7 +156,8 @@ function getGroupedDataInMonths(data, rangeDates, rangeFlags) {
 				rangeFlags.start.month = true;
 			}
 
-			let monthDataTotal = 0;
+			let organicMonthDataTotal = 0;
+			let artificialMonthdataTotal = 0;
 			let divisor = 0;
 
 			for (let day in data[year][month]) {
@@ -199,8 +170,9 @@ function getGroupedDataInMonths(data, rangeDates, rangeFlags) {
 					rangeFlags.start.day = true;
 				}
 
-				if (data[year][month][day] === parseFloat(0)) continue;
-				monthDataTotal += data[year][month][day];
+				if (data[year][month][day]["organic"] === parseFloat(0)) continue;
+				organicMonthDataTotal += data[year][month][day]["organic"];
+				artificialMonthdataTotal += data[year][month][day]["artificial"];
 				divisor++;
 
 				if (rangeDates.end[0] === year && rangeDates.end[1] === formattedMonth && rangeDates.end[2] === dayNumber) {
@@ -208,17 +180,19 @@ function getGroupedDataInMonths(data, rangeDates, rangeFlags) {
 				}
 			}
 
-			groupedData.data.push(monthDataTotal / divisor);
-			groupedData.labels.push(month + " " + year);
+			formattedData[0].push(organicMonthDataTotal / divisor);
+			formattedData[1].push(artificialMonthdataTotal / divisor);
+			labels.push(month + " " + year);
 		}
 	}
 
 
-	return groupedData;
+	return {formattedData, labels};
 }
 
 function getGroupedDataInYears(data, rangeDates, rangeFlags) {
-	let groupedData = getGroupedDataFormat();
+	let formattedData = [[], []];
+	let labels = [];
 
 	for (let year in data) {
 		if (rangeFlags.end) break;
@@ -228,7 +202,8 @@ function getGroupedDataInYears(data, rangeDates, rangeFlags) {
 			rangeFlags.start.year = true;
 		}
 
-		let yearDataTotal = 0;
+		let organicYearDataTotal = 0;
+		let artificialYearDataTotal = 0;
 		let divisor = 0;
 
 		for (let month in data[year]) {
@@ -251,8 +226,9 @@ function getGroupedDataInYears(data, rangeDates, rangeFlags) {
 					rangeFlags.start.day = true;
 				}
 
-				if (data[year][month][day] === parseFloat(0)) continue;
-				yearDataTotal += data[year][month][day];
+				if (data[year][month][day]["organic"] === parseFloat(0)) continue;
+				organicYearDataTotal += data[year][month][day]["organic"];
+				artificialYearDataTotal += data[year][month][day]["artificial"];
 				divisor++;
 
 				if (rangeDates.end[0] === year && rangeDates.end[1] === formattedMonth && rangeDates.end[2] === dayNumber) {
@@ -261,9 +237,10 @@ function getGroupedDataInYears(data, rangeDates, rangeFlags) {
 			}
 		}
 
-		groupedData.data.push(yearDataTotal / divisor);
-		groupedData.labels.push(year);
+		formattedData[0].push(organicYearDataTotal / divisor);
+		formattedData[1].push(artificialYearDataTotal / divisor);
+		labels.push(year);
 	}
 
-	return groupedData;
+	return {formattedData, labels};
 }

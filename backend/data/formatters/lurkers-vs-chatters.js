@@ -2,19 +2,8 @@
 
 import moment from 'moment';
 
-/**
- * @typedef FormattedData
- * @property {Object} data
- * @property {String[]} data.organic
- * @property {String[]} data.artificial
- * @property {String[]} labels
- */
-
 export default {
-	getGroupedData(timeUnit, range, data) {
-		let rangeDates = getRangeDates(range);
-		let rangeFlags = getRangeFlags();
-
+	formatData(timeUnit, rangeDates, rangeFlags, data) {
 		switch(timeUnit) {
 		case "Day":
 			return getGroupedDataInDays(data, rangeDates, rangeFlags);
@@ -30,47 +19,9 @@ export default {
 	}
 }
 
-function getRangeDates(range) {
-	if (!range.start || !range.end) {
-		const today = moment().format("YYYY-MM-DD");
-		const startDate = moment(today).subtract("30", "days").format("YYYY-MM-DD");
-
-		return {
-			start: startDate.split("-"),
-			end: today.split("-")
-		};
-	}
-
-	return {
-		start: range.start.split("-"),
-		end: range.end.split("-")
-	};
-}
-
-function getRangeFlags() {
-	return {
-		start: {
-			year: false,
-			month: false,
-			day: false
-		},
-		end: false
-	}
-}
-
-function getGroupedDataFormat() {
-	/** @type {FormattedData} */
-	return {
-		data: {
-			organic: [],
-			artificial: []
-		}, 
-		labels: []
-	}
-}
-
 function getGroupedDataInDays(data, rangeDates, rangeFlags) {
-	let groupedData = getGroupedDataFormat();
+	let formattedData = [[], []];
+	let labels = [];
 
 	for (let year in data) {
 		if (rangeFlags.end) break;
@@ -100,9 +51,9 @@ function getGroupedDataInDays(data, rangeDates, rangeFlags) {
 					rangeFlags.start.day = true;
 				}
 
-				groupedData.data.organic.push(data[year][month][day]["organic"]);
-				groupedData.data.artificial.push(data[year][month][day]["artificial"]);
-				groupedData.labels.push(month + " " + day.split(" ")[1] + " " + year);
+				formattedData[0].push(data[year][month][day]["chatters"]);
+				formattedData[1].push(data[year][month][day]["lurkers"]);
+				labels.push(month + " " + day.split(" ")[1] + " " + year);
 
 				if (rangeDates.end[0] === year && rangeDates.end[1] === formattedMonth && rangeDates.end[2] === dayNumber) {
 					rangeFlags.end = true;
@@ -111,14 +62,14 @@ function getGroupedDataInDays(data, rangeDates, rangeFlags) {
 		}
 	}
 	
-	return groupedData;
+	return {formattedData, labels};
 }
 
 function getGroupedDataInWeeks(data, rangeDates, rangeFlags) {
-	let groupedData = getGroupedDataFormat();
-	let organicWeekDataTotal = 0;
-	let artificialWeekDataTotal = 0;
-	let divisor = 0;
+	let formattedData = [[], []];
+	let labels = [];
+	let lurkersWeekDataTotal = 0;
+	let chattersWeekDataTotal = 0;
 
 	for (let year in data) {
 		if (rangeFlags.end) break;
@@ -148,28 +99,18 @@ function getGroupedDataInWeeks(data, rangeDates, rangeFlags) {
 					rangeFlags.start.day = true;
 				}
 
-				organicWeekDataTotal += data[year][month][day]["organic"];
-				artificialWeekDataTotal += data[year][month][day]["artificial"];
-
-				if (data[year][month][day]["organic"] > parseFloat(0)) {
-					divisor++;
-				}
+				lurkersWeekDataTotal += data[year][month][day]["lurkers"];
+				chattersWeekDataTotal += data[year][month][day]["chatters"];
 
 				let dayName = day.split(" ")[0];
 				if (dayName === "Sat") {
 					
-					if (organicWeekDataTotal === parseFloat(0)) {
-						groupedData.data.organic.push(0);
-						groupedData.data.artificial.push(0);
-					} else {
-						groupedData.data.organic.push(organicWeekDataTotal / divisor);
-						groupedData.data.artificial.push(artificialWeekDataTotal / divisor);
-					}
-					
-					groupedData.labels.push(month + " " + day.split(" ")[1]);
-					organicWeekDataTotal = 0;
-					artificialWeekDataTotal = 0;
-					divisor = 0;
+					formattedData[0].push(chattersWeekDataTotal);
+					formattedData[1].push(lurkersWeekDataTotal);
+					labels.push(month + " " + day.split(" ")[1]);
+
+					lurkersWeekDataTotal = 0;
+					chattersWeekDataTotal = 0;
 				}
 
 				if (rangeDates.end[0] === year && rangeDates.end[1] === formattedMonth && rangeDates.end[2] === dayNumber) {
@@ -179,11 +120,12 @@ function getGroupedDataInWeeks(data, rangeDates, rangeFlags) {
 		}
 	}
 
-	return groupedData;
+	return {formattedData, labels};
 }
 
 function getGroupedDataInMonths(data, rangeDates, rangeFlags) {
-	let groupedData = getGroupedDataFormat();
+	let formattedData = [[], []];
+	let labels = [];
 
 	for (let year in data) {
 		if (rangeFlags.end) break;
@@ -203,9 +145,8 @@ function getGroupedDataInMonths(data, rangeDates, rangeFlags) {
 				rangeFlags.start.month = true;
 			}
 
-			let organicMonthDataTotal = 0;
-			let artificialMonthdataTotal = 0;
-			let divisor = 0;
+			let lurkersMonthDataTotal = 0;
+			let chattersMonthdataTotal = 0;
 
 			for (let day in data[year][month]) {
 				if (rangeFlags.end) break;
@@ -217,28 +158,27 @@ function getGroupedDataInMonths(data, rangeDates, rangeFlags) {
 					rangeFlags.start.day = true;
 				}
 
-				if (data[year][month][day]["organic"] === parseFloat(0)) continue;
-				organicMonthDataTotal += data[year][month][day]["organic"];
-				artificialMonthdataTotal += data[year][month][day]["artificial"];
-				divisor++;
+				lurkersMonthDataTotal += data[year][month][day]["lurkers"];
+				chattersMonthdataTotal += data[year][month][day]["chatters"];
 
 				if (rangeDates.end[0] === year && rangeDates.end[1] === formattedMonth && rangeDates.end[2] === dayNumber) {
 					rangeFlags.end = true;
 				}
 			}
 
-			groupedData.data.organic.push(organicMonthDataTotal / divisor);
-			groupedData.data.artificial.push(artificialMonthdataTotal / divisor);
-			groupedData.labels.push(month + " " + year);
+			formattedData[0].push(chattersMonthdataTotal);
+			formattedData[1].push(lurkersMonthDataTotal);
+			labels.push(month + " " + year);
 		}
 	}
 
 
-	return groupedData;
+	return {formattedData, labels};
 }
 
 function getGroupedDataInYears(data, rangeDates, rangeFlags) {
-	let groupedData = getGroupedDataFormat();
+	let formattedData = [[], []];
+	let labels = [];
 
 	for (let year in data) {
 		if (rangeFlags.end) break;
@@ -248,9 +188,8 @@ function getGroupedDataInYears(data, rangeDates, rangeFlags) {
 			rangeFlags.start.year = true;
 		}
 
-		let organicYearDataTotal = 0;
-		let artificialYearDataTotal = 0;
-		let divisor = 0;
+		let lurkersYearDataTotal = 0;
+		let chattersYearDataTotal = 0;
 
 		for (let month in data[year]) {
 			if (rangeFlags.end) break;
@@ -272,10 +211,8 @@ function getGroupedDataInYears(data, rangeDates, rangeFlags) {
 					rangeFlags.start.day = true;
 				}
 
-				if (data[year][month][day]["organic"] === parseFloat(0)) continue;
-				organicYearDataTotal += data[year][month][day]["organic"];
-				artificialYearDataTotal += data[year][month][day]["artificial"];
-				divisor++;
+				lurkersYearDataTotal += data[year][month][day]["lurkers"];
+				chattersYearDataTotal += data[year][month][day]["chatters"];
 
 				if (rangeDates.end[0] === year && rangeDates.end[1] === formattedMonth && rangeDates.end[2] === dayNumber) {
 					rangeFlags.end = true;
@@ -283,10 +220,10 @@ function getGroupedDataInYears(data, rangeDates, rangeFlags) {
 			}
 		}
 
-		groupedData.data.organic.push(organicYearDataTotal / divisor);
-		groupedData.data.artificial.push(artificialYearDataTotal / divisor);
-		groupedData.labels.push(year);
+		formattedData[0].push(chattersYearDataTotal);
+		formattedData[1].push(lurkersYearDataTotal);
+		labels.push(year);
 	}
 
-	return groupedData;
+	return {formattedData, labels};
 }
