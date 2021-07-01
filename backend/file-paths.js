@@ -16,7 +16,6 @@ export default {
 		uploadedFiles: uploadedFilesPath
 	},
 	files: {
-		"Settings": path.join(userDataPath, '/settings.json'),
 		"Ad Breaks (Minutes)": path.join(streamDataPath, '/ad-breaks.json'),
 		"Ad Time (Seconds) Per Hour": path.join(streamDataPath, '/ad-time-per-hour.json'),
 		"Average Viewers": path.join(streamDataPath, '/average-viewers.json'),

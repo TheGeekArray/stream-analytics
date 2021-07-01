@@ -5,16 +5,8 @@ import fs from 'fs-extra';
 import filePaths from '../file-paths';
 import logger from './logger';
 
-export async function readFile(file, filePath) {
-	fs.readFile(filePath, 'utf8', function(err, data) {
-		if (err) {
-			logger.error(err);
-		} else {
-			if (data) {
-				dataAccess.setLoadedData(file, JSON.parse(data));
-			}
-		}
-	});
+export async function readFileFromStorage(file) {
+	return await fs.readFile(filePaths.files[file], { encoding: 'utf8' });
 }
 
 export async function writeToFile(topic, topicData) {
@@ -31,4 +23,9 @@ export async function writeToFile(topic, topicData) {
 	} catch (err) {
 		logger.error(`[writeToFile]` + err, true);
 	}
+}
+
+export function createNewFile(file) {
+	fs.writeFileSync(filePaths.files[file], JSON.stringify({}), { encoding: "utf8", flag: "wx", mode: 0o666 });
+	dataAccess.setLoadedData(file, {});
 }

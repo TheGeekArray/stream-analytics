@@ -3,10 +3,6 @@
 		<div id="nav">
 			<Navigation class="navigation" />
 			<FileReader class="file-reader-component"/>
-			<!-- <router-link to="/" v-if="this.$route.path !== '/'" class="menu-item-home">
-				<font-awesome-icon icon="reply" class="back-icon" />
-			</router-link>
-			<router-link to="/settings"><font-awesome-icon icon="cog" class="settings-icon" /></router-link> -->
 		</div>
 		<router-view class="content"/>
 	</div>
@@ -62,12 +58,6 @@
 	#nav a {
 		color:#8f959b;
 		text-decoration: none;
-	}
-
-	.settings-icon {
-		color:#616569;
-		font-size: 35px;
-		margin-left: 30px;
 	}
 
 	.back-icon {

@@ -1,6 +1,7 @@
 'use strict';
 
 import * as dataAccess from '../data-access';
+import logger from '../../utils/logger';
 
 export function mapArtificialViewersData(averageViewersData, hostsAndRaidsData) {
 	let artificialViewersData = dataAccess.getLoadedData("Artificial Viewers");

@@ -3,7 +3,7 @@
 import { ipcMain } from 'electron';
 import fs from 'fs-extra';
 import filePaths from '../file-paths';
-import dataMapper from './data-mapper';
+import * as dataMapper from './data-mapper';
 import * as dataFormatter from './data-formatter';
 import logger from '../utils/logger';
 import path from 'path';
@@ -45,16 +45,26 @@ export function setupListeners() {
 
 		event.reply("dataLoaded", formattedData, labels);
 	});
-
-	ipcMain.on("startingDateSet", function(date) {
-		logger.info(`Setting starting date...`);
-		let settings = { startingDate: date };
-		fileHandler.writeToFile("Settings", settings);
-	});
 }
 
-export function getLoadedData(topic) {
+export async function loadDataFromStorage() {
+	for (let file in filePaths.files) {
+		try {
+			let data = await fileHandler.readFileFromStorage(file);
+			loadedData[file] = JSON.parse(data);
+		} catch (err) {
+			logger.error(`[loadDataFromStorage]` + err, true);
+			fileHandler.createNewFile(file);
+		}
+	}
+}
+
+export function getLoadedData(topic) {;
 	return loadedData[topic];
+};
+
+export function getAllLoadedData() {
+	return loadedData;
 };
 
 export function setLoadedData(file, data) {

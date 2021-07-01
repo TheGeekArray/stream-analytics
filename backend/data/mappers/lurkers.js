@@ -1,6 +1,7 @@
 'use strict';
 
 import * as dataAccess from '../data-access';
+import logger from '../../utils/logger';
 
 export function mapLurkersData(uniqueViewersData, chattersData) {
 	let lurkersData = dataAccess.getLoadedData("Lurkers");

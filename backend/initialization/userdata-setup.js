@@ -5,10 +5,11 @@ import * as fileHandler from '../utils/file-handler';
 import fs from 'fs-extra';
 import filePaths from '../file-paths';
 import logger from '../utils/logger';
+import * as dataMapper from '../data/data-mapper';
 
-export default function setupUserData() {
+export default async function setupUserData() {
 	setupFolders();
-	setupFiles();
+	setupFiles().then(setupCustomData);
 }
 
 function setupFolders() {
@@ -29,20 +30,26 @@ function setupFolders() {
 	}
 }
 
-function setupFiles() {
+async function setupFiles() {
 	logger.info("Creating missing files...");
-	for (let file in filePaths.files) {
-		setupFile(file, filePaths.files[file]);
+	try {
+		await dataAccess.loadDataFromStorage();
+	} catch (err) {
+		logger.error(err);
 	}
 }
 
-async function setupFile(file, filePath) {
-	try {
-		fs.writeFileSync(filePath, JSON.stringify({}), { encoding: "utf8", flag: "wx", mode: 0o666 });
-		dataAccess.setLoadedData(file, {});
-		logger.info(`Created ${file} file...`);
-	} catch (err) {
-		logger.debug(`[setupFile]` + err);
-		await fileHandler.readFile(file, filePath);
+function setupCustomData() {
+	const loadedData = dataAccess.getAllLoadedData();
+
+	if (!loadedData || Object.keys(loadedData).length === 0) {
+		logger.error("No custom data found");
+		return;
+	}
+
+	const customData = dataMapper.mapCustomData(loadedData);
+
+	for (let key of Object.keys(customData)) {
+		fileHandler.writeToFile(key, customData[key]);
 	}
 }
