@@ -3,6 +3,7 @@
 import { app, protocol, BrowserWindow } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
+import path from 'path';
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 import initialize from '../backend/initialization';
@@ -25,6 +26,8 @@ async function createWindow() {
 			contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION
 		}
 	});
+
+	win.setIcon(path.join(__dirname, '../public/img/icon.png'));
 
 	if (process.env.WEBPACK_DEV_SERVER_URL) {
 		// Load the url of the dev server if in development mode
