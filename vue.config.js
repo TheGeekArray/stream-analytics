@@ -2,6 +2,14 @@ module.exports = {
 	pluginOptions: {
 		electronBuilder: {
 			nodeIntegration: true,
+			builderOptions: {
+				directories: {
+					"buildResources": "public"
+				},
+				win: {
+					"icon": "public/img/icon.png"
+				}
+			}
 		},
 	},
 	chainWebpack: config => {
