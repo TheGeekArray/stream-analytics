@@ -88,9 +88,14 @@
 							},
 							footer: function(tooltipItems) {
 								let total = 0;
+								if (tooltipItems[1].yLabel === 0) {
+									return 'Total unique viewers: 0';
+								}
+
 								for (let i = 0; i < tooltipItems.length; i++) {
 									total += parseFloat(tooltipItems[i].yLabel);
 								}
+								
 								return 'Total unique viewers: ' + total;
 							}
 						}
