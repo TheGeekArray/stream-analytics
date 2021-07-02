@@ -33,7 +33,7 @@
 			legendLabels: ["Organic", "Hosts/raids/embeds"]
 		}),
 		mounted() {
-			if (this.streamData > 1) {
+			if (this.streamData.length > 1) {
 				this.updateRangeTotals();
 			}
 		},
