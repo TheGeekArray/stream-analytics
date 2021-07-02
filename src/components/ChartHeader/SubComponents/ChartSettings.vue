@@ -2,6 +2,7 @@
 	<div class="chart-settings" v-clickoutside="hideSettings">
 		<font-awesome-icon icon="cog" class="button settings-button" v-on:click="settingsVisible = !settingsVisible;" />
 		<div class="settings-container" v-show="settingsVisible">
+			<h3>General Settings</h3>
 			<div class="hide-empty-days">
 				<Checkbox 
 					ref="emptyDays"
@@ -69,7 +70,17 @@
 		right: 0;
 		border-radius: 3px;
 		box-shadow: 0px 3px 10px 0px rgba(0, 0, 0, 0.3);
-		padding: 20px;
+		padding: 0 20px 20px 20px;
+	}
+
+	h3 {
+		color: #aaaaaa;
+		font-size: 15px;
+		margin-top: 20px;
+	}
+
+	.settings-container div {
+		margin-left: 5px;
 	}
 
 	.settings-container div:not(:last-child) {
