@@ -7,7 +7,7 @@ import weeksFormatter from './formatters/weeks';
 import monthsFormatter from './formatters/months';
 import yearsFormatter from './formatters/years';
 
-export function formatData(timeUnit, range, data) {
+export function formatData(timeUnit, range, data, displayAverage) {
 	let rangeDates = getRangeDates(range);
 	let rangeFlags = getRangeFlags();
 
@@ -15,11 +15,11 @@ export function formatData(timeUnit, range, data) {
 	case "Day":
 		return daysFormatter.formatDataInDays(data, rangeDates, rangeFlags);
 	case "Week":
-		return weeksFormatter.formatDataInWeeks(data, rangeDates, rangeFlags);
+		return weeksFormatter.formatDataInWeeks(data, rangeDates, rangeFlags, displayAverage);
 	case "Month":
-		return monthsFormatter.formatDataInMonths(data, rangeDates, rangeFlags);
+		return monthsFormatter.formatDataInMonths(data, rangeDates, rangeFlags, displayAverage);
 	case "Year":
-		return yearsFormatter.formatDataInYears(data, rangeDates, rangeFlags);
+		return yearsFormatter.formatDataInYears(data, rangeDates, rangeFlags, displayAverage);
 	default:
 		return daysFormatter.formatDataInDays(data, rangeDates, rangeFlags);
 	}

@@ -1,7 +1,8 @@
 <template>
 	<div class="chart" v-if="loaded">
 		<ChartHeader 
-			v-bind:topics="topics" 
+			v-bind:topics="topics"
+			v-bind:displayAverage="displayAverage"  
 			v-on:toggle-empty-days="shouldHideEmptyDays = $event;"
 			v-on:toggle-trendline="shouldHideTrendline = $event;"
 		/>
@@ -17,6 +18,7 @@
 		components: { ChartHeader },
 		data: () => ({
 			topics: ["Organic Viewers", "Artificial Viewers"],
+			displayAverage: true,
 			loaded: false,
 			streamData: [],
 			labels: [],
@@ -36,6 +38,7 @@
 			// eslint-disable-next-line no-unused-vars
 			$route: function(to, from) {
 				this.topics = to.params.topics;
+				this.displayAverage = to.params.displayAverage;
 			}
 		},
 		created() {

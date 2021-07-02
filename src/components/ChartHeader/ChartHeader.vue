@@ -45,7 +45,7 @@
 			TimeUnitPicker,
 			Checkbox
 		},
-		props: ['topics'],
+		props: ['topics', 'displayAverage'],
 		data: () => ({
 			timeUnit: "Day",
 			settingsVisible: false,
@@ -63,7 +63,7 @@
 		},
 		methods: {
 			sendDataRequestedEvent: function() {
-				ipcRenderer.send("dataRequested", this.topics, this.dateRange, this.timeUnit);
+				ipcRenderer.send("dataRequested", this.topics, this.displayAverage, this.dateRange, this.timeUnit);
 			},
 			resetChart() {
 				this.dateRange.start = moment().subtract("30","days").format('YYYY-MM-DD');

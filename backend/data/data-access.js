@@ -33,12 +33,12 @@ export function setupListeners() {
 		});
 	});
 
-	ipcMain.on("dataRequested", function(event, topics, range = { start: "", end: "" }, timeUnit = "Day") {
+	ipcMain.on("dataRequested", function(event, topics, displayAverage = true, range = { start: "", end: "" }, timeUnit = "Day") {
 		let labels = [];
 		let formattedData = [];
 
 		for (let topic of topics) {
-			let data = dataFormatter.formatData(timeUnit, range, loadedData[topic]);
+			let data = dataFormatter.formatData(timeUnit, range, loadedData[topic], displayAverage);
 			formattedData.push(data.formattedData);
 			labels = data.labels;
 		}

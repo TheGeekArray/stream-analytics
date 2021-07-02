@@ -3,7 +3,7 @@
 import moment from 'moment';
 
 export default {
-	formatDataInYears(data, rangeDates, rangeFlags) {
+	formatDataInYears(data, rangeDates, rangeFlags, displayAverage) {
 		let formattedData = [];
 		let labels = [];
 	
@@ -48,7 +48,12 @@ export default {
 				}
 			}
 	
-			formattedData.push(yearDataTotal / divisor);
+			if (displayAverage) {
+				formattedData.push(yearDataTotal / divisor);
+			} else {
+				formattedData.push(yearDataTotal);
+			}
+			
 			labels.push(year);
 		}
 	

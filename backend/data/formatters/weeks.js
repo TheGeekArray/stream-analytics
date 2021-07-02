@@ -3,7 +3,7 @@
 import moment from 'moment';
 
 export default {
-	formatDataInWeeks(data, rangeDates, rangeFlags) {
+	formatDataInWeeks(data, rangeDates, rangeFlags, displayAverage) {
 		let formattedData = [];
 		let labels = [];
 		let weekDataTotal = 0;
@@ -49,7 +49,11 @@ export default {
 						if (weekDataTotal === parseFloat(0)) {
 							formattedData.push(0);
 						} else {
-							formattedData.push(weekDataTotal / divisor);
+							if (displayAverage) {
+								formattedData.push(weekDataTotal / divisor);
+							} else {
+								formattedData.push(weekDataTotal);
+							}
 						}
 						
 						labels.push(month + " " + day.split(" ")[1]);
