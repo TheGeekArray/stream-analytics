@@ -38,6 +38,7 @@ export default {
 		border-radius: 3px;
 		text-align: center;
 		font-size: 14px;
+		cursor: pointer;
 	}
 	input::-webkit-datetime-edit-month-field,
 	input::-webkit-datetime-edit-day-field,
@@ -56,6 +57,7 @@ export default {
 
 	input::-webkit-calendar-picker-indicator {
 		filter: invert(1);
+		cursor: pointer;
 	}
 
 	#start-date {

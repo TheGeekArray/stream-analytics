@@ -3,10 +3,9 @@
 		<ChartHeader 
 			v-bind:topics="topics"
 			v-bind:displayAverage="displayAverage"  
-			v-on:toggle-empty-days="shouldHideEmptyDays = $event;"
-			v-on:toggle-trendline="shouldHideTrendline = $event;"
+			v-on:settings-updated="settings = $event;"
 		/>
-		<router-view v-bind:streamData="streamData" v-bind:labels="labels" v-bind:shouldHideTrendline="shouldHideTrendline" />
+		<router-view v-bind:streamData="streamData" v-bind:labels="labels" v-bind:shouldHideTrendline="settings.shouldHideTrendline" />
 	</div>
 </template>
 
@@ -22,15 +21,17 @@
 			loaded: false,
 			streamData: [],
 			labels: [],
-			shouldHideEmptyDays: false,
-			shouldHideTrendline: false
+			settings: {
+				shouldHideEmptyDays: false,
+				shouldHideTrendline: false
+			}
 		}),
 		watch: {
 			streamData: function() {
 				if (Object.keys(this.streamData[0]).length > 0)  {
 					this.loaded = true;
 
-					if (this.shouldHideEmptyDays) {
+					if (this.settings.shouldHideEmptyDays) {
 						this.hideEmptyDays();
 					}
 				}

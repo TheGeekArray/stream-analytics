@@ -1,6 +1,6 @@
 <template>
 	<div id="app">
-		<div id="nav">
+		<div class="nav">
 			<Navigation class="navigation" />
 			<FileReader class="file-reader-component"/>
 		</div>
@@ -45,7 +45,7 @@
 		margin: 30px auto;
 	}
 
-	#nav {
+	.nav {
 		height: 100px;
 		background: rgb(26, 26, 26);
 		display: flex;
@@ -55,13 +55,17 @@
 		padding: 0 30px;
 	}
 
-	#nav a {
-		color:#8f959b;
-		text-decoration: none;
+	.button {
+		background: transparent;
+		color: #885cca;
+		border: none;
+		outline: none;
+		cursor: pointer;
+		margin-left: 10px;
+		font-family: Avenir, Helvetica, Arial, sans-serif;
 	}
 
-	.back-icon {
-		color:#616569;
-		font-size: 35px;
+	.button:hover {
+		color: #542897;
 	}
 </style>

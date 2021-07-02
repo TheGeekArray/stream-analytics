@@ -1,8 +1,8 @@
 <template>
 	<div class="navigation">
-		<font-awesome-icon class="menu-icon" icon="bars" v-on:click="collapsed = false"/>
+		<font-awesome-icon class="button menu-button" icon="bars" v-on:click="collapsed = false"/>
 		<div class="navigation-window" v-show="!collapsed" v-bind:class="{ hidden: collapsed }">
-			<font-awesome-icon icon="times" class="return-button" v-on:click="collapsed = true"/>
+			<font-awesome-icon icon="times" class="button return-button" v-on:click="collapsed = true"/>
 			<div class="navigation-items-container">
 				<router-link :to="{name: 'OrganicViewers', params: { topics: ['Organic Viewers', 'Artificial Viewers'], displayAverage: true }}" class="navigation-item" exact-active-class="navigation-item-active">
 					<span v-on:click="collapsed = true">Organic vs. Artificial Viewers</span>
@@ -64,30 +64,10 @@ export default {
 		to { width: 0; }
 	}
 
-	#menu-icon {
-		height: 25px;
-		width: 25px;
-	}
-
-	.menu-icon {
-		cursor: pointer;
-		color: #885cca;
-	}
-
-	.menu-icon:hover {
-		color: #542897;
-	}
-
 	.return-button {
-		color: #885cca;
 		margin-top: 20px;
 		margin-right: 20px;
 		align-self: flex-end;
-		cursor: pointer;
-	}
-
-	.return-button:hover {
-		color: #542897;
 	}
 
 	.navigation-items-container {

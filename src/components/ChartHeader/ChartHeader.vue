@@ -9,46 +9,28 @@
 			:key="timeUnitPickerKey"
 		/>
 
-		<div class="chart-settings" v-clickoutside="hideSettings">
-			<font-awesome-icon icon="cog" class="button settings-button" v-on:click="settingsVisible = !settingsVisible;" />
-			<div class="settings-container" v-show="settingsVisible">
-				<div class="hide-empty-days">
-					<Checkbox 
-						ref="emptyDays"
-						v-bind:description="`Hide ${timeUnit.toLowerCase() + 's'} not streamed`"
-						v-on:input="$emit('toggle-empty-days', $event); sendDataRequestedEvent()" 
-					/>
-				</div>
-				<div class="hide-trend-line">
-					<Checkbox 
-						ref="trendLine"
-						v-bind:description="`Hide trend line`" 
-						v-on:input="$emit('toggle-trendline', $event); sendDataRequestedEvent()"
-					/>
-				</div>
-			</div>
-		</div>
+		<ChartSettings v-bind:timeUnit="timeUnit" v-on:settings-updated="$emit('settings-updated', $event); sendDataRequestedEvent();" />
 	</div>
 </template>
 
 <script>
-	import Checkbox from '@/components/InputComponents/Checkbox';
-	import DatePicker from '@/components/ChartHeader/SubComponents/DatePicker';
-	import TimeUnitPicker from '@/components/ChartHeader/SubComponents/TimeUnitPicker';
 	import { ipcRenderer } from 'electron';
 	import moment from 'moment';
+
+	import DatePicker from '@/components/ChartHeader/SubComponents/DatePicker';
+	import TimeUnitPicker from '@/components/ChartHeader/SubComponents/TimeUnitPicker';
+	import ChartSettings from '@/components/ChartHeader/SubComponents/ChartSettings';
 
 	export default {
 		name: 'ChartHeader',
 		components: {
 			DatePicker,
 			TimeUnitPicker,
-			Checkbox
+			ChartSettings
 		},
 		props: ['topics', 'displayAverage'],
 		data: () => ({
 			timeUnit: "Day",
-			settingsVisible: false,
 			dateRange: {
 				start: "",
 				end: ""
@@ -73,16 +55,13 @@
 				this.timeUnitPickerKey++;
 
 				this.sendDataRequestedEvent();
-			},
-			hideSettings: function() {
-				this.settingsVisible = false;
 			}
 		}
 	}
 </script>
 
 
-<style scoped>
+<style>
 	.header {
 		display: flex;
 		height: 60px;
@@ -93,46 +72,7 @@
 		margin-left: auto;
 	}
 
-	.button {
-		background: transparent;
-		color: #885cca;
-		border: none;
-		outline: none;
-		cursor: pointer;
-		margin-left: 10px;
-		font-family: Avenir, Helvetica, Arial, sans-serif;
-	}
-
-	.button:hover {
-		color: #542897;
-	}
-
 	.reset-button {
 		font-size: 14px;
-	}
-
-	.settings-button {
-		font-size: 24px;
-	}
-
-	.chart-settings {
-		position: relative;
-		margin-left: 10px;
-	}
-
-	.settings-container {
-		position: absolute;
-		background: #3f3f3f;
-		color: #FFF;
-		width: 200px;
-		top: 40px;
-		right: 0;
-		border-radius: 3px;
-		box-shadow: 0px 3px 10px 0px rgba(0, 0, 0, 0.3);
-		padding: 20px;
-	}
-
-	.settings-container div:not(:last-child) {
-		margin-bottom: 20px;
 	}
 </style>
