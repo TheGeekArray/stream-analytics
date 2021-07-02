@@ -37,7 +37,7 @@ export default {
 					} else {
 						rangeFlags.start.day = true;
 					}
-	
+					
 					if (data[year][month][day] === parseFloat(0)) continue;
 					monthDataTotal += data[year][month][day];
 					divisor++;
@@ -46,8 +46,7 @@ export default {
 						rangeFlags.end = true;
 					}
 				}
-	
-				if (displayAverage) {
+				if (displayAverage && monthDataTotal !== 0) {
 					formattedData.push(monthDataTotal / divisor);
 				} else {
 					formattedData.push(monthDataTotal);
@@ -56,8 +55,7 @@ export default {
 				labels.push(month + " " + year);
 			}
 		}
-	
-	
+
 		return {formattedData, labels};
 	}
 }
