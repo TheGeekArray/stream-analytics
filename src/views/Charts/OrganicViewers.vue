@@ -2,9 +2,15 @@
 	<div class="organic-viewers">
 		<div class="bar-container">
 			<BarChart v-bind:data="chartdata" v-bind:options="options" :key="barKey"/>
-			<div v-show="!settings.shouldHideTotalAverage" class="organic-range-average">
-				<span class="range-average-label">Total Organic Average</span>
-				<span class="range-average">{{rangeTotal}}</span>
+			<div class="range-averages">
+				<div v-show="!settings.organicViewers.shouldHideTotalAverage" class="total-range-average">
+					<span class="range-average-label">Total Average</span>
+					<span class="range-average">{{rangeTotal}}</span>
+				</div>
+				<div v-show="!settings.organicViewers.shouldHideTotalOrganicAverage" class="total-range-average">
+					<span class="range-average-label">Total Organic Average</span>
+					<span class="range-average">{{rangeOrganicTotal}}</span>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -25,6 +31,7 @@
 		},
 		data: () => ({
 			rangeTotal: "",
+			rangeOrganicTotal: "",
 			legendLabels: ["Organic", "Hosts/raids/embeds"],
 			chartdata: {},
 			options: {},
@@ -44,11 +51,18 @@
 		methods: {
 			updateData() {
 				this.rangeTotal = this.getRangeTotal().toFixed(2);
+				this.rangeOrganicTotal = this.getRangeOrganicTotal().toFixed(2);
 
 				this.chartdata = this.getChartData();
 				this.barKey++;
 			},
 			getRangeTotal: function() {
+				const data = this.streamData[0].map((item, index) => item + this.streamData[1][index]);
+				const total = data.reduce((previousValue, currentValue) => previousValue + currentValue);
+
+				return total / data.filter(value => value !== 0).length;
+			},
+			getRangeOrganicTotal: function() {
 				const organicData = this.streamData[0];
 				const total = organicData.reduce((previousValue, currentValue) => previousValue + currentValue);
 
@@ -70,7 +84,7 @@
 					}]
 				}
 
-				if (!this.settings.shouldHideTrendline) {
+				if (!this.settings.general.shouldHideTrendline) {
 					data.datasets[0].trendlineLinear = {
 						style: "rgba(141,141,141, .8)",
 						lineStyle: "dotted|solid",
@@ -85,7 +99,13 @@
 					responsive: true,
 					maintainAspectRatio: false,
 					legend: {
-						position: "bottom"
+						position: "bottom",
+						align: "end",
+						labels: {
+							boxWidth: 13,
+							padding: 30,
+							fontSize: 13
+						}
 					},
 					tooltips: {
 						mode: "x",
@@ -136,7 +156,12 @@
 		flex-direction: column;
 	}
 
-	.organic-range-average {
+	.range-averages {
+		display: flex;
+		align-self: flex-start;
+	}
+
+	.total-range-average {
 		text-align: center;
 		background: #18181b;
 		width: 140px;
@@ -145,9 +170,9 @@
 		flex-wrap: wrap;
 		align-items: center;
 		padding: 10px;
-		align-self: flex-end;
 		margin-top: -25px;
 		border-radius: 3px;
+		margin-right: 10px;
 	}
 
 	.range-average-label {

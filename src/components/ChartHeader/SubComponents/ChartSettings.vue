@@ -7,13 +7,13 @@
 				<div class="setting hide-empty-days">
 					<Checkbox 
 						v-bind:description="`Hide ${timeUnit.toLowerCase() + 's'} not streamed`"
-						v-on:input="shouldHideEmptyDays = $event; updateSettings()" 
+						v-on:input="settings.general.shouldHideEmptyDays = $event; updateSettings()" 
 					/>
 				</div>
 				<div class="setting hide-trend-line">
 					<Checkbox 
 						v-bind:description="`Hide trend line`" 
-						v-on:input="shouldHideTrendline = $event; updateSettings()"
+						v-on:input="settings.general.shouldHideTrendline = $event; updateSettings()"
 					/>
 				</div>
 			</div>
@@ -21,8 +21,14 @@
 				<h3>This view</h3>
 				<div class="setting hide-total-average">
 					<Checkbox 
+						v-bind:description="`Hide total average`" 
+						v-on:input="settings.organicViewers.shouldHideTotalAverage = $event; updateSettings()"
+					/>
+				</div>
+				<div class="setting hide-total-organic-average">
+					<Checkbox 
 						v-bind:description="`Hide total organic average`" 
-						v-on:input="shouldHideTotalAverage = $event; updateSettings()"
+						v-on:input="settings.organicViewers.shouldHideTotalOrganicAverage = $event; updateSettings()"
 					/>
 				</div>
 			</div>
@@ -41,21 +47,23 @@
 		props: ['timeUnit'],
 		data: () => ({
 			settingsVisible: false,
-			shouldHideEmptyDays: false,
-			shouldHideTrendline: false
+			settings: {
+				general: {
+					shouldHideEmptyDays: false,
+					shouldHideTrendline: false
+				},
+				organicViewers: {
+					shouldHideTotalAverage: false,
+					shouldHideTotalOrganicAverage: false
+				}
+			}
 		}),
 		methods: {
 			hideSettings: function() {
 				this.settingsVisible = false;
 			},
 			updateSettings: function() {
-				let settings = {
-					shouldHideEmptyDays: this.shouldHideEmptyDays,
-					shouldHideTrendline: this.shouldHideTrendline,
-					shouldHideTotalAverage: this.shouldHideTotalAverage
-				}
-
-				this.$emit('settings-updated', settings);
+				this.$emit('settings-updated', this.settings);
 			}
 		}
 	}

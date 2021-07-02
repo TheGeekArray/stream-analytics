@@ -53,7 +53,7 @@
 					}]
 				}
 
-				if (!this.settings.shouldHideTrendline) {
+				if (!this.settings.general.shouldHideTrendline) {
 					data.datasets[0].trendlineLinear = {
 						style: "rgba(141,141,141, .8)",
 						lineStyle: "dotted|solid",
@@ -68,7 +68,13 @@
 					responsive: true,
 					maintainAspectRatio: false,
 					legend: {
-						position: "bottom"
+						position: "bottom",
+						align: "end",
+						labels: {
+							boxWidth: 13,
+							padding: 30,
+							fontSize: 13
+						}
 					},
 					tooltips: {
 						mode: "x",

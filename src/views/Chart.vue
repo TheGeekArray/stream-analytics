@@ -22,8 +22,14 @@
 			streamData: [],
 			labels: [],
 			settings: {
-				shouldHideEmptyDays: false,
-				shouldHideTrendline: false
+				general: {
+					shouldHideEmptyDays: false,
+					shouldHideTrendline: false
+				},
+				organicViewers: {
+					shouldHideTotalAverage: false,
+					shouldHideTotalOrganicAverage: false
+				}
 			}
 		}),
 		watch: {
@@ -31,7 +37,7 @@
 				if (Object.keys(this.streamData[0]).length > 0)  {
 					this.loaded = true;
 
-					if (this.settings.shouldHideEmptyDays) {
+					if (this.settings.general.shouldHideEmptyDays) {
 						this.hideEmptyDays();
 					}
 				}
