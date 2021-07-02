@@ -21,12 +21,12 @@ export function setupListeners() {
 				logger.info(`Processed file saved`);
 			});
 
-			for (let topic in result.mappedData) {
+			for (let topic in result.allData) {
 				if (topic === "Date") {
 					continue;
 				}
 
-				fileHandler.writeToFile(topic, result.mappedData[topic]).then(() => {
+				fileHandler.writeToFile(topic, result.allData[topic]).then(() => {
 					event.reply("dataProcessed");
 				});
 			}
