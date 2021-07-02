@@ -50,8 +50,6 @@
 		},
 		created() {
 			this.setupListeners();
-		},
-		beforeMount() {
 			this.sendDataRequestedEvent();
 		},
 		destroyed() {
