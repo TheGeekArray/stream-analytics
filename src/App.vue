@@ -55,6 +55,11 @@
 		padding: 0 30px;
 	}
 
+	.nav a {
+		color:#8f959b;
+		text-decoration: none;
+	}
+
 	.button {
 		background: transparent;
 		color: #885cca;

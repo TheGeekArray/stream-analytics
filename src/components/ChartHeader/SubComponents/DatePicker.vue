@@ -40,6 +40,7 @@ export default {
 		font-size: 14px;
 		cursor: pointer;
 	}
+	
 	input::-webkit-datetime-edit-month-field,
 	input::-webkit-datetime-edit-day-field,
 	input::-webkit-datetime-edit-year-field {
