@@ -50,23 +50,16 @@
 		},
 		methods: {
 			updateData() {
-				this.rangeTotal = this.getRangeTotal().toFixed(2);
-				this.rangeOrganicTotal = this.getRangeOrganicTotal().toFixed(2);
+				this.rangeTotal = this.getRangeTotal(this.streamData[0].map((item, index) => item + this.streamData[1][index])).toFixed(2);
+				this.rangeOrganicTotal = this.getRangeTotal(this.streamData[0]).toFixed(2);
 
 				this.chartdata = this.getChartData();
 				this.barKey++;
 			},
-			getRangeTotal: function() {
-				const data = this.streamData[0].map((item, index) => item + this.streamData[1][index]);
+			getRangeTotal: function(data) {
 				const total = data.reduce((previousValue, currentValue) => previousValue + currentValue);
 
 				return total / data.filter(value => value !== 0).length;
-			},
-			getRangeOrganicTotal: function() {
-				const organicData = this.streamData[0];
-				const total = organicData.reduce((previousValue, currentValue) => previousValue + currentValue);
-
-				return total / organicData.filter(value => value !== 0).length;
 			},
 			getChartData: function() {
 				let data = {
