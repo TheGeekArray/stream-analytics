@@ -3,7 +3,7 @@
 import moment from 'moment';
 
 export default {
-	getGroupedDataInMonths(data, rangeDates, rangeFlags) {
+	formatDataInMonths(data, rangeDates, rangeFlags) {
 		let formattedData = [];
 		let labels = [];
 	

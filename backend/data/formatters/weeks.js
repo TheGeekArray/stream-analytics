@@ -3,7 +3,7 @@
 import moment from 'moment';
 
 export default {
-	getGroupedDataInWeeks(data, rangeDates, rangeFlags) {
+	formatDataInWeeks(data, rangeDates, rangeFlags) {
 		let formattedData = [];
 		let labels = [];
 		let weekDataTotal = 0;

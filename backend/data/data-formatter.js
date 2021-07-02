@@ -13,15 +13,15 @@ export function formatData(timeUnit, range, data) {
 
 	switch(timeUnit) {
 	case "Day":
-		return daysFormatter.getGroupedDataInDays(data, rangeDates, rangeFlags);
+		return daysFormatter.formatDataInDays(data, rangeDates, rangeFlags);
 	case "Week":
-		return weeksFormatter.getGroupedDataInWeeks(data, rangeDates, rangeFlags);
+		return weeksFormatter.formatDataInWeeks(data, rangeDates, rangeFlags);
 	case "Month":
-		return monthsFormatter.getGroupedDataInMonths(data, rangeDates, rangeFlags);
+		return monthsFormatter.formatDataInMonths(data, rangeDates, rangeFlags);
 	case "Year":
-		return yearsFormatter.getGroupedDataInYears(data, rangeDates, rangeFlags);
+		return yearsFormatter.formatDataInYears(data, rangeDates, rangeFlags);
 	default:
-		return daysFormatter.getGroupedDataInDays(data, rangeDates, rangeFlags);
+		return daysFormatter.formatDataInDays(data, rangeDates, rangeFlags);
 	}
 }
 
