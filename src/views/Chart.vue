@@ -5,7 +5,7 @@
 			v-bind:displayAverage="displayAverage"  
 			v-on:settings-updated="settings = $event;"
 		/>
-		<router-view v-bind:streamData="streamData" v-bind:labels="labels" v-bind:shouldHideTrendline="settings.shouldHideTrendline" />
+		<router-view v-bind:streamData="streamData" v-bind:labels="labels" v-bind:settings="settings" />
 	</div>
 </template>
 

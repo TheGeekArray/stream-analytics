@@ -2,20 +2,29 @@
 	<div class="chart-settings" v-clickoutside="hideSettings">
 		<font-awesome-icon icon="cog" class="button settings-button" v-on:click="settingsVisible = !settingsVisible;" />
 		<div class="settings-container" v-show="settingsVisible">
-			<h3>General Settings</h3>
-			<div class="hide-empty-days">
-				<Checkbox 
-					ref="emptyDays"
-					v-bind:description="`Hide ${timeUnit.toLowerCase() + 's'} not streamed`"
-					v-on:input="shouldHideEmptyDays = $event; updateSettings()" 
-				/>
+			<div class="general-settings">
+				<h3>General</h3>
+				<div class="setting hide-empty-days">
+					<Checkbox 
+						v-bind:description="`Hide ${timeUnit.toLowerCase() + 's'} not streamed`"
+						v-on:input="shouldHideEmptyDays = $event; updateSettings()" 
+					/>
+				</div>
+				<div class="setting hide-trend-line">
+					<Checkbox 
+						v-bind:description="`Hide trend line`" 
+						v-on:input="shouldHideTrendline = $event; updateSettings()"
+					/>
+				</div>
 			</div>
-			<div class="hide-trend-line">
-				<Checkbox 
-					ref="trendLine"
-					v-bind:description="`Hide trend line`" 
-					v-on:input="shouldHideTrendline = $event; updateSettings()"
-				/>
+			<div v-show="$route.name === 'OrganicViewers'" class="view-settings">
+				<h3>This view</h3>
+				<div class="setting hide-total-average">
+					<Checkbox 
+						v-bind:description="`Hide total organic average`" 
+						v-on:input="shouldHideTotalAverage = $event; updateSettings()"
+					/>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -42,7 +51,8 @@
 			updateSettings: function() {
 				let settings = {
 					shouldHideEmptyDays: this.shouldHideEmptyDays,
-					shouldHideTrendline: this.shouldHideTrendline
+					shouldHideTrendline: this.shouldHideTrendline,
+					shouldHideTotalAverage: this.shouldHideTotalAverage
 				}
 
 				this.$emit('settings-updated', settings);
@@ -79,11 +89,8 @@
 		margin-top: 20px;
 	}
 
-	.settings-container div {
+	.setting {
 		margin-left: 5px;
-	}
-
-	.settings-container div:not(:last-child) {
-		margin-bottom: 20px;
+		margin-bottom: 10px;
 	}
 </style>

@@ -14,7 +14,7 @@
 		props: {
 			streamData: Array,
 			labels: Array,
-			shouldHideTrendline: Boolean
+			settings: Object
 		},
 		data: () => ({
 			legendLabels: ["Minutes per viewer"],
@@ -48,7 +48,7 @@
 					}]
 				}
 
-				if (!this.shouldHideTrendline) {
+				if (!this.settings.shouldHideTrendline) {
 					data.datasets[0].trendlineLinear = {
 						style: "rgba(141,141,141, .8)",
 						lineStyle: "dotted|solid",

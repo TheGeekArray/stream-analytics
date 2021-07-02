@@ -2,7 +2,7 @@
 	<div class="organic-viewers">
 		<div class="bar-container">
 			<BarChart v-bind:data="chartdata" v-bind:options="options" :key="barKey"/>
-			<div class="organic-range-average">
+			<div v-show="!settings.shouldHideTotalAverage" class="organic-range-average">
 				<span class="range-average-label">Total Organic Average</span>
 				<span class="range-average">{{rangeTotal}}</span>
 			</div>
@@ -20,7 +20,7 @@
 		props: {
 			streamData: Array,
 			labels: Array,
-			shouldHideTrendline: Boolean,
+			settings: Object,
 			topics: Array
 		},
 		data: () => ({
@@ -70,7 +70,7 @@
 					}]
 				}
 
-				if (!this.shouldHideTrendline) {
+				if (!this.settings.shouldHideTrendline) {
 					data.datasets[0].trendlineLinear = {
 						style: "rgba(141,141,141, .8)",
 						lineStyle: "dotted|solid",
