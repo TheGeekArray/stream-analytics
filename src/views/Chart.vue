@@ -7,6 +7,10 @@
 		/>
 		<router-view v-bind:streamData="streamData" v-bind:labels="labels" v-bind:settings="settings" />
 	</div>
+	<div class="no-data-uploaded" v-else>
+		<h2>No data has been uploaded yet</h2>
+		<p> Upload some data with the uploader in the top right corner to get started.</p>
+	</div>
 </template>
 
 <script>
@@ -88,3 +92,18 @@
 		}
 	}
 </script>
+
+<style scoped>
+	.no-data-uploaded {
+		text-align: center;
+		margin-top: 100px;
+	}
+
+	h2 {
+		color: rgb(226, 226, 226);
+	}
+
+	p {
+		font-size: 16px;
+	}
+</style>
