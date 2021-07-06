@@ -20,7 +20,7 @@
 	export default {
 		components: { ChartHeader },
 		data: () => ({
-			topics: ["Organic Viewers", "Artificial Viewers"],
+			topics: [],
 			displayAverage: true,
 			loaded: false,
 			streamData: [],
@@ -36,6 +36,15 @@
 				}
 			}
 		}),
+		created() {
+			this.topics = this.getTopics(this.$route);
+			this.setupListeners();
+			this.sendDataRequestedEvent();
+		},
+		destroyed() {
+			ipcRenderer.removeListener("dataProcessed", this.sendDataRequestedEvent);
+			ipcRenderer.removeListener("dataLoaded", this.setStreamData);
+		},
 		watch: {
 			streamData: function() {
 				if (Object.keys(this.streamData[0]).length > 0)  {
@@ -48,17 +57,9 @@
 			},
 			// eslint-disable-next-line no-unused-vars
 			$route: function(to, from) {
-				this.topics = to.params.topics;
+				this.topics = this.getTopics(to);
 				this.displayAverage = to.params.displayAverage;
 			}
-		},
-		created() {
-			this.setupListeners();
-			this.sendDataRequestedEvent();
-		},
-		destroyed() {
-			ipcRenderer.removeListener("dataProcessed", this.sendDataRequestedEvent);
-			ipcRenderer.removeListener("dataLoaded", this.setStreamData);
 		},
 		methods: {
 			setupListeners: function() {
@@ -89,6 +90,16 @@
 				this.streamData = data;
 				this.labels = labels;
 			},
+			getTopics: function(route) {
+				switch (route.name) {
+					case "OrganicViewers":
+					return ["Organic Viewers", "Artificial Viewers"];
+					case "MinutesPerViewer":
+					return ["Minutes Per Viewer"];
+					case "LurkersVsChatters":
+					return ["Chatters", "Lurkers"];
+				}
+			}
 		}
 	}
 </script>

@@ -30,7 +30,8 @@
 		data: () => ({
 			rangeTotal: "",
 			rangeOrganicTotal: "",
-			legendLabels: ["Organic", "Hosts/raids/embeds"]
+			legendLabels: ["Organic", "Hosts/raids/embeds"],
+			hasMultipleDataSets: true
 		}),
 		mounted() {
 			if (this.streamData.length > 1) {

@@ -12,7 +12,7 @@
 			barKey: 0
 		}),
 		beforeMount() {
-			this.options = this.getOptions(true);
+			this.options = this.getOptions(this.hasMultipleDataSets);
 			this.updateData();
 		},
 		watch: {
@@ -21,7 +21,7 @@
 			}
 		},
 		methods: {
-			updateData() {
+			updateData: function() {
 				this.chartdata = this.getChartData();
 				this.barKey++;
 			},
@@ -55,7 +55,7 @@
 				return data;
 			},
 			getOptions: function(hasMultipleDataSets) {
-				return {
+				let options = {
 					responsive: true,
 					maintainAspectRatio: false,
 					legend: {
@@ -79,37 +79,47 @@
 
 								label += (tooltipItem.yLabel % 1 !== 0 ? tooltipItem.yLabel.toFixed(2) : tooltipItem.yLabel);
 								return label;
-							},
-							title: function(tooltipItems, data) {
-								if (!hasMultipleDataSets) return [];
-								return data.labels[tooltipItems[0].index];
-							},
-							footer: function(tooltipItems) {
-								if (!hasMultipleDataSets) return "";
-								let total = 0;
-								for (let i = 0; i < tooltipItems.length; i++) {
-									total += parseFloat(tooltipItems[i].yLabel);
-								}
-								return 'Total: ' + total.toFixed(2);
 							}
 						}
 					},
 					scales: {
 						xAxes: [{
-							stacked: true,
+							stacked: hasMultipleDataSets,
 							ticks: {
 								autoSkip: true,
 								autoSkipPadding: 5
 							}
 						}],
 						yAxes: [{
-							stacked: true,
+							stacked: hasMultipleDataSets,
 							ticks: {
 								min: 0
 							}
 						}]
 					}
 				};
+
+				if (hasMultipleDataSets) {
+					options.tooltips.callbacks.footer = this.getTooltipFooter();
+				}
+
+				return options;
+			},
+			getTooltipFooter: function() {
+				return function(tooltipItems) {
+					let total = 0;
+					for (let i = 0; i < tooltipItems.length; i++) {
+						total += parseFloat(tooltipItems[i].yLabel);
+					}
+
+					if (total % 1 === 0) {
+						total = total.toFixed(0);
+					} else {
+						total = total.toFixed(2);
+					}
+
+					return 'Total: ' + total;
+				}
 			}
 		}
 	}

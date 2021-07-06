@@ -17,6 +17,7 @@
 		],
 		data: () => ({
 			legendLabels: ["Chatters", "Lurkers"],
+			hasMultipleDataSets: true
 		})
 	}
 </script>

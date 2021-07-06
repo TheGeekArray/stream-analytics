@@ -17,6 +17,7 @@
 		],
 		data: () => ({
 			legendLabels: ["Minutes per viewer"],
+			hasMultipleDataSets: false
 		})
 	}
 </script>
