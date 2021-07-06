@@ -89,12 +89,12 @@
 								return label;
 							},
 							title: function(tooltipItems, data) {
-								let label = data.labels[tooltipItems[0].index];
+								let label = moment(data.labels[tooltipItems[0].index], "MMM DD YYYY");
 								switch (timeUnit) {
 								case "Day":
-									return moment(label).format("ddd MMM DD YYYY");
+									return label.format("ddd MMM DD YYYY");
 								case "Week":
-									return moment(label).format("MMM DD YYYY") +  " - " + moment(label).add(6, "day").format("MMM DD YYYY");
+									return label.format("MMM DD YYYY") +  " - " + label.add(6, "day").format("MMM DD YYYY");
 								default:
 									return data.labels[tooltipItems[0].index];
 								}
