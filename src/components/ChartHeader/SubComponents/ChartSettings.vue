@@ -38,25 +38,19 @@
 
 <script>
 	import Checkbox from '@/components/InputComponents/Checkbox.vue';
+	import Settings from '@/mixins/Settings.vue';
 
 	export default {
 		name: "ChartSettings",
 		components: {
 			Checkbox
 		},
+		mixins: [
+			Settings
+		],
 		props: ['timeUnit'],
 		data: () => ({
 			settingsVisible: false,
-			settings: {
-				general: {
-					shouldHideEmptyDays: false,
-					shouldHideTrendline: false
-				},
-				organicViewers: {
-					shouldHideTotalAverage: false,
-					shouldHideTotalOrganicAverage: false
-				}
-			}
 		}),
 		methods: {
 			hideSettings: function() {

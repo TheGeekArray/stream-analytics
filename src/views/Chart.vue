@@ -17,26 +17,22 @@
 <script>
 	import { ipcRenderer } from 'electron';
 	import ChartHeader from '@/components/ChartHeader/ChartHeader.vue';
+	import Settings from '@/mixins/Settings.vue';
 
 	export default {
-		components: { ChartHeader },
+		components: { 
+			ChartHeader 
+		},
+		mixins: [
+			Settings
+		],
 		data: () => ({
 			topics: [],
 			displayAverage: true,
 			loaded: false,
 			streamData: [],
 			labels: [],
-			timeUnit: "Day",
-			settings: {
-				general: {
-					shouldHideEmptyDays: false,
-					shouldHideTrendline: false
-				},
-				organicViewers: {
-					shouldHideTotalAverage: false,
-					shouldHideTotalOrganicAverage: false
-				}
-			}
+			timeUnit: "Day"
 		}),
 		created() {
 			this.topics = this.getTopics(this.$route);
