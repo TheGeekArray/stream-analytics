@@ -56,7 +56,7 @@ export default {
 							}
 						}
 						
-						labels.push(month + " " + day.split(" ")[1]);
+						labels.push(month + " " + day.split(" ")[1] + " " + year);
 						weekDataTotal = 0;
 						divisor = 0;
 					}

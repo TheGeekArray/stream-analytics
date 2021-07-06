@@ -52,7 +52,7 @@ export default {
 					formattedData.push(monthDataTotal);
 				}
 
-				labels.push(month + " " + year);
+				labels.push(moment().month(month).format('MMMM') + " " + year);
 			}
 		}
 
