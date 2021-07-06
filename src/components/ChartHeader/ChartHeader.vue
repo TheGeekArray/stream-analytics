@@ -4,7 +4,7 @@
 		<button class="button reset-button" v-on:click="resetChart">Reset to 30 days</button>
 
 		<TimeUnitPicker 
-			@change="timeUnit = $event; sendDataRequestedEvent();"
+			@change="timeUnit = $event; sendDataRequestedEvent(); $emit('timeunit-updated', timeUnit)"
 			class="time-unit-picker-component"
 			:key="timeUnitPickerKey"
 		/>

@@ -4,8 +4,9 @@
 			v-bind:topics="topics"
 			v-bind:displayAverage="displayAverage"  
 			v-on:settings-updated="settings = $event;"
+			v-on:timeunit-updated="timeUnit = $event;"
 		/>
-		<router-view v-bind:streamData="streamData" v-bind:labels="labels" v-bind:settings="settings" />
+		<router-view v-bind:streamData="streamData" v-bind:labels="labels" v-bind:settings="settings" v-bind:timeUnit="timeUnit" />
 	</div>
 	<div class="no-data-uploaded" v-else>
 		<h2>No data has been uploaded yet</h2>
@@ -25,6 +26,7 @@
 			loaded: false,
 			streamData: [],
 			labels: [],
+			timeUnit: "Day",
 			settings: {
 				general: {
 					shouldHideEmptyDays: false,

@@ -1,10 +1,13 @@
 <script>
+	import moment from 'moment';
+
 	export default {
 		props: {
 			streamData: Array,
 			labels: Array,
 			settings: Object,
-			topics: Array
+			topics: Array,
+			timeUnit: String
 		},
 		data: () => ({
 			chartdata: {},
@@ -12,16 +15,19 @@
 			barKey: 0
 		}),
 		beforeMount() {
-			this.options = this.getOptions(this.hasMultipleDataSets);
 			this.updateData();
 		},
 		watch: {
 			streamData: function() {
 				this.updateData();
+			},
+			timeUnit: function() {
+				this.updateData();
 			}
 		},
 		methods: {
 			updateData: function() {
+				this.options = this.getOptions(this.hasMultipleDataSets);
 				this.chartdata = this.getChartData();
 				this.barKey++;
 			},
@@ -55,6 +61,8 @@
 				return data;
 			},
 			getOptions: function(hasMultipleDataSets) {
+				let timeUnit = this.timeUnit;
+
 				let options = {
 					responsive: true,
 					maintainAspectRatio: false,
@@ -79,7 +87,18 @@
 
 								label += (tooltipItem.yLabel % 1 !== 0 ? tooltipItem.yLabel.toFixed(2) : tooltipItem.yLabel);
 								return label;
-							}
+							},
+							title: function(tooltipItems, data) {
+								let label = data.labels[tooltipItems[0].index];
+								switch (timeUnit) {
+								case "Day":
+									return moment(label).format("ddd MMM DD YYYY");
+								case "Week":
+									return moment(label).format("MMM DD YYYY") +  " - " + moment(label).add(6, "day").format("MMM DD YYYY");
+								default:
+									return data.labels[tooltipItems[0].index];
+								}
+							},
 						}
 					},
 					scales: {
